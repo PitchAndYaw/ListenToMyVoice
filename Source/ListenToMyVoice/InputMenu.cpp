@@ -12,6 +12,7 @@ UInputMenu::UInputMenu(const FObjectInitializer& OI) : Super(OI) {
     static ConstructorHelpers::FObjectFinder<UStaticMesh> Finder(
         TEXT("StaticMesh'/Game/Art/Common/Menu/Meshes/menu2_cajaprueba.menu2_cajaprueba'"));
     SetStaticMesh(Finder.Object);
+    LightingChannels.bChannel1 = true;
 
     _Color = FColor::FromHex("293E3DFF"); 
     _HoverColor = FColor::FromHex("ECCF00FF");

@@ -17,17 +17,20 @@ AMenu3D::AMenu3D(const class FObjectInitializer& OI) : Super(OI) {
     static ConstructorHelpers::FObjectFinder<UStaticMesh> Finder(
         TEXT("StaticMesh'/Game/Art/Common/Menu/Meshes/menu2_parte_superior.menu2_parte_superior'"));
     _TopDecorator->SetStaticMesh(Finder.Object);
+    _TopDecorator->LightingChannels.bChannel1 = true;
 
     _BottomDecorator = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("_BottomDecorator"));
     static ConstructorHelpers::FObjectFinder<UStaticMesh> Finder2(
         TEXT("StaticMesh'/Game/Art/Common/Menu/Meshes/menu2_parte_abajo.menu2_parte_abajo'"));
     _BottomDecorator->SetStaticMesh(Finder2.Object);
+    _BottomDecorator->LightingChannels.bChannel1 = true;
 
     _MiddleDecorator = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("_MiddleDecorator"));
     static ConstructorHelpers::FObjectFinder<UStaticMesh> Finder3(
         TEXT("StaticMesh'/Game/Art/Common/Menu/Meshes/menu2_parte_intermedia.menu2_parte_intermedia'"));
     _MiddleDecorator->SetStaticMesh(Finder3.Object);
-    
+    _MiddleDecorator->LightingChannels.bChannel1 = true;
+
     _BackSubmenu = CreateDefaultSubobject<UInputMenu>(TEXT("BACK"));
     _BackSubmenu->_InputMenuReleasedDelegate.BindUObject(this, &AMenu3D::OnButtonBack);
     _BackSubmenu->AddOnInputMenuDelegate();

@@ -18,6 +18,8 @@ UMenuInteraction::UMenuInteraction() {
     _Light->SetOuterConeAngle(10);
     _Light->SetInnerConeAngle(5);
     _Light->SetIntensity(10000);
+    _Light->LightingChannels.bChannel0 = false;
+    _Light->LightingChannels.bChannel1 = true;
 
     FLinearColor Color = FLinearColor();
     Color.R = 0.635;
@@ -51,13 +53,6 @@ void UMenuInteraction::TickComponent(float DeltaTime, ELevelTick TickType,
                                              ECollisionChannel::ECC_Visibility, CollisionInfo) &&
         HitResult.Actor.IsValid()) {
 
-        if (HitResult.Actor.Get()->IsA(AMenu3D::StaticClass())) {
-            _Light->SetIntensity(10000);
-        }
-        else {
-            _Light->SetIntensity(10);
-        }
-
         if (_TargetInputMenu && HitResult.GetComponent() != _TargetInputMenu) {
             _TargetInputMenu->EndhoverInteraction();
             _TargetLocked = false;
@@ -70,7 +65,6 @@ void UMenuInteraction::TickComponent(float DeltaTime, ELevelTick TickType,
         }
     }
     else {
-        _Light->SetIntensity(10);
         if (_TargetInputMenu) {
             _TargetInputMenu->EndhoverInteraction();
             _TargetInputMenu = nullptr;
