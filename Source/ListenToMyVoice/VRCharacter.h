@@ -102,11 +102,6 @@ protected:
     void MoveForward(float Value) override;
     void TurnVRCharacter();
 
-    /************* IK **************/
-    FVector HeadCameraOffset;
-    UFUNCTION()
-    void UpdateIK();
-
     /********** UPDATE ANIMATIONS ***********/
     UFUNCTION(Server, Reliable, WithValidation)
     void SERVER_UpdateAnimation(EGripEnum NewAnim, int Hand);
@@ -146,50 +141,4 @@ private:
 
     void ItemGrabbedLeft();
     void ItemGrabbedRight();
-
-public:
-    /*** MESH FOLLOW WITH CAMERA ***/
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera-Mesh follow")
-    float MaxHeadTurnValue;
-
-private:
-    FVector BodyCameraOffset;
-
-    bool bHeadTurn;
-    bool bHeadTurning;
-
-    UFUNCTION()
-    void UpdateMeshPostitionWithCamera();
-    UFUNCTION()
-    void UpdateMeshRotationWithCamera();
-
-    void CheckHeadTurn();
-    void TurnBody();
-    /**/
-
-protected:
-    /*** IK PROPERTIES ***/
-    UPROPERTY(BlueprintReadOnly, Category = "IK")
-    FVector _HMDWorldPosition;
-    UPROPERTY(BlueprintReadOnly, Category = "IK")
-    FRotator _HMDWorldOrientation;
-    UPROPERTY(BlueprintReadOnly, Category = "IK")
-    FVector _LeftControllerPosition;
-    UPROPERTY(BlueprintReadOnly, Category = "IK")
-    FRotator _LeftControllerOrientation;
-    UPROPERTY(BlueprintReadOnly, Category = "IK")
-    FVector _RightControllerPosition;
-    UPROPERTY(BlueprintReadOnly, Category = "IK")
-    FRotator _RightControllerOrientation;
-
-    /*** CALIBRATION PROPERTIES ***/
-    UFUNCTION()
-    void CalculateMeshArmExtension();
-    UPROPERTY(BlueprintReadOnly, Category = "VR Calibration")
-    float MaxMeshArmExtension;
-
-public:
-    /* Debug Features */
-    void DebugSensors();
-    void DebugController(EControllerHand DeviceHand);
 };
