@@ -34,6 +34,8 @@ AVRCharacter::AVRCharacter(const FObjectInitializer& OI) : Super(OI) {
     
     _VROriginComp = CreateDefaultSubobject<USceneComponent>(TEXT("_VROriginComp"));
     _VROriginComp->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+    _VROriginComp->RelativeLocation.Z -= 100;
+
     _PlayerCamera->AttachToComponent(_VROriginComp, FAttachmentTransformRules::KeepRelativeTransform);
     _PlayerCamera->PostProcessBlendWeight = 1;
     _ChaperoneComp = CreateDefaultSubobject<USteamVRChaperoneComponent>(TEXT("_ChaperoneComp"));
@@ -67,8 +69,8 @@ void AVRCharacter::BuildLeft() {
     /* ADDITIONAL */
     _LeftSphere = CreateDefaultSubobject<USphereComponent>(TEXT("_LeftSphere"));
     _LeftSphere->AttachToComponent(_SM_LeftHand, FAttachmentTransformRules::KeepRelativeTransform);
-    _LeftSphere->SetRelativeLocation(FVector(20.f, 0.f, 0.f));
-    _LeftSphere->SetSphereRadius(15.f);
+    _LeftSphere->SetRelativeLocation(FVector(10.f, 0.f, 0.f));
+    _LeftSphere->SetSphereRadius(10.f);
 }
 
 void AVRCharacter::BuildRight() {
@@ -86,8 +88,8 @@ void AVRCharacter::BuildRight() {
     /* ADDITIONAL */
     _RightSphere = CreateDefaultSubobject<USphereComponent>(TEXT("_RightSphere"));
     _RightSphere->AttachToComponent(_SM_RightHand, FAttachmentTransformRules::KeepRelativeTransform);
-    _RightSphere->SetRelativeLocation(FVector(20.f, 0.f, 0.f));
-    _RightSphere->SetSphereRadius(15.f);
+    _RightSphere->SetRelativeLocation(FVector(10.f, 0.f, 0.f));
+    _RightSphere->SetSphereRadius(10.f);
 }
 
 void AVRCharacter::BeginPlay() {
