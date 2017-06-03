@@ -143,6 +143,7 @@ public:
     void OnButtonSwitchComfortMode(UInputMenu* InputMenu);
 
     void OnButtonBackToMenu(UInputMenu* InputMenu);
+    void OnRes640(UInputMenu* InputMenu);
     
 protected:
     TSubclassOf<ACharacter> _BoyClass;
@@ -163,4 +164,5 @@ private:
     AMenu3D* _MenuActor;
 
     void CreateOptionsPanel();
+    void ChangeResolution(FString Resolution);
 };

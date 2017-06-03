@@ -368,13 +368,22 @@ AMenu3D* UNWGameInstance::CreateMenuPlay() {
 void UNWGameInstance::CreateOptionsPanel() {
     /*** (2)OPTIONS MENU ***/
     UMenuPanel* MenuOptions = NewObject<UMenuPanel>(_MenuActor, FName("MenuOptions"));
-    UInputMenu* Slot_ComfortMode = NewObject<UInputMenu>(_MenuActor, 
-                                        _MenuOptions.bComfortMode ? "COMFORT ON" : "COMFORT OFF");
-    Slot_ComfortMode->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonSwitchComfortMode);
-    Slot_ComfortMode->AddOnInputMenuDelegate();
-
     _MenuActor->AddSubmenu(MenuOptions);
-    MenuOptions->AddMenuInput(Slot_ComfortMode);
+    if (_IsVRMode) {
+        UInputMenu* Slot_ComfortMode = NewObject<UInputMenu>(_MenuActor,
+                                                             _MenuOptions.bComfortMode ? "COMFORT ON" : "COMFORT OFF");
+        Slot_ComfortMode->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonSwitchComfortMode);
+        Slot_ComfortMode->AddOnInputMenuDelegate();
+
+        MenuOptions->AddMenuInput(Slot_ComfortMode);
+    }
+    else {
+        UInputMenu* Slot_Res640 = NewObject<UInputMenu>(_MenuActor, "640x480");
+        Slot_Res640->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnRes640);
+        Slot_Res640->AddOnInputMenuDelegate();
+
+        MenuOptions->AddMenuInput(Slot_Res640);
+    }
 }
 
 /*********************************** BINDINGS ****************************************************/
@@ -412,4 +421,14 @@ void UNWGameInstance::OnButtonSwitchComfortMode(UInputMenu* InputMenu) {
 
 void UNWGameInstance::OnButtonBackToMenu(UInputMenu* InputMenu) {
     DestroySession();
+}
+
+void UNWGameInstance::OnRes640(UInputMenu* InputMenu) {
+    ChangeResolution("1024x768f");
+}
+
+void UNWGameInstance::ChangeResolution(FString Resolution) {
+    FString Command = "r.SetRes " + Resolution;
+    GetWorld()->Exec(GetWorld(), *Command);
+    ULibraryUtils::Log(Command);
 }
