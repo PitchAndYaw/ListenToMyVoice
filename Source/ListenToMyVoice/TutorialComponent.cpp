@@ -1,18 +1,20 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ListenToMyVoice.h"
-#include "TutorialText.h"
+#include "TutorialComponent.h"
 
 #include "Kismet/KismetMathLibrary.h"
 
 
-UTutorialText::UTutorialText() : Super() {
+UTutorialComponent::UTutorialComponent() : Super() {
     PrimaryComponentTick.bCanEverTick = true;
 
     RelativeRotation = FRotator(0, -120, 0);
+    _WidgetSteps = {};
+    _StepPivot = 0;
 }
 
-void UTutorialText::BeginPlay() {
+void UTutorialComponent::BeginPlay() {
     Super::BeginPlay();
 
     if (GetWorld()) {
@@ -25,7 +27,7 @@ void UTutorialText::BeginPlay() {
     }
 }
 
-void UTutorialText::TickComponent(float DeltaTime, ELevelTick TickType,
+void UTutorialComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                   FActorComponentTickFunction* ThisTickFunction) {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -34,6 +36,13 @@ void UTutorialText::TickComponent(float DeltaTime, ELevelTick TickType,
                                                                     _Character->GetActorLocation());
         
         SetRelativeRotation(PlayerRot);
-        ULibraryUtils::Log(RelativeRotation.ToString());
     }
+}
+
+void UTutorialComponent::NextStep() {
+    if (_StepPivot < _WidgetSteps.Num()) {
+        _StepPivot++;
+        SetWidgetClass(_WidgetSteps[_StepPivot]);
+    }
+    else  DestroyComponent();
 }

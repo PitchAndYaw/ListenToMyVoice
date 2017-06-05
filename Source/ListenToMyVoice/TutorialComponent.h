@@ -2,21 +2,28 @@
 
 #pragma once
 
-#include "Components/TextRenderComponent.h"
-#include "TutorialText.generated.h"
+#include "Components/WidgetComponent.h"
+#include "TutorialComponent.generated.h"
 
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class LISTENTOMYVOICE_API UTutorialText : public UTextRenderComponent {
+class LISTENTOMYVOICE_API UTutorialComponent : public UWidgetComponent {
     GENERATED_BODY()
 
 public:
-    UTutorialText();
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Steps")
+    TArray<TSubclassOf<UUserWidget>> _WidgetSteps;
+
+    UTutorialComponent();
 
     virtual void TickComponent(float DeltaTime, ELevelTick TickType,
                                FActorComponentTickFunction* ThisTickFunction) override;
 
+    void NextStep();
+
 protected:
+    int _StepPivot;
+
     void BeginPlay() override;
 
 private:
