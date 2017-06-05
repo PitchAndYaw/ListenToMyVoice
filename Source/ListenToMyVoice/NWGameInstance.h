@@ -143,7 +143,12 @@ public:
     void OnButtonSwitchComfortMode(UInputMenu* InputMenu);
 
     void OnButtonBackToMenu(UInputMenu* InputMenu);
-    void OnRes640(UInputMenu* InputMenu);
+    
+    void OnButtonGraphics(UInputMenu* InputMenu);
+    void OnRes1920(UInputMenu* InputMenu);
+    void OnRes1600(UInputMenu* InputMenu);
+    void OnRes1280(UInputMenu* InputMenu);
+    void OnRes800(UInputMenu* InputMenu);
     
 protected:
     TSubclassOf<ACharacter> _BoyClass;

@@ -135,3 +135,7 @@ void AMenu3D::PlaceDecorators(bool PlaceBackButton, float PanelHeight) {
     Location.Z = -(PanelHeight + (PlaceBackButton ? _BackMenuSize : 0)) / 2;
     _MiddleDecorator->SetRelativeLocation(Location);
 }
+
+int AMenu3D::GetSubmenuNum() {
+    return _Submenus.Num();
+}
