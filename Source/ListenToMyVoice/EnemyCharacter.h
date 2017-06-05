@@ -28,6 +28,8 @@ public:
 	TSubclassOf<class UAIPerceptionComponent> AIPerceptionComponent;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
     int _Damage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	bool _IsDamaged;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, class AActor* DamageCauser) override;
@@ -39,4 +41,8 @@ protected:
 
 public:
     virtual void Tick(float DeltaTime) override;
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	void SetDamaged(bool Damaged);
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	bool GetDamaged();
 };
