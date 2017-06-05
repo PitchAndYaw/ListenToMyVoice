@@ -144,6 +144,12 @@ public:
 
     void OnButtonBackToMenu(UInputMenu* InputMenu);
     
+    void OnButtonGraphics(UInputMenu* InputMenu);
+    void OnRes1920(UInputMenu* InputMenu);
+    void OnRes1600(UInputMenu* InputMenu);
+    void OnRes1280(UInputMenu* InputMenu);
+    void OnRes800(UInputMenu* InputMenu);
+    
 protected:
     TSubclassOf<ACharacter> _BoyClass;
     TSubclassOf<ACharacter> _GirlClass;
@@ -163,4 +169,5 @@ private:
     AMenu3D* _MenuActor;
 
     void CreateOptionsPanel();
+    void ChangeResolution(FString Resolution);
 };

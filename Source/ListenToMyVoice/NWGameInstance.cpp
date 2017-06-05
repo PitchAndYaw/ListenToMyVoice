@@ -242,8 +242,9 @@ void UNWGameInstance::OnFindSessionsComplete(bool bWasSuccessful) {
 
     _SessionOwner = Result.Len() > 0 ? Result : "NO SESSIONS";
 
-    if (Ok) _MenuActor->SetInputMenuLoading(3, 0, false, "");
-    else _MenuActor->SetInputMenuLoading(3, 0, false, _SessionOwner);
+    int Index = _MenuActor->GetSubmenuNum() - 1;
+    if (Ok) _MenuActor->SetInputMenuLoading(Index, 0, false, "");
+    else _MenuActor->SetInputMenuLoading(Index, 0, false, _SessionOwner);
 }
 
 bool UNWGameInstance::JoinAtSession(TSharedPtr<const FUniqueNetId> UserId, FName SessionName,
@@ -305,10 +306,10 @@ AMenu3D* UNWGameInstance::CreateMenuMain() {
     MenuMain->AddMenuInput(Slot_Options);
     MenuMain->AddMenuInput(Slot_ExitGame);
 
-    /*** (1)OPTIONS MENU ***/
+    /*** OPTIONS ***/
     CreateOptionsPanel();
 
-    /*** (2)NEW GAME MENU ***/
+    /*** (TOTAL -2)NEW GAME MENU ***/
     UMenuPanel* MenuNewGame = NewObject<UMenuPanel>(_MenuActor, FName("MenuNewGame"));
     UInputMenu* Slot_HostGame = NewObject<UInputMenu>(_MenuActor, FName("HOST GAME"));
     Slot_HostGame->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonHostGame);
@@ -321,7 +322,7 @@ AMenu3D* UNWGameInstance::CreateMenuMain() {
     MenuNewGame->AddMenuInput(Slot_HostGame);
     MenuNewGame->AddMenuInput(Slot_FindGame);
 
-    /*** (3)FIND GAME MENU ***/
+    /*** (TOTAL - 1)FIND GAME MENU ***/
     UMenuPanel* MenuFindGame = NewObject<UMenuPanel>(_MenuActor, FName("MenuFindGame"));
     UInputMenu* Slot_JoinGame = NewObject<UInputMenu>(_MenuActor, FName("JOIN GAME"));
     Slot_JoinGame->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonJoinGame);
@@ -359,27 +360,57 @@ AMenu3D* UNWGameInstance::CreateMenuPlay() {
     MenuPlay->AddMenuInput(Slot_Options);
     MenuPlay->AddMenuInput(Slot_ExitGame);
 
-    /*** (1)OPTIONS MENU ***/
+    /*** OPTIONS ***/
     CreateOptionsPanel();
 
     return _MenuActor;
 }
 
 void UNWGameInstance::CreateOptionsPanel() {
-    /*** (2)OPTIONS MENU ***/
+    /*** (1)OPTIONS MENU ***/
     UMenuPanel* MenuOptions = NewObject<UMenuPanel>(_MenuActor, FName("MenuOptions"));
-    UInputMenu* Slot_ComfortMode = NewObject<UInputMenu>(_MenuActor, 
-                                        _MenuOptions.bComfortMode ? "COMFORT ON" : "COMFORT OFF");
-    Slot_ComfortMode->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonSwitchComfortMode);
-    Slot_ComfortMode->AddOnInputMenuDelegate();
-
     _MenuActor->AddSubmenu(MenuOptions);
-    MenuOptions->AddMenuInput(Slot_ComfortMode);
+    if (_IsVRMode) {
+        UInputMenu* Slot_ComfortMode = NewObject<UInputMenu>(_MenuActor,
+                                                             _MenuOptions.bComfortMode ? "COMFORT ON" : "COMFORT OFF");
+        Slot_ComfortMode->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonSwitchComfortMode);
+        Slot_ComfortMode->AddOnInputMenuDelegate();
+
+        MenuOptions->AddMenuInput(Slot_ComfortMode);
+    }
+    else {
+        UInputMenu* Slot_Graphics = NewObject<UInputMenu>(_MenuActor, "GRAPHICS");
+        Slot_Graphics->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonGraphics);
+        Slot_Graphics->AddOnInputMenuDelegate();
+
+        MenuOptions->AddMenuInput(Slot_Graphics);
+
+        /*** (2)GRAPHICS MENU ***/
+        UMenuPanel* MenuGraphics = NewObject<UMenuPanel>(_MenuActor, FName("MenuGraphics"));
+        UInputMenu* Slot_Res1920 = NewObject<UInputMenu>(_MenuActor, "1920x1080");
+        Slot_Res1920->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnRes1920);
+        Slot_Res1920->AddOnInputMenuDelegate();
+        UInputMenu* Slot_Res1600 = NewObject<UInputMenu>(_MenuActor, "1600x900");
+        Slot_Res1600->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnRes1600);
+        Slot_Res1600->AddOnInputMenuDelegate();
+        UInputMenu* Slot_Res1280 = NewObject<UInputMenu>(_MenuActor, "1280x720");
+        Slot_Res1280->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnRes1280);
+        Slot_Res1280->AddOnInputMenuDelegate();
+        UInputMenu* Slot_Res800 = NewObject<UInputMenu>(_MenuActor, "800x600");
+        Slot_Res800->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnRes800);
+        Slot_Res800->AddOnInputMenuDelegate();
+
+        _MenuActor->AddSubmenu(MenuGraphics);
+        MenuGraphics->AddMenuInput(Slot_Res1920);
+        MenuGraphics->AddMenuInput(Slot_Res1600);
+        MenuGraphics->AddMenuInput(Slot_Res1280);
+        MenuGraphics->AddMenuInput(Slot_Res800);
+    }
 }
 
 /*********************************** BINDINGS ****************************************************/
 void UNWGameInstance::OnButtonNewGame(UInputMenu* InputMenu) {
-    _MenuActor->SetSubmenuByIndex(2);
+    _MenuActor->SetSubmenuByIndex(_MenuActor->GetSubmenuNum() - 2);
 }
 
 void UNWGameInstance::OnButtonOptions(UInputMenu* InputMenu) {
@@ -396,8 +427,9 @@ void UNWGameInstance::OnButtonHostGame(UInputMenu* InputMenu) {
 
 void UNWGameInstance::OnButtonFindGame(UInputMenu* InputMenu) {
     FindOnlineGames();
-    _MenuActor->SetSubmenuByIndex(3);
-    _MenuActor->SetInputMenuLoading(3, 0, true, "SEARCHING...");
+    int Index = _MenuActor->GetSubmenuNum() - 1;
+    _MenuActor->SetSubmenuByIndex(Index);
+    _MenuActor->SetInputMenuLoading(Index, 0, true, "SEARCHING...");
 }
 
 void UNWGameInstance::OnButtonJoinGame(UInputMenu* InputMenu) {
@@ -412,4 +444,29 @@ void UNWGameInstance::OnButtonSwitchComfortMode(UInputMenu* InputMenu) {
 
 void UNWGameInstance::OnButtonBackToMenu(UInputMenu* InputMenu) {
     DestroySession();
+}
+
+void UNWGameInstance::OnButtonGraphics(UInputMenu* InputMenu) {
+    _MenuActor->SetSubmenuByIndex(2);
+}
+
+void UNWGameInstance::OnRes1920(UInputMenu* InputMenu) {
+    ChangeResolution("1920x1080");
+}
+
+void UNWGameInstance::OnRes1600(UInputMenu* InputMenu) {
+    ChangeResolution("1600x900");
+}
+
+void UNWGameInstance::OnRes1280(UInputMenu* InputMenu) {
+    ChangeResolution("1280x720");
+}
+
+void UNWGameInstance::OnRes800(UInputMenu* InputMenu) {
+    ChangeResolution("800x600");
+}
+
+void UNWGameInstance::ChangeResolution(FString Resolution) {
+    FString Command = "r.SetRes " + Resolution;
+    GetFirstLocalPlayerController()->ConsoleCommand(Command);
 }

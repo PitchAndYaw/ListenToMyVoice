@@ -23,6 +23,8 @@ public:
     void SetSubmenuByIndex(const int& Index);
     void SetInputMenuLoading(int IndexPanel, int IndexInputMenu, bool IsLoading, FString Text);
 
+    int GetSubmenuNum();
+
 protected:
     /*** DECORATORS ***/
     UPROPERTY(Category = "Menu Decorator", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
