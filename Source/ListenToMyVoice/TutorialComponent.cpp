@@ -6,13 +6,17 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "NWGameInstance.h"
 
-#include "PlayerControllerLobby.h"
+#include "PlayerCharacter.h"
 #include "VRCharacter.h"
 #include "FPCharacter.h"
 #include "InventoryItem.h"
 
 UTutorialComponent::UTutorialComponent() : Super() {
     PrimaryComponentTick.bCanEverTick = true;
+
+    SetEnableGravity(false);
+    SetCollisionProfileName("NoCollision");
+    bGenerateOverlapEvents = false;
 
     _WidgetSteps = {};
     _StepPivot = -1;
@@ -28,7 +32,7 @@ void UTutorialComponent::BeginPlay() {
             if (GameInstance && GameInstance->_IsVRMode != _IsVR) DestroyComponent();
 
             if (GetWorld()->GetFirstPlayerController()->GetCharacter()) {
-                _Character = GetWorld()->GetFirstPlayerController()->GetCharacter();
+                _Character = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
             }
         }
     }
@@ -54,29 +58,25 @@ bool UTutorialComponent::CheckCondition() {
         if (_StepPivot < 0) NextStep();
         else {
             switch (_WidgetSteps[_StepPivot]._Condition) {
-                case ETutorialCondition::Grab:
+                case ETutorialCondition::TakeItem:
                 {
-                    AVRCharacter* VRCharacter = Cast<AVRCharacter>(_Character);
-                    if (VRCharacter && (VRCharacter->_ItemLeft == _ActorRef ||
-                                        VRCharacter->_ItemRight == _ActorRef)) {
+                    if (_Character && (_Character->_ItemLeft == _ActorRef ||
+                                       _Character->_ItemRight == _ActorRef)) {
                         NextStep();
                     }
                 };
                 break;
-                case ETutorialCondition::UseItemVR:
+                case ETutorialCondition::Use:
                 {
-                    AVRCharacter* VRCharacter = Cast<AVRCharacter>(_Character);
-                    if (VRCharacter) {
-                        APlayerControllerLobby* PC = Cast<APlayerControllerLobby>(VRCharacter->GetController());
-                        if (PC) {
-                            if (VRCharacter && ((VRCharacter->_ItemLeft == _ActorRef && PC->_IsLefReleased) ||
-                                (VRCharacter->_ItemRight == _ActorRef && PC->_IsRightReleased))) {
-
-                                PC->_IsLefReleased = false;
-                                PC->_IsRightReleased = false;
-                                NextStep();
-                            }
-                        }
+                    if (_Character && (_Character->_LastUsedPressed == _ActorRef)) {
+                        NextStep();
+                    }
+                };
+                break;
+                case ETutorialCondition::UseItem:
+                {
+                    if (_Character && (_Character->_LastItemUsedPressed == _ActorRef)) {
+                        NextStep();
                     }
                 };
                 break;
@@ -99,36 +99,10 @@ bool UTutorialComponent::CheckCondition() {
                     if (FPCharacter && !FPCharacter->_IsInventoryHidden) { NextStep(); }
                 };
                 break;
-                case ETutorialCondition::EquipItem:
-                {
-                    AFPCharacter* FPCharacter = Cast<AFPCharacter>(_Character);
-                    if (FPCharacter && (FPCharacter->_ItemLeft == _ActorRef ||
-                                        FPCharacter->_ItemRight == _ActorRef)) {
-                        NextStep();
-                    }
-                };
-                break;
                 case ETutorialCondition::CloseInv:
                 {
                     AFPCharacter* FPCharacter = Cast<AFPCharacter>(_Character);
                     if (FPCharacter && FPCharacter->_IsInventoryHidden) { NextStep(); }
-                };
-                break;
-                case ETutorialCondition::UseItemFP:
-                {
-                    AFPCharacter* FPCharacter = Cast<AFPCharacter>(_Character);
-                    if (FPCharacter) {
-                        APlayerControllerLobby* PC = Cast<APlayerControllerLobby>(FPCharacter->GetController());
-                        if (PC) {
-                            if (FPCharacter && ((FPCharacter->_ItemLeft == _ActorRef && PC->_IsLefReleased) ||
-                                (FPCharacter->_ItemRight == _ActorRef && PC->_IsRightReleased))) {
-
-                                PC->_IsLefReleased = false;
-                                PC->_IsRightReleased = false;
-                                NextStep();
-                            }
-                        }
-                    }
                 };
                 break;
                 default:;

@@ -8,17 +8,18 @@
 
 UENUM(BlueprintType)
 enum class ETutorialCondition : uint8 {
+    /* COMMON */
+    TakeItem UMETA(DisplayName = "Take Item"),
+    UseItem  UMETA(DisplayName = "Use Item"),
+    Use      UMETA(DisplayName = "Use"),
+
     /* VR */
-    Grab 	  UMETA(DisplayName = "VR Grab Item"),
-    UseItemVR UMETA(DisplayName = "VR Use Item"),
     Drop	  UMETA(DisplayName = "VR Drop Item"),
     
     /* FP */
     Save      UMETA(DisplayName = "FP Save Item"),
     OpenInv   UMETA(DisplayName = "FP Open Inventory"),
-    EquipItem UMETA(DisplayName = "FP Equip Item"),
-    CloseInv  UMETA(DisplayName = "FP Close Inventory"),
-    UseItemFP UMETA(DisplayName = "FP Use Item")
+    CloseInv  UMETA(DisplayName = "FP Close Inventory")
 };
 
 USTRUCT(BlueprintType, Category = "Tutorial")
@@ -59,7 +60,7 @@ protected:
 
 private:
     UUserWidget* _Widget;
-    ACharacter* _Character;
+    class APlayerCharacter* _Character;
 
     bool CheckCondition();
 };

@@ -15,6 +15,12 @@ public:
     AActor* _ItemLeft;
     AActor* _ItemRight;
 
+    AActor* _LastItemUsedPressed;
+    AActor* _LastItemUsedReleased;
+
+    AActor* _LastUsedPressed;
+    AActor* _LastUsedReleased;
+
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
     float _baseTurnRate;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)

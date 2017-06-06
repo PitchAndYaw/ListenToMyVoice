@@ -116,7 +116,10 @@ void APlayerCharacter::SERVER_UsePressed_Implementation(UActorComponent* compone
 }
 void APlayerCharacter::MULTI_UsePressed_Implementation(UActorComponent* component) {
     IItfUsable* itfObject = Cast<IItfUsable>(component);
-    if (itfObject) itfObject->Execute_UsePressed(component);
+    if (itfObject) {
+        itfObject->Execute_UsePressed(component);
+        _LastUsedPressed = component->GetOwner();
+    }
 }
 
 void APlayerCharacter::UseReleased() {}
@@ -126,7 +129,10 @@ void APlayerCharacter::SERVER_UseReleased_Implementation(UActorComponent* compon
 }
 void APlayerCharacter::MULTI_UseReleased_Implementation(UActorComponent* component) {
     IItfUsable* itfObject = Cast<IItfUsable>(component);
-    if (itfObject) itfObject->Execute_UseReleased(component);
+    if (itfObject) {
+        itfObject->Execute_UseReleased(component);
+        _LastUsedReleased = component->GetOwner();
+    }
 }
 
 /******** USE ITEM LEFT *********/

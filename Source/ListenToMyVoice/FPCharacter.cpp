@@ -185,7 +185,10 @@ void AFPCharacter::UseLeftPressed(bool IsMenuHidden) {
             for (UActorComponent* Component : Components) {
                 if (Component->GetClass()->ImplementsInterface(UItfUsableItem::StaticClass())) {
                     IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
-                    if (ItfObject) ItfObject->Execute_UseItemPressed(Component);
+                    if (ItfObject) {
+                        ItfObject->Execute_UseItemPressed(Component);
+                        _LastItemUsedPressed = _ItemLeft;
+                    }
                 }
             }
         }
@@ -202,7 +205,10 @@ void AFPCharacter::UseLeftReleased(bool IsMenuHidden) {
             for (UActorComponent* Component : Components) {
                 if (Component->GetClass()->ImplementsInterface(UItfUsableItem::StaticClass())) {
                     IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
-                    if (ItfObject) ItfObject->Execute_UseItemReleased(Component);
+                    if (ItfObject) {
+                        ItfObject->Execute_UseItemReleased(Component);
+                        _LastItemUsedReleased = _ItemLeft;
+                    }
                 }
             }
         }
@@ -219,7 +225,10 @@ void AFPCharacter::UseRightPressed(bool IsMenuHidden) {
         for (UActorComponent* Component : Components) {
             if (Component->GetClass()->ImplementsInterface(UItfUsableItem::StaticClass())) {
                 IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
-                if (ItfObject) ItfObject->Execute_UseItemPressed(Component);
+                if (ItfObject) {
+                    ItfObject->Execute_UseItemPressed(Component);
+                    _LastItemUsedPressed = _ItemRight;
+                }
             }
         }
     }
@@ -233,7 +242,10 @@ void AFPCharacter::UseRightReleased(bool IsMenuHidden) {
         for (UActorComponent* Component : Components) {
             if (Component->GetClass()->ImplementsInterface(UItfUsableItem::StaticClass())) {
                 IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
-                if (ItfObject) ItfObject->Execute_UseItemReleased(Component);
+                if (ItfObject) {
+                    ItfObject->Execute_UseItemReleased(Component);
+                    _LastItemUsedReleased = _ItemRight;
+                }
             }
         }
     }
