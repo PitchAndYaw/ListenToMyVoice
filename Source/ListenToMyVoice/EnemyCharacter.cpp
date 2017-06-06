@@ -20,6 +20,7 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
     _VisionAngleDegrees = 90.0f;
 	_HearingRange = 1500.0f;
     _Damage = 1;
+	_IsDamaged = false;
 
 	GetCharacterMovement()->MaxWalkSpeed = 170.0f;
 }
@@ -49,5 +50,14 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const&
 				 class AController* EventInstigator, class AActor* DamageCauser) {
 	ULibraryUtils::Log(FString::Printf(TEXT("Me han dado")), 0, 60);
 	/*The enemy doesn't receive damage*/
+	SetDamaged(true);
 	return 0.0f;
+}
+
+void AEnemyCharacter::SetDamaged(bool Damaged) {
+	_IsDamaged = Damaged;
+}
+
+bool AEnemyCharacter::GetDamaged() {
+	return _IsDamaged;
 }
