@@ -451,19 +451,19 @@ void UNWGameInstance::OnButtonGraphics(UInputMenu* InputMenu) {
 }
 
 void UNWGameInstance::OnRes1920(UInputMenu* InputMenu) {
-    ChangeResolution("1920x1080");
+    ChangeResolution("1920x1080f");
 }
 
 void UNWGameInstance::OnRes1600(UInputMenu* InputMenu) {
-    ChangeResolution("1600x900");
+    ChangeResolution("1600x900f");
 }
 
 void UNWGameInstance::OnRes1280(UInputMenu* InputMenu) {
-    ChangeResolution("1280x720");
+    ChangeResolution("1280x720f");
 }
 
 void UNWGameInstance::OnRes800(UInputMenu* InputMenu) {
-    ChangeResolution("800x600");
+    ChangeResolution("800x600f");
 }
 
 void UNWGameInstance::ChangeResolution(FString Resolution) {

@@ -13,6 +13,10 @@ class LISTENTOMYVOICE_API APlayerControllerLobby : public APlayerController {
     GENERATED_BODY()
 
 public:
+    /* TUTORIAL */
+    bool _IsLefReleased;
+    bool _IsRightReleased;
+
     APlayerControllerLobby(const FObjectInitializer& OI);
 
     UFUNCTION(Client, Reliable)
