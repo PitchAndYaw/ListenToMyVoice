@@ -12,6 +12,15 @@ class LISTENTOMYVOICE_API APlayerCharacter : public ACharacter {
     GENERATED_BODY()
 
 public:
+    AActor* _ItemLeft;
+    AActor* _ItemRight;
+
+    AActor* _LastItemUsedPressed;
+    AActor* _LastItemUsedReleased;
+
+    AActor* _LastUsedPressed;
+    AActor* _LastUsedReleased;
+
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
     float _baseTurnRate;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
@@ -61,9 +70,6 @@ protected:
 	class UFMODAudioComponent* _BreathAudioComp;
     UPROPERTY(Category = Audio, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UMenuInteraction* _MenuInteractionComp;
-
-    AActor* _ItemLeft;
-    AActor* _ItemRight;
 
     void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 

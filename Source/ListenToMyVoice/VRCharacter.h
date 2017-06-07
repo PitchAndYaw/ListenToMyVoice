@@ -20,6 +20,8 @@ class LISTENTOMYVOICE_API AVRCharacter : public APlayerCharacter {
     GENERATED_BODY()
 
 public:
+    AActor* _ActorGrabbing;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rumble")
     UForceFeedbackEffect * _RumbleOverLapLeft;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rumble")
@@ -119,7 +121,6 @@ private:
 
     AActor* _ActorFocusedLeft;
     AActor* _ActorFocusedRight;
-    AActor* _ActorGrabbing;
 
     UStaticMeshComponent* _LastMeshFocusedLeft = nullptr;
     UStaticMeshComponent* _LastMeshFocusedRight = nullptr;

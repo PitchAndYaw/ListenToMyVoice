@@ -11,6 +11,8 @@ class LISTENTOMYVOICE_API AFPCharacter : public APlayerCharacter {
     GENERATED_BODY()
 
 public:
+    bool _IsInventoryHidden;
+
     /* HUD */
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HUD")
     TSubclassOf<class UUserWidget> _HUDClass;
@@ -67,7 +69,6 @@ protected:
 	class USkeletalMeshComponent* _FirstPersonMesh;
 
     class UInventoryWidget* _InventoryWidget;
-    bool _IsInventoryHidden;
 
     void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 

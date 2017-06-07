@@ -102,6 +102,7 @@ void APlayerControllerLobby::UseLeftReleased() {
         bool  IsMenuHidden = _MapMainMenu.Contains(GetWorld()->GetMapName()) ? false :
                                 _MenuActor ? _MenuActor->_IsMenuHidden : true;
         PlayerCharacter->UseLeftReleased(IsMenuHidden);
+        _IsLefReleased = true;
     }
 }
 
@@ -121,6 +122,7 @@ void APlayerControllerLobby::UseRightReleased() {
         bool  IsMenuHidden = _MapMainMenu.Contains(GetWorld()->GetMapName()) ? false :
             _MenuActor ? _MenuActor->_IsMenuHidden : true;
         PlayerCharacter->UseRightReleased(IsMenuHidden);
+        _IsRightReleased = true;
     }
 }
 
