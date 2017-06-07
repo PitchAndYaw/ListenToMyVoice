@@ -42,6 +42,8 @@ public:
     AActor* _ActorRef;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tutorial")
     bool _IsVR;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tutorial")
+    bool _IsMovable;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tutorial Steps")
     TArray<FWidgetSteps> _WidgetSteps;
 

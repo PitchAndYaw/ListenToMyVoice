@@ -21,6 +21,7 @@ UTutorialComponent::UTutorialComponent() : Super() {
     _WidgetSteps = {};
     _StepPivot = -1;
     _IsVR = false;
+    _IsMovable = true;
 }
 
 void UTutorialComponent::BeginPlay() {
@@ -43,11 +44,12 @@ void UTutorialComponent::TickComponent(float DeltaTime, ELevelTick TickType,
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
     if (_Character) {
-        FRotator PlayerRot = UKismetMathLibrary::FindLookAtRotation(GetOwner()->GetActorLocation(),
-                                                                    _Character->GetActorLocation());
-        
-        SetRelativeRotation(PlayerRot);
+        if (_IsMovable) {
+            FRotator PlayerRot = UKismetMathLibrary::FindLookAtRotation(GetOwner()->GetActorLocation(),
+                                                                        _Character->GetActorLocation());
 
+            SetRelativeRotation(PlayerRot);
+        }
         CheckCondition();
     }
 }
@@ -105,8 +107,8 @@ bool UTutorialComponent::CheckCondition() {
                     if (FPCharacter && FPCharacter->_IsInventoryHidden) { NextStep(); }
                 };
                 break;
-                default:;
-                    break;
+                default: ;
+                break;
             }
         }
     }
@@ -114,20 +116,19 @@ bool UTutorialComponent::CheckCondition() {
 }
 
 void UTutorialComponent::NextStep() {
-    ULibraryUtils::Log("NextStep ");
-
     APlayerController* PC = Cast<APlayerController>(_Character->GetController());
     if (PC) {
         _StepPivot++;
         if (_StepPivot < _WidgetSteps.Num()) {
             if (_Widget) _Widget->Destruct();
             _Widget = CreateWidget<UUserWidget>(PC, _WidgetSteps[_StepPivot]._WidgetClass);
-            
+
             SetWidgetClass(_WidgetSteps[_StepPivot]._WidgetClass);
             SetWidget(_Widget);
             //SetRelativeRotation(FRotator(0,0,0));
             //SetVisibility(true);
             //RegisterComponent();
+            ULibraryUtils::Log("NextStep ");
         }
         else  DestroyComponent();
     }
