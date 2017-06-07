@@ -36,10 +36,10 @@ void UTutorialComponent::TickComponent(float DeltaTime, ELevelTick TickType,
     if (_Character) {
         if (_IsMovable) {
             
-            FRotator PlayerRot = UKismetMathLibrary::FindLookAtRotation(GetOwner()->GetActorLocation(),
+            FRotator PlayerRot = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(),
                                                                         _Character->GetPlayerCamera()->GetComponentLocation());
 
-            SetRelativeRotation(PlayerRot);
+            SetWorldRotation(PlayerRot);
         }
         if(_IsDynamic) CheckCondition();
     }
