@@ -27,17 +27,6 @@ UTutorialComponent::UTutorialComponent() : Super() {
 
 void UTutorialComponent::BeginPlay() {
     Super::BeginPlay();
-
-    if (GetWorld()) {
-        if (GetWorld()->GetFirstPlayerController()) {
-            UNWGameInstance* GameInstance = Cast<UNWGameInstance>(GetWorld()->GetFirstPlayerController()->GetGameInstance());
-            if (GameInstance && GameInstance->_IsVRMode != _IsVR) DestroyComponent();
-
-            if (GetWorld()->GetFirstPlayerController()->GetCharacter()) {
-                _Character = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
-            }
-        }
-    }
 }
 
 void UTutorialComponent::TickComponent(float DeltaTime, ELevelTick TickType,
@@ -53,6 +42,20 @@ void UTutorialComponent::TickComponent(float DeltaTime, ELevelTick TickType,
         }
         if(_IsDynamic) CheckCondition();
     }
+    else CheckPlayer();
+}
+
+void UTutorialComponent::CheckPlayer() {
+    if (GetWorld()) {
+        if (GetWorld()->GetFirstPlayerController()) {
+            UNWGameInstance* GameInstance = Cast<UNWGameInstance>(GetWorld()->GetFirstPlayerController()->GetGameInstance());
+            if (GameInstance && GameInstance->_IsVRMode != _IsVR) DestroyComponent();
+
+            if (GetWorld()->GetFirstPlayerController()->GetCharacter()) {
+                _Character = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+            }
+        }
+    }
 }
 
 bool UTutorialComponent::CheckCondition() {
@@ -61,10 +64,18 @@ bool UTutorialComponent::CheckCondition() {
         if (_StepPivot < 0) NextStep();
         else {
             switch (_WidgetSteps[_StepPivot]._Condition) {
-                case ETutorialCondition::TakeItem:
+                case ETutorialCondition::ItemInHand:
                 {
                     if (_Character && (_Character->_ItemLeft == _ActorRef ||
                                        _Character->_ItemRight == _ActorRef)) {
+                        NextStep();
+                    }
+                };
+                break;
+                case ETutorialCondition::NoItemInHand:
+                {
+                    if (_Character && (_Character->_ItemLeft != _ActorRef &&
+                                       _Character->_ItemRight != _ActorRef)) {
                         NextStep();
                     }
                 };

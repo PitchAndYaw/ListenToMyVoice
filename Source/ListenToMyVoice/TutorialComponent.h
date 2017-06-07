@@ -9,7 +9,8 @@
 UENUM(BlueprintType)
 enum class ETutorialCondition : uint8 {
     /* COMMON */
-    TakeItem        UMETA(DisplayName = "Take Item"),
+    ItemInHand      UMETA(DisplayName = "Equip Item"),
+    NoItemInHand    UMETA(DisplayName = "UnEquip Item"),
     UseItemPressed  UMETA(DisplayName = "Use Item Pressed"),
     UseItemReleased UMETA(DisplayName = "Use Item Released"),
     UsePressed      UMETA(DisplayName = "Use Pressed"),
@@ -68,5 +69,6 @@ private:
     UUserWidget* _Widget;
     class APlayerCharacter* _Character;
 
+    void CheckPlayer();
     bool CheckCondition();
 };
