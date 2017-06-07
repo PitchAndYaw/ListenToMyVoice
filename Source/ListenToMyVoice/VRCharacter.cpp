@@ -55,6 +55,7 @@ AVRCharacter::AVRCharacter(const FObjectInitializer& OI) : Super(OI) {
 
 void AVRCharacter::BuildLeft() {
     _LeftHandComp = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("_LeftHandComp"));
+    _LeftHandComp->bDisableLowLatencyUpdate = true;
     _LeftHandComp->Hand = EControllerHand::Left;
     _LeftHandComp->AttachToComponent(_VROriginComp, FAttachmentTransformRules::KeepRelativeTransform);
     _LeftHandComp->SetRelativeLocation(FVector(10.f, 0.f, 0.f));
@@ -75,6 +76,7 @@ void AVRCharacter::BuildLeft() {
 
 void AVRCharacter::BuildRight() {
     _RightHandComp = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("_RightHandComp"));
+    _RightHandComp->bDisableLowLatencyUpdate = true;
     _RightHandComp->Hand = EControllerHand::Right;
     _RightHandComp->AttachToComponent(_VROriginComp, FAttachmentTransformRules::KeepRelativeTransform);
     _RightHandComp->SetRelativeLocation(FVector(10.f, 0.f, 0.f));
