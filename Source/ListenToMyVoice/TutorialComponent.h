@@ -17,6 +17,7 @@ enum class ETutorialCondition : uint8 {
     UseReleased     UMETA(DisplayName = "Use Released"),
 
     /* VR */
+    BeginGrab UMETA(DisplayName = "VR Begin Grab"),
     Drop	  UMETA(DisplayName = "VR Drop Item"),
     
     /* FP */

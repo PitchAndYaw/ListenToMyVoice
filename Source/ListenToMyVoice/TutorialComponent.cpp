@@ -35,8 +35,9 @@ void UTutorialComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
     if (_Character) {
         if (_IsMovable) {
+            
             FRotator PlayerRot = UKismetMathLibrary::FindLookAtRotation(GetOwner()->GetActorLocation(),
-                                                                        _Character->GetActorLocation());
+                                                                        _Character->GetPlayerCamera()->GetComponentLocation());
 
             SetRelativeRotation(PlayerRot);
         }
@@ -64,6 +65,7 @@ bool UTutorialComponent::CheckCondition() {
         if (_StepPivot < 0) NextStep();
         else {
             switch (_WidgetSteps[_StepPivot]._Condition) {
+                /* COMMON */
                 case ETutorialCondition::ItemInHand:
                 {
                     if (_Character && (_Character->_ItemLeft == _ActorRef ||
@@ -76,20 +78,6 @@ bool UTutorialComponent::CheckCondition() {
                 {
                     if (_Character && (_Character->_ItemLeft != _ActorRef &&
                                        _Character->_ItemRight != _ActorRef)) {
-                        NextStep();
-                    }
-                };
-                break;
-                case ETutorialCondition::UsePressed:
-                {
-                    if (_Character && (_Character->_LastUsedPressed == _ActorRef)) {
-                        NextStep();
-                    }
-                };
-                break;
-                case ETutorialCondition::UseReleased:
-                {
-                    if (_Character && (_Character->_LastUsedReleased == _ActorRef)) {
                         NextStep();
                     }
                 };
@@ -108,12 +96,36 @@ bool UTutorialComponent::CheckCondition() {
                     }
                 };
                 break;
+                case ETutorialCondition::UsePressed:
+                {
+                    if (_Character && (_Character->_LastUsedPressed == _ActorRef)) {
+                        NextStep();
+                    }
+                };
+                break;
+                case ETutorialCondition::UseReleased:
+                {
+                    if (_Character && (_Character->_LastUsedReleased == _ActorRef)) {
+                        NextStep();
+                    }
+                };
+                break;
+                
+                /* VR */
+                case ETutorialCondition::BeginGrab:
+                {
+                    AVRCharacter* VRCharacter = Cast<AVRCharacter>(_Character);
+                    if (VRCharacter && (VRCharacter->_ActorGrabbing == _ActorRef)) { NextStep(); }
+                };
+                break;
                 case ETutorialCondition::Drop:
                 {
                     AVRCharacter* VRCharacter = Cast<AVRCharacter>(_Character);
                     if (VRCharacter && (!VRCharacter->_ItemLeft || !VRCharacter->_ItemRight)) { NextStep(); }
                 };
                 break;
+
+                /* FP */
                 case ETutorialCondition::Save:
                 {
                     UInventoryItem* Item = Cast<UInventoryItem>(_ActorRef->GetComponentByClass(
