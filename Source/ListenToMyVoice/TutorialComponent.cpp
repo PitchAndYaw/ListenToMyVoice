@@ -22,6 +22,7 @@ UTutorialComponent::UTutorialComponent() : Super() {
     _StepPivot = -1;
     _IsVR = false;
     _IsMovable = true;
+    _IsDynamic = true;
 }
 
 void UTutorialComponent::BeginPlay() {
@@ -50,7 +51,7 @@ void UTutorialComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
             SetRelativeRotation(PlayerRot);
         }
-        CheckCondition();
+        if(_IsDynamic) CheckCondition();
     }
 }
 
@@ -68,16 +69,30 @@ bool UTutorialComponent::CheckCondition() {
                     }
                 };
                 break;
-                case ETutorialCondition::Use:
+                case ETutorialCondition::UsePressed:
                 {
                     if (_Character && (_Character->_LastUsedPressed == _ActorRef)) {
                         NextStep();
                     }
                 };
                 break;
-                case ETutorialCondition::UseItem:
+                case ETutorialCondition::UseReleased:
+                {
+                    if (_Character && (_Character->_LastUsedReleased == _ActorRef)) {
+                        NextStep();
+                    }
+                };
+                break;
+                case ETutorialCondition::UseItemPressed:
                 {
                     if (_Character && (_Character->_LastItemUsedPressed == _ActorRef)) {
+                        NextStep();
+                    }
+                };
+                break;
+                case ETutorialCondition::UseItemReleased:
+                {
+                    if (_Character && (_Character->_LastItemUsedReleased == _ActorRef)) {
                         NextStep();
                     }
                 };

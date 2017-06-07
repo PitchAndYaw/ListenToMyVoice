@@ -9,9 +9,11 @@
 UENUM(BlueprintType)
 enum class ETutorialCondition : uint8 {
     /* COMMON */
-    TakeItem UMETA(DisplayName = "Take Item"),
-    UseItem  UMETA(DisplayName = "Use Item"),
-    Use      UMETA(DisplayName = "Use"),
+    TakeItem        UMETA(DisplayName = "Take Item"),
+    UseItemPressed  UMETA(DisplayName = "Use Item Pressed"),
+    UseItemReleased UMETA(DisplayName = "Use Item Released"),
+    UsePressed      UMETA(DisplayName = "Use Pressed"),
+    UseReleased     UMETA(DisplayName = "Use Released"),
 
     /* VR */
     Drop	  UMETA(DisplayName = "VR Drop Item"),
@@ -44,6 +46,8 @@ public:
     bool _IsVR;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tutorial")
     bool _IsMovable;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tutorial")
+    bool _IsDynamic;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tutorial Steps")
     TArray<FWidgetSteps> _WidgetSteps;
 
