@@ -17,6 +17,7 @@ UTutorialComponent::UTutorialComponent() : Super() {
     SetEnableGravity(false);
     SetCollisionProfileName("NoCollision");
     bGenerateOverlapEvents = false;
+    bDrawAtDesiredSize = true;
 
     _WidgetSteps = {};
     _StepPivot = -1;
