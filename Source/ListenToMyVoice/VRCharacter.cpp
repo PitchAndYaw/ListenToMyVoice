@@ -274,7 +274,7 @@ void AVRCharacter::UseLeftPressed(bool IsMenuHidden) {
 
 void AVRCharacter::UseLeftReleased(bool IsMenuHidden) {
     if (IsMenuHidden) {
-        if (_ItemLeft) {
+        if (_ItemLeft && _LastItemUsedPressed == _ItemLeft) {
             TArray<UActorComponent*> Components;
             _ItemLeft->GetComponents(Components);
 
@@ -324,7 +324,7 @@ void AVRCharacter::UseRightPressed(bool IsMenuHidden) {
 
 void AVRCharacter::UseRightReleased(bool IsMenuHidden) {
     if (IsMenuHidden) {
-        if (_ItemRight) {
+        if (_ItemRight && _LastItemUsedPressed == _ItemRight) {
             TArray<UActorComponent*> Components;
             _ItemRight->GetComponents(Components);
 
@@ -393,7 +393,7 @@ void AVRCharacter::UseTriggerReleased(AActor* ActorFocused, USceneComponent* InP
             SERVER_GrabRelease(Hand);
         }
     }
-    else if (ActorFocused) {
+    else if (ActorFocused && _LastUsedPressed == ActorFocused) {
         /* CAN BE USED */
         TArray<UActorComponent*> Components;
         ActorFocused->GetComponents(Components);

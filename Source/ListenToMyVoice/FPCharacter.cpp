@@ -163,7 +163,7 @@ void AFPCharacter::UsePressed() {
 
 void AFPCharacter::UseReleased() {
     /* RAYCASTING DETECTION */
-    if (_HitResult.GetActor()) {
+    if (_HitResult.GetActor() && _LastUsedPressed == _HitResult.GetActor()) {
         TArray<UActorComponent*> Components;
         _HitResult.GetActor()->GetComponents(Components);
 
@@ -198,7 +198,7 @@ void AFPCharacter::UseLeftPressed(bool IsMenuHidden) {
 
 void AFPCharacter::UseLeftReleased(bool IsMenuHidden) {
     if (IsMenuHidden) {
-        if (_ItemLeft && _IsInventoryHidden) {
+        if (_ItemLeft && _IsInventoryHidden && _LastItemUsedPressed == _ItemLeft) {
             TArray<UActorComponent*> Components;
             _ItemLeft->GetComponents(Components);
 
@@ -235,7 +235,7 @@ void AFPCharacter::UseRightPressed(bool IsMenuHidden) {
 }
 
 void AFPCharacter::UseRightReleased(bool IsMenuHidden) {
-    if (_ItemRight && _IsInventoryHidden) {
+    if (_ItemRight && _IsInventoryHidden && _LastItemUsedPressed == _ItemRight) {
         TArray<UActorComponent*> Components;
         _ItemRight->GetComponents(Components);
 
