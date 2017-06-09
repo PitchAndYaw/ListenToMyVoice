@@ -18,7 +18,14 @@
 AVRCharacter::AVRCharacter(const FObjectInitializer& OI) : Super(OI) {
     PrimaryActorTick.bCanEverTick = true;
     bPositionalHeadTracking = true;
+
+    /* VR TURN */
+    _TurnLeft = false;
+    _TurnRight = false;
     _BaseTurnRate = 1000.f;
+    _TurnVelocity = 500;
+    _TurnActualVelocity = 500;
+    _TurnAcceleration = -70;
 
     static ConstructorHelpers::FObjectFinder<UForceFeedbackEffect> FFFinderLeft(
         TEXT("/Game/BluePrints/Effects/RumbleLightLeft"));
@@ -98,6 +105,8 @@ void AVRCharacter::BuildRight() {
 void AVRCharacter::BeginPlay() {
     Super::BeginPlay();
 
+    _TurnActualVelocity = _TurnVelocity;
+
     HMD = (IHeadMountedDisplay*)(GEngine->HMDDevice.Get());
     if (HMD) HMD->EnablePositionalTracking(bPositionalHeadTracking);
 
@@ -110,8 +119,8 @@ void AVRCharacter::BeginPlay() {
     _GrabDelegateRight.BindUObject(this, &AVRCharacter::ItemGrabbedRight);
 }
 
-void AVRCharacter::Tick(float deltaTime) {
-    Super::Tick(deltaTime);
+void AVRCharacter::Tick(float DeltaTime) {
+    Super::Tick(DeltaTime);
 
     SERVER_UpdateComponentPosition(_LeftHandComp, _LeftHandComp->RelativeLocation,
                                                   _LeftHandComp->RelativeRotation);
@@ -119,6 +128,23 @@ void AVRCharacter::Tick(float deltaTime) {
     SERVER_UpdateComponentPosition(_RightHandComp, _RightHandComp->RelativeLocation,
                                                    _RightHandComp->RelativeRotation);
 
+    /* VR TURN  */
+    if (_TurnLeft) {
+        AddControllerYawInput(-_TurnActualVelocity*DeltaTime);
+        _TurnActualVelocity += _TurnAcceleration;
+        if (_TurnActualVelocity <= 0) {
+            _TurnLeft = false;
+            _TurnActualVelocity = _TurnVelocity;
+        }
+    }
+    else if (_TurnRight) {
+        AddControllerYawInput(_TurnActualVelocity*DeltaTime);
+        _TurnActualVelocity += _TurnAcceleration;
+        if (_TurnActualVelocity <= 0) {
+            _TurnRight = false;
+            _TurnActualVelocity = _TurnVelocity;
+        }
+    }
 }
 
 /********** UPDATE LOCATIONS ***********/
@@ -254,11 +280,19 @@ void AVRCharacter::MoveForward(float Value) {
 }
 
 void AVRCharacter::TurnVRLeft() {
-    AddControllerYawInput(_BaseTurnRate * GetWorld()->GetDeltaSeconds());
+    UNWGameInstance* GameInst = Cast<UNWGameInstance>(GetWorld()->GetGameInstance());
+    if (GameInst && GameInst->_MenuOptions.bComfortMode) {
+        AddControllerYawInput(-_BaseTurnRate * GetWorld()->GetDeltaSeconds());
+    }
+    else if (!_TurnLeft && !_TurnRight) { _TurnLeft = true; }
 }
 
 void AVRCharacter::TurnVRRight() {
-    AddControllerYawInput(-_BaseTurnRate * GetWorld()->GetDeltaSeconds());
+    UNWGameInstance* GameInst = Cast<UNWGameInstance>(GetWorld()->GetGameInstance());
+    if (GameInst && GameInst->_MenuOptions.bComfortMode) {
+        AddControllerYawInput(_BaseTurnRate * GetWorld()->GetDeltaSeconds());
+    }
+    else if (!_TurnLeft && !_TurnRight) { _TurnRight = true; }
 }
 
 //void AVRCharacter::TurnAtRate(float Rate) {
