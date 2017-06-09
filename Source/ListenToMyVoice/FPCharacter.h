@@ -73,6 +73,9 @@ protected:
     void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
     /*************************************** ACTION MAPPINGS *************************************/
+    /*********** MOVEMENT ***********/
+    void MoveRight(float Val);
+
     /************** USE *************/
     void UsePressed();
     void UseReleased();

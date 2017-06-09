@@ -16,8 +16,6 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
     bReplicates = true;
     bReplicateMovement = true;
 
-    _baseTurnRate = 45.f;
-    _baseLookUpRate = 45.f;
     _ItemLeft = nullptr;
     _ItemRight = nullptr;
 
@@ -57,7 +55,6 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 
     /* MOVEMENT */
 	PlayerInput->BindAxis("MoveForward", this, &APlayerCharacter::MoveForward);
-    PlayerInput->BindAxis("MoveRight", this, &APlayerCharacter::MoveRight);
 }
 
 /**********************************PHYSIC MATERIALS***********************************************/
@@ -92,21 +89,6 @@ void APlayerCharacter::MoveForward(float Value) {
         AddMovementInput(GetActorForwardVector(), Value);
 		CheckFloorMaterial();
     }
-}
-
-void APlayerCharacter::MoveRight(float Value) {
-    if (Value != 0.0f) {
-        AddMovementInput(GetActorRightVector(), Value);
-		CheckFloorMaterial();
-    }
-}
-
-void APlayerCharacter::TurnAtRate(float Rate) {
-    AddControllerYawInput(Rate * _baseTurnRate * GetWorld()->GetDeltaSeconds());
-}
-
-void APlayerCharacter::LookUpAtRate(float Rate) {
-    AddControllerPitchInput(Rate * _baseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
 /************** USE *************/

@@ -20,6 +20,9 @@ class LISTENTOMYVOICE_API AVRCharacter : public APlayerCharacter {
     GENERATED_BODY()
 
 public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
+    float _BaseTurnRate;
+
     AActor* _ActorGrabbing;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rumble")
@@ -102,7 +105,9 @@ protected:
 
     /*********** MOVEMENT ***********/
     void MoveForward(float Value) override;
-    void TurnVRCharacter();
+    void TurnVRLeft();
+    void TurnVRRight();
+    //void TurnAtRate(float Rate);
 
     /********** UPDATE ANIMATIONS ***********/
     UFUNCTION(Server, Reliable, WithValidation)

@@ -34,10 +34,9 @@ void AFPCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput)
     Super::SetupPlayerInputComponent(PlayerInput);
 
     /* MOVEMENT */
+    PlayerInput->BindAxis("MoveRight", this, &AFPCharacter::MoveRight);
     PlayerInput->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-    PlayerInput->BindAxis("TurnRate", this, &APlayerCharacter::TurnAtRate);
     PlayerInput->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-    PlayerInput->BindAxis("LookUpRate", this, &APlayerCharacter::LookUpAtRate);
 
     /* ACTIONS */
     PlayerInput->BindAction("TakeDropRight", IE_Released, this, &AFPCharacter::TakeDropRight);
@@ -146,6 +145,14 @@ FHitResult AFPCharacter::Raycasting() {
 }
 
 /****************************************** ACTION MAPPINGS **************************************/
+/*********** MOVEMENT ***********/
+void AFPCharacter::MoveRight(float Value) {
+    if (Value != 0.0f) {
+        AddMovementInput(GetActorRightVector(), Value);
+        CheckFloorMaterial();
+    }
+}
+
 /************** USE *************/
 void AFPCharacter::UsePressed() {
     /* RAYCASTING DETECTION */
