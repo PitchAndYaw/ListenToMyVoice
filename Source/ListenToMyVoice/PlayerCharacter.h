@@ -70,6 +70,8 @@ protected:
 	class UFMODAudioComponent* _BreathAudioComp;
     UPROPERTY(Category = Audio, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UMenuInteraction* _MenuInteractionComp;
+	UPROPERTY(Category = "Diary", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* _PlayerPointerComp;
 
     void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 

@@ -30,6 +30,14 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
 
     _StepsAudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("Audio"));
 	_BreathAudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("Audio_Breathing"));
+	_PlayerPointerComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Player Pointer"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Plane(TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
+	if (StaticMesh_Plane.Object) {
+		_PlayerPointerComp->SetStaticMesh(StaticMesh_Plane.Object);
+	}
+	_PlayerPointerComp->SetRelativeLocation({ 0,0,300 });
+	_PlayerPointerComp->bOwnerNoSee = true;
+
 	_PlayerCamera->PostProcessBlendWeight = 0;
 	_DamageDisappearVelocity = 0.3;
 
