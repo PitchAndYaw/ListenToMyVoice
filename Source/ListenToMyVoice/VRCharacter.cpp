@@ -20,12 +20,19 @@ AVRCharacter::AVRCharacter(const FObjectInitializer& OI) : Super(OI) {
     bPositionalHeadTracking = true;
 
     /* VR TURN */
-    _TurnLeft = false;
-    _TurnRight = false;
+    _TurnSide = 0;
     _BaseTurnRate = 1000.f;
     _TurnVelocity = 500;
     _TurnActualVelocity = 500;
     _TurnAcceleration = -70;
+
+    /* VR MOVE */
+    GetCharacterMovement()->MaxWalkSpeed = 240.0f;
+    GetCharacterMovement()->MaxCustomMovementSpeed = 240.0f;
+    GetCharacterMovement()->MaxWalkSpeedCrouched = 120.0f;
+    GetCharacterMovement()->MaxAcceleration = 1024;
+    GetCharacterMovement()->GroundFriction = 0.1;
+    GetCharacterMovement()->BrakingDecelerationWalking = 512;
 
     static ConstructorHelpers::FObjectFinder<UForceFeedbackEffect> FFFinderLeft(
         TEXT("/Game/BluePrints/Effects/RumbleLightLeft"));
@@ -33,12 +40,6 @@ AVRCharacter::AVRCharacter(const FObjectInitializer& OI) : Super(OI) {
     static ConstructorHelpers::FObjectFinder<UForceFeedbackEffect> FFFinderRight(
         TEXT("/Game/BluePrints/Effects/RumbleLightRight"));
     _RumbleOverLapRight = FFFinderRight.Object;
-
-    GetCharacterMovement()->MaxWalkSpeed = 240.0f;
-    GetCharacterMovement()->MaxFlySpeed = 240.0f;
-    GetCharacterMovement()->MaxCustomMovementSpeed = 240.0f;
-    GetCharacterMovement()->MaxWalkSpeedCrouched = 120.0f;
-    GetCharacterMovement()->MaxSwimSpeed = 120.0f;
     
     _VROriginComp = CreateDefaultSubobject<USceneComponent>(TEXT("_VROriginComp"));
     _VROriginComp->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
@@ -129,19 +130,11 @@ void AVRCharacter::Tick(float DeltaTime) {
                                                    _RightHandComp->RelativeRotation);
 
     /* VR TURN  */
-    if (_TurnLeft) {
-        AddControllerYawInput(-_TurnActualVelocity*DeltaTime);
+    if (_TurnSide != 0) {
+        AddControllerYawInput(_TurnSide*_TurnActualVelocity*DeltaTime);
         _TurnActualVelocity += _TurnAcceleration;
         if (_TurnActualVelocity <= 0) {
-            _TurnLeft = false;
-            _TurnActualVelocity = _TurnVelocity;
-        }
-    }
-    else if (_TurnRight) {
-        AddControllerYawInput(_TurnActualVelocity*DeltaTime);
-        _TurnActualVelocity += _TurnAcceleration;
-        if (_TurnActualVelocity <= 0) {
-            _TurnRight = false;
+            _TurnSide = 0;
             _TurnActualVelocity = _TurnVelocity;
         }
     }
@@ -284,7 +277,7 @@ void AVRCharacter::TurnVRLeft() {
     if (GameInst && GameInst->_MenuOptions.bComfortMode) {
         AddControllerYawInput(-_BaseTurnRate * GetWorld()->GetDeltaSeconds());
     }
-    else if (!_TurnLeft && !_TurnRight) { _TurnLeft = true; }
+    else if (_TurnSide == 0) { _TurnSide = -1; }
 }
 
 void AVRCharacter::TurnVRRight() {
@@ -292,7 +285,7 @@ void AVRCharacter::TurnVRRight() {
     if (GameInst && GameInst->_MenuOptions.bComfortMode) {
         AddControllerYawInput(_BaseTurnRate * GetWorld()->GetDeltaSeconds());
     }
-    else if (!_TurnLeft && !_TurnRight) { _TurnRight = true; }
+    else if (_TurnSide == 0) { _TurnSide = 1; }
 }
 
 //void AVRCharacter::TurnAtRate(float Rate) {

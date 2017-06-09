@@ -136,8 +136,7 @@ private:
     UStaticMeshComponent* _LastMeshFocusedRight = nullptr;
 
     /* VR TURN */
-    bool _TurnLeft;
-    bool _TurnRight;
+    int _TurnSide;
     float _TurnActualVelocity;
 
     void BuildLeft();
