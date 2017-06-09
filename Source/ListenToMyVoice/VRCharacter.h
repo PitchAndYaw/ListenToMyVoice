@@ -105,7 +105,9 @@ protected:
 
     /*********** MOVEMENT ***********/
     void MoveForward(float Value) override;
-    void TurnAtRate(float Rate);
+    void TurnVRLeft();
+    void TurnVRRight();
+    //void TurnAtRate(float Rate);
 
     /********** UPDATE ANIMATIONS ***********/
     UFUNCTION(Server, Reliable, WithValidation)

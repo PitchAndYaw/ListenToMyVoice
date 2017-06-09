@@ -18,7 +18,7 @@
 AVRCharacter::AVRCharacter(const FObjectInitializer& OI) : Super(OI) {
     PrimaryActorTick.bCanEverTick = true;
     bPositionalHeadTracking = true;
-    _BaseTurnRate = 15.f;
+    _BaseTurnRate = 1000.f;
 
     static ConstructorHelpers::FObjectFinder<UForceFeedbackEffect> FFFinderLeft(
         TEXT("/Game/BluePrints/Effects/RumbleLightLeft"));
@@ -140,7 +140,8 @@ void AVRCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput)
     Super::SetupPlayerInputComponent(PlayerInput);
 
     /* MOVEMENT */
-    PlayerInput->BindAxis("TurnRate", this, &AVRCharacter::TurnAtRate);
+    PlayerInput->BindAction("TurnVRLeft", IE_Pressed, this, &AVRCharacter::TurnVRLeft);
+    PlayerInput->BindAction("TurnVRRight", IE_Pressed, this, &AVRCharacter::TurnVRRight);
 
     /* ACTIONS */
     PlayerInput->BindAction("DropLeft", IE_Pressed, this, &AVRCharacter::DropLeft);
@@ -252,9 +253,17 @@ void AVRCharacter::MoveForward(float Value) {
     AddMovementInput(_PlayerCamera->GetForwardVector(), Value);
 }
 
-void AVRCharacter::TurnAtRate(float Rate) {
-    AddControllerYawInput(Rate * _BaseTurnRate * GetWorld()->GetDeltaSeconds());
+void AVRCharacter::TurnVRLeft() {
+    AddControllerYawInput(_BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
+
+void AVRCharacter::TurnVRRight() {
+    AddControllerYawInput(-_BaseTurnRate * GetWorld()->GetDeltaSeconds());
+}
+
+//void AVRCharacter::TurnAtRate(float Rate) {
+//    AddControllerYawInput(Rate * _BaseTurnRate * GetWorld()->GetDeltaSeconds());
+//}
 
 /******** USE ITEM LEFT *********/
 void AVRCharacter::UseLeftPressed(bool IsMenuHidden) {
