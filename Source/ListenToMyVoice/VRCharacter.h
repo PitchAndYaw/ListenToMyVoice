@@ -20,8 +20,13 @@ class LISTENTOMYVOICE_API AVRCharacter : public APlayerCharacter {
     GENERATED_BODY()
 
 public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
+    /* VR TURN */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Turn VR Comfort")
     float _BaseTurnRate;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Turn VR")
+    float _TurnVelocity;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Turn VR")
+    float _TurnAcceleration;
 
     AActor* _ActorGrabbing;
 
@@ -38,7 +43,7 @@ public:
     AVRCharacter(const FObjectInitializer& OI);
     virtual void BeginPlay() override;
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInput) override;
-    virtual void Tick(float deltaTime) override;
+    virtual void Tick(float DeltaTime) override;
 
     void ResetHMDOrigin();
 
@@ -129,6 +134,11 @@ private:
 
     UStaticMeshComponent* _LastMeshFocusedLeft = nullptr;
     UStaticMeshComponent* _LastMeshFocusedRight = nullptr;
+
+    /* VR TURN */
+    bool _TurnLeft;
+    bool _TurnRight;
+    float _TurnActualVelocity;
 
     void BuildLeft();
     void BuildRight();
