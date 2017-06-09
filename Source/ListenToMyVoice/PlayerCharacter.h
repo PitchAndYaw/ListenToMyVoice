@@ -21,10 +21,6 @@ public:
     AActor* _LastUsedPressed;
     AActor* _LastUsedReleased;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-    float _baseTurnRate;
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-    float _baseLookUpRate;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Life")
     int _Health;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Life")
@@ -50,10 +46,6 @@ public:
 
     virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
                              class AController* EventInstigator, class AActor* DamageCauser) override;
-    
-    /*********** MOVEMENT ***********/
-    virtual void TurnAtRate(float Rate);
-    virtual void LookUpAtRate(float Rate);
 
     AActor* GetWalkieActor();
     bool IsWalkieInHand();
@@ -76,7 +68,6 @@ protected:
     /*************************************** ACTION MAPPINGS *************************************/
     /*********** MOVEMENT ***********/
     virtual void MoveForward(float Val);
-    virtual void MoveRight(float Val);
 
     /************** USE *************/
     UFUNCTION(Server, Reliable, WithValidation)
@@ -126,17 +117,17 @@ protected:
 	/***********POST PROCESS***********/
 	bool _Damaged;
 
+    /* Physic Materials */
+    const USkeletalMeshSocket* _FootSocket;
+    void CheckFloorMaterial();
+    FHitResult _FootHitResult;
+
 private:
     AActor* _WalkieActor;
 
     /* Radio Delegate */
     FDelegateHandle _OnRadioPressedDelegateHandle;
     FDelegateHandle _OnRadioReleasedDelegateHandle;
-
-	/*Physic Materials*/
-	const USkeletalMeshSocket* _FootSocket;
-	void CheckFloorMaterial();
-	FHitResult _FootHitResult;
 
 public:
     FORCEINLINE UCameraComponent* APlayerCharacter::GetPlayerCamera() const { return _PlayerCamera; }
