@@ -27,9 +27,7 @@ AVRCharacter::AVRCharacter(const FObjectInitializer& OI) : Super(OI) {
     _TurnAcceleration = -70;
 
     /* VR MOVE */
-    GetCharacterMovement()->MaxWalkSpeed = 240.0f;
-    GetCharacterMovement()->MaxCustomMovementSpeed = 240.0f;
-    GetCharacterMovement()->MaxWalkSpeedCrouched = 120.0f;
+    GetCharacterMovement()->MaxWalkSpeed = 200.0f;
     GetCharacterMovement()->MaxAcceleration = 1024;
     GetCharacterMovement()->GroundFriction = 0.1;
     GetCharacterMovement()->BrakingDecelerationWalking = 512;
