@@ -264,7 +264,7 @@ void AVRCharacter::MoveForward(float Value) {
 
     UNWGameInstance* GameInst = Cast<UNWGameInstance>(GetWorld()->GetGameInstance());
     if (GameInst && GameInst->_MenuOptions.bComfortMode && Value != 0)
-        _PlayerCamera->PostProcessSettings.VignetteIntensity = 2;
+        _PlayerCamera->PostProcessSettings.VignetteIntensity = 4;
     else _PlayerCamera->PostProcessSettings.VignetteIntensity = 0;
 
     AddMovementInput(_PlayerCamera->GetForwardVector(), Value);
