@@ -24,9 +24,7 @@ UInputMenu::UInputMenu(const FObjectInitializer& OI) : Super(OI) {
     _TextRender->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
 
     _AudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("_AudioComp"));
-    static ConstructorHelpers::FObjectFinder<UObject> Finder2(
-        TEXT("/Game/FMOD/Events/UI/Tic.Tic"));
-    _AudioComp->SetEvent((UFMODEvent*)(Finder2.Object));
+    _AudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/UI/Tic.Tic")));
     _AudioComp->bAutoActivate = false;
 
     _NextPoint = FVector();
