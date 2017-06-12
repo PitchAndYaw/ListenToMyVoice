@@ -14,7 +14,7 @@ UBTTask_NewWaypoint::UBTTask_NewWaypoint()
 {
 	BlackboardKey.SelectedKeyName = FName("Waypoint");
 	BlackboardKey.SelectedKeyType = UBlackboardKeyType_Vector::StaticClass();
-	if (GetWorld()) {
+	if (GetWorld() && GetWorld()->AreActorsInitialized()) {
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWaypoint::StaticClass(), FoundActors);
 		if (FoundActors.Num() > 0)
 			DefaultWaypoint = Cast<AWaypoint>(FoundActors[0]);
@@ -29,16 +29,14 @@ EBTNodeResult::Type UBTTask_NewWaypoint::ExecuteTask(UBehaviorTreeComponent& Own
 	APawn* Target = Cast<APawn>(OwnerComp.GetBlackboardComponent()->
 		GetValueAsObject(FName("TargetPawn")));
 
-		if (Self)
+		if (Self && DefaultWaypoint)
 		{
 			OwnerComp.GetBlackboardComponent()->SetValueAsVector(BlackboardKey.SelectedKeyName,
 				DefaultWaypoint->NextWaypoint->GetActorLocation());
 			DefaultWaypoint = DefaultWaypoint->NextWaypoint;
 			OwnerComp.GetBlackboardComponent()->SetValueAsObject(FName("TargetPawn"), Target);
+			return EBTNodeResult::Type::Succeeded;
 		}
 
-		return EBTNodeResult::Type::Succeeded;
-
-
-
+		return EBTNodeResult::Type::Failed;
 }

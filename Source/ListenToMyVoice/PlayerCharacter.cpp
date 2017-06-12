@@ -39,7 +39,6 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
 	_PlayerCamera->PostProcessBlendWeight = 0;
 	_DamageDisappearVelocity = 0.3;
 
-	OnActorHit.AddDynamic(this, &APlayerCharacter::OnHit);
     _Health = 1;
 	_Damaged = false;
 }
@@ -266,18 +265,6 @@ void APlayerCharacter::CLIENT_ClearRadioDelegates_Implementation(AActor* Actor) 
 }
 
 /***********RECEIVE HIT AND DAMAGE*************/
-void APlayerCharacter::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit) {
-	if (OtherActor) {
-		if (OtherActor->IsA(AProjectile::StaticClass())) {
-			// Create a damage event  
-			TSubclassOf<UDamageType> const ValidDamageTypeClass = TSubclassOf<UDamageType>(UDamageType::StaticClass());
-			FDamageEvent DamageEvent(ValidDamageTypeClass);
-			const float DamageAmount = 1.0f;
-			TakeDamage(DamageAmount, DamageEvent, GetController(), OtherActor);
-		}
-	}
-}
-
 float APlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
                                    class AController* EventInstigator, class AActor* DamageCauser) {	
     _Health -= DamageAmount;	

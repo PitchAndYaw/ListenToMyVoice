@@ -113,9 +113,6 @@ protected:
     UFUNCTION(Client, Reliable)
     void CLIENT_ClearRadioDelegates(AActor* Actor);
 
-	UFUNCTION()
-	void OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
-
 	/***********POST PROCESS***********/
 	bool _Damaged;
 
