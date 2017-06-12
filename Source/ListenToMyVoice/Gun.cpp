@@ -42,10 +42,17 @@ void UGun::OnFire() {
 		if (World != NULL) {
 			UStaticMeshComponent* mesh = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
 			FTransform SocketTransform;
+			FTransform CameraSocketTransform;
+			FVector CameraVector;
 
 			if (mesh->DoesSocketExist(TEXT("Forward"))) {
 				_Socket = mesh->GetSocketByName(TEXT("Forward"));
 				_Socket->GetSocketTransform(SocketTransform, mesh);
+			}
+
+			if (_PlayerCharacter->GetMesh()->DoesSocketExist(TEXT("ShootCamera"))) {
+				_CameraSocket = _PlayerCharacter->GetMesh()->GetSocketByName(TEXT("ShootCamera"));
+				CameraSocketTransform = _CameraSocket->GetSocketTransform(_PlayerCharacter->GetMesh());
 			}
 
 			FActorSpawnParameters ActorSpawnParams;
@@ -54,16 +61,22 @@ void UGun::OnFire() {
 
 			
 			//Shoot bullet from gun:
+			
 			if (_Socket) {
 				AProjectile* const NewProjectile = World->SpawnActor<AProjectile>
 					(_ProjectileClass, SocketTransform, ActorSpawnParams);
 			}
+			
 
-			//Shoot bullet from camera:
+			//Shoot bullet from camera:		
 			/*
-			if (_Socket) {
+			if (_CameraSocket) {
+				CameraVector.X = _PlayerCharacter->GetPlayerCamera()->GetComponentLocation().X + 50;
+				CameraVector.Y = _PlayerCharacter->GetPlayerCamera()->GetComponentLocation().Y;
+				CameraVector.Z = _PlayerCharacter->GetPlayerCamera()->GetComponentLocation().Z;
+
 				AProjectile* const NewProjectile = World->SpawnActor<AProjectile>
-					(_ProjectileClass, _PlayerCharacter->GetPlayerCamera()->GetComponentTransform(), ActorSpawnParams);
+					(_ProjectileClass, CameraVector, _PlayerCharacter->GetPlayerCamera()->GetComponentRotation(), ActorSpawnParams);
 			}
 			*/
 		}

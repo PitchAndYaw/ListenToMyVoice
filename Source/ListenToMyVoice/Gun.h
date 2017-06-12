@@ -32,6 +32,7 @@ public:
 	TSubclassOf<class AProjectile> _ProjectileClass;
 
 	const UStaticMeshSocket* _Socket;
+	const USkeletalMeshSocket* _CameraSocket;
 
 	/*Inerfaces*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Use Item")
