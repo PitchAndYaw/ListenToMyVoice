@@ -24,9 +24,9 @@ UInputMenu::UInputMenu(const FObjectInitializer& OI) : Super(OI) {
     _TextRender->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
 
     _AudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("_AudioComp"));
-    //static ConstructorHelpers::FObjectFinder<UObject> Finder2(
-    //    TEXT("/Game/FMOD/Desktop/Events/UI/Tic.Tic"));
-    //_AudioComp->SetEvent((UFMODEvent*)(Finder2.Object));
+    static ConstructorHelpers::FObjectFinder<UObject> Finder2(
+        TEXT("/Game/FMOD/Events/UI/Tic.Tic"));
+    _AudioComp->SetEvent((UFMODEvent*)(Finder2.Object));
     _AudioComp->bAutoActivate = false;
 
     _NextPoint = FVector();
@@ -51,8 +51,8 @@ void UInputMenu::BeginPlay() {
     _TextRender->SetText(FText::FromString(GetFName().ToString()));
     _TextRender->RegisterComponent();
 
-    //_AudioComp->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);
-    //_AudioComp->RegisterComponent();
+    _AudioComp->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);
+    _AudioComp->RegisterComponent();
 
     SetCollisionProfileName("IgnoreOnlyPawn");
 }
@@ -96,7 +96,7 @@ void UInputMenu::PressEvents() {
 void UInputMenu::ReleaseEvents() {
     if (!_IsLoading) {
         HoverInteraction();
-        //_AudioComp->Play();
+        _AudioComp->Play();
         _InputMenuReleasedEvent.Broadcast(this);
     }
 }

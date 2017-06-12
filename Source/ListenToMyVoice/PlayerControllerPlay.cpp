@@ -13,18 +13,9 @@
 APlayerControllerPlay::APlayerControllerPlay(const FObjectInitializer& OI) : Super(OI) {
     /* VOICE */
     _WalkieNoiseAudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("Audio"));
-    //static ConstructorHelpers::FObjectFinder<UObject> Finder(
-    //    TEXT("/Game/FMOD/Desktop/Events/Radio/Interferencia_radio"));
-    //_WalkieNoiseAudioComp->SetEvent((UFMODEvent*)(Finder.Object));
     _WalkieNoiseAudioComp->bAutoActivate = false;
     _IsListen = false;
     _ClientPossesed = false;
-
-    //static ConstructorHelpers::FObjectFinder<USoundWave> SoundFinder(
-    //    TEXT("/Game/Maps/Alex/04_-_Black_Night_Of_Magic"));
-    //_TestAudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("Voice Comp"));
-    //_TestAudioComp->bAutoActivate = false;
-    //_TestAudioComp->SetSound(SoundFinder.Object);
 }
 
 void APlayerControllerPlay::SetupInputComponent() {
@@ -105,11 +96,6 @@ void APlayerControllerPlay::ModifyVoiceAudioComponent(const FUniqueNetId& Remote
                                                              FAttachmentTransformRules::KeepRelativeTransform);
                     _WalkieNoiseAudioComp->bOverrideAttenuation = true;
                     ULibraryUtils::Log("Setup Voice");
-
-                    //_TestAudioComp->AttachToComponent(MeshComponent,
-                    //                                  FAttachmentTransformRules::KeepRelativeTransform);
-                    //_TestAudioComp->bOverrideAttenuation = true;
-                    //_TestAudioComp->Play();
                 }
             }
         }
@@ -118,7 +104,6 @@ void APlayerControllerPlay::ModifyVoiceAudioComponent(const FUniqueNetId& Remote
             if (_VoiceAudioComp) {
                 _VoiceAudioComp->SetVolumeMultiplier(1.0);
                 _WalkieNoiseAudioComp->SetVolume(1.0);
-                //_TestAudioComp->SetVolumeMultiplier(1.0);
                 ULibraryUtils::Log("VOLUME: 1.0");
             }
         }
@@ -126,7 +111,6 @@ void APlayerControllerPlay::ModifyVoiceAudioComponent(const FUniqueNetId& Remote
             if (_VoiceAudioComp) {
                 _VoiceAudioComp->SetVolumeMultiplier(0.05);
                 _WalkieNoiseAudioComp->SetVolume(0.05);
-                //_TestAudioComp->SetVolumeMultiplier(0.05);
                 ULibraryUtils::Log("VOLUME: 0.05");
             }
         }
