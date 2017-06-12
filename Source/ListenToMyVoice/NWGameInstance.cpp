@@ -418,6 +418,7 @@ void UNWGameInstance::OnButtonOptions(UInputMenu* InputMenu) {
 }
 
 void UNWGameInstance::OnButtonExitGame(UInputMenu* InputMenu) {
+    DestroySession();
     FGenericPlatformMisc::RequestExit(false);
 }
 
