@@ -15,6 +15,7 @@ APlayerControllerPlay::APlayerControllerPlay(const FObjectInitializer& OI) : Sup
     _WalkieNoiseAudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("Audio"));
     _WalkieNoiseAudioComp->bAutoActivate = false;
     _IsListen = false;
+    _IsTalking = false;
     _ClientPossesed = false;
 }
 
@@ -85,6 +86,10 @@ void APlayerControllerPlay::ModifyVoiceAudioComponent(const FUniqueNetId& Remote
                 UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(
                     WalkieActor->GetComponentByClass(UStaticMeshComponent::StaticClass()));
 
+                _WalkieLight = Cast<UPointLightComponent>(
+                    WalkieActor->GetComponentByClass(UPointLightComponent::StaticClass()));
+                _WalkieLight->SetIntensity(0);
+
                 if (MeshComponent && NoiseEvent) {
                     AudioComponent->AttachToComponent(MeshComponent,
                                                       FAttachmentTransformRules::KeepRelativeTransform);
@@ -124,6 +129,7 @@ void APlayerControllerPlay::TickActor(float DeltaTime, enum ELevelTick TickType,
 }
 
 void APlayerControllerPlay::TickWalkie() {
+    /* Noise Event */
     if (_VoiceAudioComp && _WalkieNoiseAudioComp) {
         if (_VoiceAudioComp->IsPlaying() && !_WalkieNoiseAudioComp->IsPlaying()) {
             _WalkieNoiseAudioComp->Play();
@@ -132,6 +138,37 @@ void APlayerControllerPlay::TickWalkie() {
         else if (!_VoiceAudioComp->IsPlaying() && _WalkieNoiseAudioComp->IsPlaying()) {
             _WalkieNoiseAudioComp->Stop();
             _IsListen = false;
+        }
+    }
+
+    /* Walkie Light */
+    if (!_WalkieLight) {
+        APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+        if (PlayerCharacter) {
+            AActor* WalkieActor = PlayerCharacter->GetWalkieActor();
+            if (WalkieActor) {
+                _WalkieLight = Cast<UPointLightComponent>(
+                    WalkieActor->GetComponentByClass(UPointLightComponent::StaticClass()));
+                _WalkieLight->SetIntensity(0);
+            }
+        }
+    }
+
+    if (_WalkieLight) {
+        if (_IsListen && _IsTalking) {
+            _WalkieLight->SetIntensity(5000);
+            _WalkieLight->SetLightColor(FLinearColor::Red);
+        }
+        else if (_IsListen) {
+            _WalkieLight->SetIntensity(5000);
+            _WalkieLight->SetLightColor(FLinearColor::Blue);
+        }
+        else if (_IsTalking) {
+            _WalkieLight->SetIntensity(5000);
+            _WalkieLight->SetLightColor(FLinearColor::Green);
+        }
+        else {
+            _WalkieLight->SetIntensity(0);
         }
     }
 }
@@ -254,6 +291,7 @@ void APlayerControllerPlay::CLIENT_HideMenu_Implementation() {
 
 /*********************************************** DELEGATES ***************************************/
 void APlayerControllerPlay::OnRadioPressed() {
+    _IsTalking = true;
     StartTalking();
 
     ULibraryUtils::Log(FString::Printf(TEXT("I AM: %s"),
@@ -269,6 +307,7 @@ void APlayerControllerPlay::OnRadioPressed() {
 }
 
 void APlayerControllerPlay::OnRadioReleased() {
+    _IsTalking = false;
     StopTalking();
 
     for (APlayerState* OtherPlayerState : GetWorld()->GetGameState()->PlayerArray) {

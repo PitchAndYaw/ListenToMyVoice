@@ -64,10 +64,13 @@ protected:
     void UseRightReleased();
 
 private:
+    UPointLightComponent* _WalkieLight;
+
     class UFMODAudioComponent* _WalkieNoiseAudioComp;
     UAudioComponent* _VoiceAudioComp;
     //UAudioComponent* _TestAudioComp;
     bool _IsListen;
+    bool _IsTalking;
     bool _ClientPossesed;
 
     /* MENU INTERFACE */
