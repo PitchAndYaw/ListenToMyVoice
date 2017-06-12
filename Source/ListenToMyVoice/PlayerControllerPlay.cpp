@@ -14,9 +14,10 @@ APlayerControllerPlay::APlayerControllerPlay(const FObjectInitializer& OI) : Sup
     /* VOICE */
     _WalkieNoiseAudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("Audio"));
     _WalkieNoiseAudioComp->bAutoActivate = false;
-    _IsListen = false;
-    _IsTalking = false;
     _ClientPossesed = false;
+
+    _IsTalking = false;
+    _IsRemoteTalking = false;
 }
 
 void APlayerControllerPlay::SetupInputComponent() {
@@ -39,6 +40,8 @@ void APlayerControllerPlay::BeginPlay() {
             SERVER_CallUpdate(_GameInstance->_PlayerInfoSaved);
         }
     }
+
+    IOnlineSubsystem::Get()->GetVoiceInterface()->OnPlayerTalkingStateChangedDelegates.AddUObject(this, &APlayerControllerPlay::OnTalk);
 }
 
 bool APlayerControllerPlay::SERVER_CallUpdate_Validate(FPlayerInfo info) {
@@ -71,6 +74,12 @@ void APlayerControllerPlay::OnRep_Pawn() {
 }
 
 /*********************************************** VOICE *******************************************/
+void APlayerControllerPlay::OnTalk(TSharedRef<const FUniqueNetId> TalkerId, bool bIsTalking) {
+    if (*PlayerState->UniqueId.GetUniqueNetId().Get() != TalkerId.Get()) {
+        _IsRemoteTalking = bIsTalking;
+    }
+}
+
 void APlayerControllerPlay::ModifyVoiceAudioComponent(const FUniqueNetId& RemoteTalkerId,
                                                       class UAudioComponent* AudioComponent) {
 
@@ -133,11 +142,9 @@ void APlayerControllerPlay::TickWalkie() {
     if (_VoiceAudioComp && _WalkieNoiseAudioComp) {
         if (_VoiceAudioComp->IsPlaying() && !_WalkieNoiseAudioComp->IsPlaying()) {
             _WalkieNoiseAudioComp->Play();
-            _IsListen = true;
         }
         else if (!_VoiceAudioComp->IsPlaying() && _WalkieNoiseAudioComp->IsPlaying()) {
             _WalkieNoiseAudioComp->Stop();
-            _IsListen = false;
         }
     }
 
@@ -155,11 +162,11 @@ void APlayerControllerPlay::TickWalkie() {
     }
 
     if (_WalkieLight) {
-        if (_IsListen && _IsTalking) {
+        if (_IsTalking && _IsRemoteTalking) {
             _WalkieLight->SetIntensity(5000);
             _WalkieLight->SetLightColor(FLinearColor::Red);
         }
-        else if (_IsListen) {
+        else if (_IsRemoteTalking) {
             _WalkieLight->SetIntensity(5000);
             _WalkieLight->SetLightColor(FLinearColor::Blue);
         }
@@ -171,10 +178,6 @@ void APlayerControllerPlay::TickWalkie() {
             _WalkieLight->SetIntensity(0);
         }
     }
-}
-
-bool APlayerControllerPlay::IsListen() {
-    return _IsListen;
 }
 
 /****************************************** ACTION MAPPINGS **************************************/
@@ -297,12 +300,18 @@ void APlayerControllerPlay::OnRadioPressed() {
     ULibraryUtils::Log(FString::Printf(TEXT("I AM: %s"),
                                        *PlayerState->UniqueId.ToDebugString()), 3, 60);
 
-    for (APlayerState* OtherPlayerState : GetWorld()->GetGameState()->PlayerArray) {
-        if (PlayerState->UniqueId != OtherPlayerState->UniqueId) {
-            ClientMutePlayer(OtherPlayerState->UniqueId);
-            ULibraryUtils::Log(FString::Printf(TEXT("MUTE: %s"),
-                                               *OtherPlayerState->UniqueId.ToDebugString()), 2, 60);
+    if (!_OtherPlayerState) {
+        for (APlayerState* OtherPlayerState : GetWorld()->GetGameState()->PlayerArray) {
+            if (PlayerState->UniqueId != OtherPlayerState->UniqueId) {
+                _OtherPlayerState = OtherPlayerState;
+            }
         }
+    }
+
+    if (_OtherPlayerState) {
+        ClientMutePlayer(_OtherPlayerState->UniqueId);
+        ULibraryUtils::Log(FString::Printf(TEXT("MUTE: %s"),
+                                           *_OtherPlayerState->UniqueId.ToDebugString()), 2, 60);
     }
 }
 
@@ -310,12 +319,18 @@ void APlayerControllerPlay::OnRadioReleased() {
     _IsTalking = false;
     StopTalking();
 
-    for (APlayerState* OtherPlayerState : GetWorld()->GetGameState()->PlayerArray) {
-        if (PlayerState->UniqueId != OtherPlayerState->UniqueId) {
-            ClientUnmutePlayer(OtherPlayerState->UniqueId);
-            ULibraryUtils::Log(FString::Printf(TEXT("UNMUTE: %s"),
-                                               *OtherPlayerState->UniqueId.ToDebugString()), 0, 60);
+    if (!_OtherPlayerState) {
+        for (APlayerState* OtherPlayerState : GetWorld()->GetGameState()->PlayerArray) {
+            if (PlayerState->UniqueId != OtherPlayerState->UniqueId) {
+                _OtherPlayerState = OtherPlayerState;
+            }
         }
+    }
+
+    if (_OtherPlayerState) {
+        ClientUnmutePlayer(_OtherPlayerState->UniqueId);
+        ULibraryUtils::Log(FString::Printf(TEXT("UNMUTE: %s"),
+                                           *_OtherPlayerState->UniqueId.ToDebugString()), 0, 60);
     }
 }
 

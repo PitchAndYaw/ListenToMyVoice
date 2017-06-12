@@ -30,9 +30,6 @@ public:
     virtual void ModifyVoiceAudioComponent(const FUniqueNetId& RemoteTalkerId,
                                            class UAudioComponent* AudioComponent) override;
 
-    UFUNCTION(BlueprintCallable, Category = "Voice")
-    bool IsListen();
-
     /* Radio Delegate */
     void OnRadioPressed();
     void OnRadioReleased();
@@ -63,14 +60,17 @@ protected:
     void UseRightPressed();
     void UseRightReleased();
 
+    void OnTalk(TSharedRef<const FUniqueNetId> TalkerId, bool bIsTalking);
+
 private:
     UPointLightComponent* _WalkieLight;
 
     class UFMODAudioComponent* _WalkieNoiseAudioComp;
     UAudioComponent* _VoiceAudioComp;
-    //UAudioComponent* _TestAudioComp;
-    bool _IsListen;
+
+    APlayerState* _OtherPlayerState;
     bool _IsTalking;
+    bool _IsRemoteTalking;
     bool _ClientPossesed;
 
     /* MENU INTERFACE */
