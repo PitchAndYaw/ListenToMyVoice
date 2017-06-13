@@ -5,6 +5,7 @@
 
 #include "PlayerControllerPlay.h"
 #include "GameStatePlay.h"
+#include "PlayerStatePlay.h"
 #include "PlayerSpectator.h"
 
 
@@ -13,6 +14,7 @@ AGameModePlay::AGameModePlay(const class FObjectInitializer& OI) : Super(OI) {
     SpectatorClass = APlayerSpectator::StaticClass();
     PlayerControllerClass = APlayerControllerPlay::StaticClass();
     GameStateClass = AGameStatePlay::StaticClass();
+    PlayerStateClass = APlayerStatePlay::StaticClass();
 
     bUseSeamlessTravel = true;
 }

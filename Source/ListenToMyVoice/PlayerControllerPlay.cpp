@@ -8,6 +8,7 @@
 #include "FMODAudioComponent.h"
 #include "PlayerCharacter.h"
 #include "PlayerSpectator.h"
+#include "PlayerStatePlay.h"
 
 
 APlayerControllerPlay::APlayerControllerPlay(const FObjectInitializer& OI) : Super(OI) {
@@ -15,9 +16,6 @@ APlayerControllerPlay::APlayerControllerPlay(const FObjectInitializer& OI) : Sup
     _WalkieNoiseAudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("Audio"));
     _WalkieNoiseAudioComp->bAutoActivate = false;
     _ClientPossesed = false;
-
-    _IsTalking = false;
-    _IsRemoteTalking = false;
 }
 
 void APlayerControllerPlay::SetupInputComponent() {
@@ -40,8 +38,6 @@ void APlayerControllerPlay::BeginPlay() {
             SERVER_CallUpdate(_GameInstance->_PlayerInfoSaved);
         }
     }
-
-    IOnlineSubsystem::Get()->GetVoiceInterface()->OnPlayerTalkingStateChangedDelegates.AddUObject(this, &APlayerControllerPlay::OnTalk);
 }
 
 bool APlayerControllerPlay::SERVER_CallUpdate_Validate(FPlayerInfo info) {
@@ -69,17 +65,11 @@ void APlayerControllerPlay::AfterPossessed() {
 
 void APlayerControllerPlay::OnRep_Pawn() {
     Super::OnRep_Pawn();
-    /* CLIENT-SERVER EXCEPTION  */
+    /* CLIENT-SERVER EXCEPTION */
     AfterPossessed();
 }
 
 /*********************************************** VOICE *******************************************/
-void APlayerControllerPlay::OnTalk(TSharedRef<const FUniqueNetId> TalkerId, bool bIsTalking) {
-    if (*PlayerState->UniqueId.GetUniqueNetId().Get() != TalkerId.Get()) {
-        _IsRemoteTalking = bIsTalking;
-    }
-}
-
 void APlayerControllerPlay::ModifyVoiceAudioComponent(const FUniqueNetId& RemoteTalkerId,
                                                       class UAudioComponent* AudioComponent) {
 
@@ -161,21 +151,30 @@ void APlayerControllerPlay::TickWalkie() {
         }
     }
 
-    if (_WalkieLight) {
-        if (_IsTalking && _IsRemoteTalking) {
-            _WalkieLight->SetIntensity(5000);
-            _WalkieLight->SetLightColor(FLinearColor::Red);
-        }
-        else if (_IsRemoteTalking) {
-            _WalkieLight->SetIntensity(5000);
-            _WalkieLight->SetLightColor(FLinearColor::Blue);
-        }
-        else if (_IsTalking) {
-            _WalkieLight->SetIntensity(5000);
-            _WalkieLight->SetLightColor(FLinearColor::Green);
+    if (_WalkieLight) SetLightColor();
+}
+
+void APlayerControllerPlay::SetLightColor() {
+    APlayerStatePlay* PS = Cast<APlayerStatePlay>(PlayerState);
+    if (PS && _OtherPlayerState) {
+        if (PS->GetIsTalking()) {
+            if (_OtherPlayerState->GetIsTalking()) {
+                _WalkieLight->SetIntensity(5000);
+                _WalkieLight->SetLightColor(FLinearColor::Red);
+            }
+            else {
+                _WalkieLight->SetIntensity(5000);
+                _WalkieLight->SetLightColor(FLinearColor::Green);
+            }
         }
         else {
-            _WalkieLight->SetIntensity(0);
+            if (_OtherPlayerState->GetIsTalking()) {
+                _WalkieLight->SetIntensity(5000);
+                _WalkieLight->SetLightColor(FLinearColor::Blue);
+            }
+            else {
+                _WalkieLight->SetIntensity(0);
+            }
         }
     }
 }
@@ -294,7 +293,9 @@ void APlayerControllerPlay::CLIENT_HideMenu_Implementation() {
 
 /*********************************************** DELEGATES ***************************************/
 void APlayerControllerPlay::OnRadioPressed() {
-    _IsTalking = true;
+    APlayerStatePlay* PS = Cast<APlayerStatePlay>(PlayerState);
+    if (PS) PS->SetIsTalking(true);
+
     StartTalking();
 
     ULibraryUtils::Log(FString::Printf(TEXT("I AM: %s"),
@@ -302,8 +303,8 @@ void APlayerControllerPlay::OnRadioPressed() {
 
     if (!_OtherPlayerState) {
         for (APlayerState* OtherPlayerState : GetWorld()->GetGameState()->PlayerArray) {
-            if (PlayerState->UniqueId != OtherPlayerState->UniqueId) {
-                _OtherPlayerState = OtherPlayerState;
+            if (PlayerState->UniqueId != OtherPlayerState->UniqueId && PlayerState->IsA(APlayerStatePlay::StaticClass())) {
+                _OtherPlayerState = Cast<APlayerStatePlay>(OtherPlayerState);
             }
         }
     }
@@ -316,13 +317,15 @@ void APlayerControllerPlay::OnRadioPressed() {
 }
 
 void APlayerControllerPlay::OnRadioReleased() {
-    _IsTalking = false;
+    APlayerStatePlay* PS = Cast<APlayerStatePlay>(PlayerState);
+    if (PS) PS->SetIsTalking(false);
+
     StopTalking();
 
     if (!_OtherPlayerState) {
         for (APlayerState* OtherPlayerState : GetWorld()->GetGameState()->PlayerArray) {
-            if (PlayerState->UniqueId != OtherPlayerState->UniqueId) {
-                _OtherPlayerState = OtherPlayerState;
+            if (PlayerState->UniqueId != OtherPlayerState->UniqueId && PlayerState->IsA(APlayerStatePlay::StaticClass())) {
+                _OtherPlayerState = Cast<APlayerStatePlay>(OtherPlayerState);
             }
         }
     }
