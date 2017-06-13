@@ -82,7 +82,8 @@ void UGun::OnFire() {
 		}
 	}
 	/*Make noise*/
-	_PlayerCharacter->MakeNoise(1.0f, GetOwner()->Instigator, GetOwner()->GetActorLocation());
+	if(_PlayerCharacter)
+		_PlayerCharacter->MakeNoise(1.0f, GetOwner()->Instigator, GetOwner()->GetActorLocation());
 }
 
 
