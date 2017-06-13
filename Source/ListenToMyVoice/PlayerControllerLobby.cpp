@@ -53,7 +53,7 @@ void APlayerControllerLobby::CLIENT_CreateMenu_Implementation() {
             Location.X += 300;
             UNWGameInstance* GameInstance = Cast<UNWGameInstance>(GetGameInstance());
             if (GameInstance && GameInstance->_IsVRMode) {
-                Location.Z += 100;
+                Location.Z += 200;
                 Location.X += 50;
             }
             _MenuActor->ToogleMenu(Location,
