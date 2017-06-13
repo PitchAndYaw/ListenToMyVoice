@@ -30,6 +30,8 @@ public:
     int _Damage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	bool _IsDamaged;
+	UPROPERTY(Category = DestructibleMesh, VisibleAnywhere, BlueprintReadOnly)
+	class UDestructibleComponent* _DestructibleMesh;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, class AActor* DamageCauser) override;
@@ -45,4 +47,7 @@ public:
 	void SetDamaged(bool Damaged);
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	bool GetDamaged();
+
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	void Die();
 };

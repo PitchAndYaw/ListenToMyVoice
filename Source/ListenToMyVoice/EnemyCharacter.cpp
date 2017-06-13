@@ -13,6 +13,12 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
     AIControllerClass = AEnemyController::StaticClass();
 	OnActorHit.AddDynamic(this, &AEnemyCharacter::OnHit);
 
+	_DestructibleMesh = CreateDefaultSubobject<UDestructibleComponent>(TEXT("DestructibleMesh"));
+	_DestructibleMesh->SetHiddenInGame(true);
+	//_DestructibleMesh->SetNotifyRigidBodyCollision(true);
+	_DestructibleMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
+	_DestructibleMesh->SetRelativeLocation(GetMesh()->GetComponentLocation());
+
     GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
     AutoPossessAI = EAutoPossessAI::Disabled;
     _SightRadius = 500.0f;
@@ -60,4 +66,15 @@ void AEnemyCharacter::SetDamaged(bool Damaged) {
 
 bool AEnemyCharacter::GetDamaged() {
 	return _IsDamaged;
+}
+
+void AEnemyCharacter::Die() {
+	if (_DestructibleMesh) {
+		GetMesh()->SetHiddenInGame(true);
+		//_DestructibleMesh->SetSimulatePhysics(true);
+		_DestructibleMesh->SetEnableGravity(true);
+		_DestructibleMesh->SetHiddenInGame(false);
+		_DestructibleMesh->ApplyRadiusDamage(100.0f, GetActorLocation(), 100.0f, 0.0f, false);
+		GetController()->UnPossess();
+	}
 }
