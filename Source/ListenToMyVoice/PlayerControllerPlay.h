@@ -60,17 +60,13 @@ protected:
     void UseRightPressed();
     void UseRightReleased();
 
-    void OnTalk(TSharedRef<const FUniqueNetId> TalkerId, bool bIsTalking);
-
 private:
     UPointLightComponent* _WalkieLight;
 
     class UFMODAudioComponent* _WalkieNoiseAudioComp;
     UAudioComponent* _VoiceAudioComp;
 
-    APlayerState* _OtherPlayerState;
-    bool _IsTalking;
-    bool _IsRemoteTalking;
+    class APlayerStatePlay* _OtherPlayerState;
     bool _ClientPossesed;
 
     /* MENU INTERFACE */
@@ -78,4 +74,5 @@ private:
     void CreateMenuActor();
 
     void TickWalkie();
+    void SetLightColor();
 };
