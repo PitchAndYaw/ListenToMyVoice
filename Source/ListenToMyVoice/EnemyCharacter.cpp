@@ -75,6 +75,7 @@ void AEnemyCharacter::Die() {
 		_DestructibleMesh->SetEnableGravity(true);
 		_DestructibleMesh->SetHiddenInGame(false);
 		_DestructibleMesh->ApplyRadiusDamage(100.0f, GetActorLocation(), 100.0f, 0.0f, false);
-		GetController()->UnPossess();
+		if(GetController())
+			GetController()->UnPossess();
 	}
 }
