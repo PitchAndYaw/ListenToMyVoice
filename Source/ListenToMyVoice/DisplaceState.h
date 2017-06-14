@@ -29,6 +29,8 @@ public:
     float _VelocityLocation;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Displacement")
     float _VelocityRotation;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Displacement")
+    bool _Block;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Displacement")
     EDisplaceState _State;

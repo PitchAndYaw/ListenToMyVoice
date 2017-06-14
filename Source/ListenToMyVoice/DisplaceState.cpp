@@ -7,6 +7,7 @@
 UDisplaceState::UDisplaceState() {
     PrimaryComponentTick.bCanEverTick = true;
 
+    _Block = false;
     _Direction = 1;
     _VelocityLocation = 20;
     _VelocityRotation = 20;
@@ -64,35 +65,37 @@ void UDisplaceState::TickComponent(float DeltaTime, ELevelTick TickType,
 
 /********************************* INTERFACES ****************************************************/
 int UDisplaceState::SwitchState_Implementation() {
-    switch (_State) {
-        case EDisplaceState::InitialPosition :
-        {
-            _State = EDisplaceState::Moving;
-            _Direction = 1;
-            break;
-        };
-        case EDisplaceState::FinalPosition:
-        {
-            _State = EDisplaceState::MovingReverse;
-            _Direction = -1;
-            break;
-        };
-        case EDisplaceState::Moving:
-        {
-            _State = EDisplaceState::MovingReverse;
-            _Direction = -1;
-            break;
-        };
-        default:
-        {
-            _State = EDisplaceState::Moving;
-            _Direction = -_Direction;
-            break;
-        };
-    }
-    _LocationFinished = false;
-    _RotationFinished = false;
+    if (!_Block) {
+        switch (_State) {
+            case EDisplaceState::InitialPosition:
+            {
+                _State = EDisplaceState::Moving;
+                _Direction = 1;
+                break;
+            };
+            case EDisplaceState::FinalPosition:
+            {
+                _State = EDisplaceState::MovingReverse;
+                _Direction = -1;
+                break;
+            };
+            case EDisplaceState::Moving:
+            {
+                _State = EDisplaceState::MovingReverse;
+                _Direction = -1;
+                break;
+            };
+            default:
+            {
+                _State = EDisplaceState::Moving;
+                _Direction = -_Direction;
+                break;
+            };
+        }
+        _LocationFinished = false;
+        _RotationFinished = false;
 
-    SetComponentTickEnabled(true);
+        SetComponentTickEnabled(true);
+    }
     return 0;
 }
