@@ -255,6 +255,8 @@ void AVRCharacter::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
         _StaticMesh->SetCustomDepthStencilValue(0);
         _StaticMesh->SetRenderCustomDepth(false);
     }
+
+    if (_LastUsedPressed && _LastUsedPressed != _LastUsedReleased) UseReleasedFocusOut();
 }
 
 /****************************************** ACTION MAPPINGS **************************************/

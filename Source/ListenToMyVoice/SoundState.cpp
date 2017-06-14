@@ -6,6 +6,7 @@
 
 USoundState::USoundState() {
     PrimaryComponentTick.bCanEverTick = true;
+    bAutoActivate = false;
 }
 
 void USoundState::BeginPlay() {

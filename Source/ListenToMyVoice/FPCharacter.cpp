@@ -129,7 +129,12 @@ FHitResult AFPCharacter::Raycasting() {
 
             //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("You hit: %s"), *_HitResult.Actor->GetName()));
         }
+
+        /* FOCUS LOST */
+        if (_LastUsedPressed && _HitResult.GetActor() != _LastUsedPressed &&
+            _LastUsedPressed != _LastUsedReleased) UseReleasedFocusOut();
     }
+    else if (_LastUsedPressed && _LastUsedPressed != _LastUsedReleased) UseReleasedFocusOut();
 
     //If Raycast is not hitting any actor, disable the outline
     if (bInventoryItemHit && _HitResult.Actor != _LastMeshFocused->GetOwner()) {

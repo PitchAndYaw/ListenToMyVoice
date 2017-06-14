@@ -77,7 +77,6 @@ protected:
     UFUNCTION(NetMulticast, Reliable)
     void MULTI_UsePressed(UActorComponent* component);
 
-    virtual void UseReleased();
     UFUNCTION(Server, Reliable, WithValidation)
     void SERVER_UseReleased(UActorComponent* component);
     UFUNCTION(NetMulticast, Reliable)
@@ -120,6 +119,8 @@ protected:
     const USkeletalMeshSocket* _FootSocket;
     void CheckFloorMaterial();
     FHitResult _FootHitResult;
+
+    void UseReleasedFocusOut();
 
 private:
     AActor* _WalkieActor;
