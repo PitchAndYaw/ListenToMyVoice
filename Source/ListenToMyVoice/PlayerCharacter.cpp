@@ -112,7 +112,6 @@ void APlayerCharacter::MULTI_UsePressed_Implementation(UActorComponent* componen
     }
 }
 
-void APlayerCharacter::UseReleased() {}
 bool APlayerCharacter::SERVER_UseReleased_Validate(UActorComponent* component) { return true; }
 void APlayerCharacter::SERVER_UseReleased_Implementation(UActorComponent* component) {
     MULTI_UseReleased(component);
@@ -123,6 +122,18 @@ void APlayerCharacter::MULTI_UseReleased_Implementation(UActorComponent* compone
         itfObject->Execute_UseReleased(component);
         _LastUsedReleased = component->GetOwner();
     }
+}
+
+void APlayerCharacter::UseReleasedFocusOut() {
+    TArray<UActorComponent*> Components;
+    _LastUsedPressed->GetComponents(Components);
+
+    for (UActorComponent* Component : Components) {
+        if (Component->GetClass()->ImplementsInterface(UItfUsable::StaticClass())) {
+            SERVER_UseReleased(Component);
+        }
+    }
+    _LastUsedPressed = nullptr;
 }
 
 /******** USE ITEM LEFT *********/

@@ -131,31 +131,10 @@ FHitResult AFPCharacter::Raycasting() {
         }
 
         /* FOCUS LOST */
-        if (_LastUsedPressed && _HitResult.GetActor() != _LastUsedPressed && _LastUsedPressed != _LastUsedReleased) {
-            ULibraryUtils::Log("VALID ACTOR");
-            TArray<UActorComponent*> Components;
-            _LastUsedPressed->GetComponents(Components);
-
-            for (UActorComponent* Component : Components) {
-                if (Component->GetClass()->ImplementsInterface(UItfUsable::StaticClass())) {
-                    SERVER_UseReleased(Component);
-                }
-            }
-            _LastUsedPressed = nullptr;
-        }
+        if (_LastUsedPressed && _HitResult.GetActor() != _LastUsedPressed &&
+            _LastUsedPressed != _LastUsedReleased) UseReleasedFocusOut();
     }
-    else if (_LastUsedPressed && _LastUsedPressed != _LastUsedReleased) {
-        ULibraryUtils::Log("INVALID ACTOR");
-        TArray<UActorComponent*> Components;
-        _LastUsedPressed->GetComponents(Components);
-
-        for (UActorComponent* Component : Components) {
-            if (Component->GetClass()->ImplementsInterface(UItfUsable::StaticClass())) {
-                SERVER_UseReleased(Component);
-            }
-        }
-        _LastUsedPressed = nullptr;
-    }
+    else if (_LastUsedPressed && _LastUsedPressed != _LastUsedReleased) UseReleasedFocusOut();
 
     //If Raycast is not hitting any actor, disable the outline
     if (bInventoryItemHit && _HitResult.Actor != _LastMeshFocused->GetOwner()) {
