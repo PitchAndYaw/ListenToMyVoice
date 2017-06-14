@@ -107,6 +107,7 @@ void APlayerCharacter::MULTI_UsePressed_Implementation(UActorComponent* componen
     IItfUsable* itfObject = Cast<IItfUsable>(component);
     if (itfObject) {
         itfObject->Execute_UsePressed(component);
+        _LastUsedReleased = nullptr;
         _LastUsedPressed = component->GetOwner();
     }
 }

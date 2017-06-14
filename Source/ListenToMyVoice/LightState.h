@@ -35,7 +35,7 @@ public:
                                FActorComponentTickFunction* ThisTickFunction) override;
 
     /* Interfaces */
-    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Item")
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Switcheable Interface")
     int SwitchState();
     virtual int SwitchState_Implementation() override;
 };

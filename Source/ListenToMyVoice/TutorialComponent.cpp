@@ -167,7 +167,6 @@ void UTutorialComponent::NextStep() {
             //SetRelativeRotation(FRotator(0,0,0));
             //SetVisibility(true);
             //RegisterComponent();
-            ULibraryUtils::Log("NextStep ");
         }
         else  DestroyComponent();
     }

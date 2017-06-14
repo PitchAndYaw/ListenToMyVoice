@@ -129,6 +129,32 @@ FHitResult AFPCharacter::Raycasting() {
 
             //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("You hit: %s"), *_HitResult.Actor->GetName()));
         }
+
+        /* FOCUS LOST */
+        if (_LastUsedPressed && _HitResult.GetActor() != _LastUsedPressed && _LastUsedPressed != _LastUsedReleased) {
+            ULibraryUtils::Log("VALID ACTOR");
+            TArray<UActorComponent*> Components;
+            _LastUsedPressed->GetComponents(Components);
+
+            for (UActorComponent* Component : Components) {
+                if (Component->GetClass()->ImplementsInterface(UItfUsable::StaticClass())) {
+                    SERVER_UseReleased(Component);
+                }
+            }
+            _LastUsedPressed = nullptr;
+        }
+    }
+    else if (_LastUsedPressed && _LastUsedPressed != _LastUsedReleased) {
+        ULibraryUtils::Log("INVALID ACTOR");
+        TArray<UActorComponent*> Components;
+        _LastUsedPressed->GetComponents(Components);
+
+        for (UActorComponent* Component : Components) {
+            if (Component->GetClass()->ImplementsInterface(UItfUsable::StaticClass())) {
+                SERVER_UseReleased(Component);
+            }
+        }
+        _LastUsedPressed = nullptr;
     }
 
     //If Raycast is not hitting any actor, disable the outline
