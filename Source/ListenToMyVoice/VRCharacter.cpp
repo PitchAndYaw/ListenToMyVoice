@@ -32,6 +32,8 @@ AVRCharacter::AVRCharacter(const FObjectInitializer& OI) : Super(OI) {
     GetCharacterMovement()->GroundFriction = 0.1;
     GetCharacterMovement()->BrakingDecelerationWalking = 256;
 
+    GetCapsuleComponent()->InitCapsuleSize(34.f, 88.0f);
+
     static ConstructorHelpers::FObjectFinder<UForceFeedbackEffect> FFFinderLeft(
         TEXT("/Game/BluePrints/Effects/RumbleLightLeft"));
     _RumbleOverLapLeft = FFFinderLeft.Object;

@@ -23,8 +23,6 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
     _LastUsedPressed = nullptr;
     _LastUsedReleased = nullptr;
 
-    GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
-
     _PlayerCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Player Camera"));
     _MenuInteractionComp = CreateDefaultSubobject<UMenuInteraction>(TEXT("Menu Interaction"));
     _MenuInteractionComp->_RayParameter = 100000;
