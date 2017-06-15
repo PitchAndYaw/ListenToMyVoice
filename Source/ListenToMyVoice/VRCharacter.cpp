@@ -256,7 +256,9 @@ void AVRCharacter::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
         _StaticMesh->SetRenderCustomDepth(false);
     }
 
-    if (_LastUsedPressed && _LastUsedPressed != _LastUsedReleased) UseReleasedFocusOut();
+    APlayerController* PlayerController = Cast<APlayerController>(GetController());
+    if (_LastUsedPressed && _LastUsedPressed != _LastUsedReleased &&
+        PlayerController && PlayerController->IsLocalPlayerController()) UseReleasedFocusOut();
 }
 
 /****************************************** ACTION MAPPINGS **************************************/

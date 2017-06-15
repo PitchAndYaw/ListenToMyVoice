@@ -78,7 +78,8 @@ void AFPCharacter::AfterPossessed(bool SetInventory) {
 void AFPCharacter::Tick(float DeltaSeconds) {
     Super::Tick(DeltaSeconds);
     //_StepsAudioComp->SetParameter(FName("humedad"), 0.9);
-    Raycasting();
+    APlayerController* PlayerController = Cast<APlayerController>(GetController());
+    if (PlayerController && PlayerController->IsLocalPlayerController()) Raycasting();
 }
 
 FHitResult AFPCharacter::Raycasting() {
@@ -132,9 +133,14 @@ FHitResult AFPCharacter::Raycasting() {
 
         /* FOCUS LOST */
         if (_LastUsedPressed && _HitResult.GetActor() != _LastUsedPressed &&
-            _LastUsedPressed != _LastUsedReleased) UseReleasedFocusOut();
+            _LastUsedPressed != _LastUsedReleased) {
+            UseReleasedFocusOut();
+        }
     }
-    else if (_LastUsedPressed && _LastUsedPressed != _LastUsedReleased) UseReleasedFocusOut();
+    else if (_LastUsedPressed && _HitResult.GetActor() != _LastUsedPressed &&
+             _LastUsedPressed != _LastUsedReleased) {
+        UseReleasedFocusOut();
+    }
 
     //If Raycast is not hitting any actor, disable the outline
     if (bInventoryItemHit && _HitResult.Actor != _LastMeshFocused->GetOwner()) {

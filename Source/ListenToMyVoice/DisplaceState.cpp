@@ -88,7 +88,7 @@ int UDisplaceState::SwitchState_Implementation() {
             default:
             {
                 _State = EDisplaceState::Moving;
-                _Direction = -_Direction;
+                _Direction = 1;
                 break;
             };
         }
