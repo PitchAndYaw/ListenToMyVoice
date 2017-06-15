@@ -28,9 +28,9 @@ AVRCharacter::AVRCharacter(const FObjectInitializer& OI) : Super(OI) {
 
     /* VR MOVE */
     GetCharacterMovement()->MaxWalkSpeed = 200.0f;
-    GetCharacterMovement()->MaxAcceleration = 1024;
+    GetCharacterMovement()->MaxAcceleration = 512;
     GetCharacterMovement()->GroundFriction = 0.1;
-    GetCharacterMovement()->BrakingDecelerationWalking = 512;
+    GetCharacterMovement()->BrakingDecelerationWalking = 256;
 
     static ConstructorHelpers::FObjectFinder<UForceFeedbackEffect> FFFinderLeft(
         TEXT("/Game/BluePrints/Effects/RumbleLightLeft"));
