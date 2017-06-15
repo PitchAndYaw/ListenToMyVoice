@@ -18,6 +18,10 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
 
     _ItemLeft = nullptr;
     _ItemRight = nullptr;
+    _LastItemUsedPressed = nullptr;
+    _LastItemUsedReleased = nullptr;
+    _LastUsedPressed = nullptr;
+    _LastUsedReleased = nullptr;
 
     GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
@@ -104,10 +108,10 @@ void APlayerCharacter::SERVER_UsePressed_Implementation(UActorComponent* compone
     MULTI_UsePressed(component);
 }
 void APlayerCharacter::MULTI_UsePressed_Implementation(UActorComponent* component) {
-    IItfUsable* itfObject = Cast<IItfUsable>(component);
-    if (itfObject) {
-        itfObject->Execute_UsePressed(component);
+    IItfUsable* ItfObject = Cast<IItfUsable>(component);
+    if (ItfObject) {
         _LastUsedReleased = nullptr;
+        ItfObject->Execute_UsePressed(component);
         _LastUsedPressed = component->GetOwner();
     }
 }
@@ -117,9 +121,10 @@ void APlayerCharacter::SERVER_UseReleased_Implementation(UActorComponent* compon
     MULTI_UseReleased(component);
 }
 void APlayerCharacter::MULTI_UseReleased_Implementation(UActorComponent* component) {
-    IItfUsable* itfObject = Cast<IItfUsable>(component);
-    if (itfObject) {
-        itfObject->Execute_UseReleased(component);
+    IItfUsable* ItfObject = Cast<IItfUsable>(component);
+    if (ItfObject) {
+        _LastUsedPressed = nullptr;
+        ItfObject->Execute_UseReleased(component);
         _LastUsedReleased = component->GetOwner();
     }
 }
@@ -133,7 +138,6 @@ void APlayerCharacter::UseReleasedFocusOut() {
             SERVER_UseReleased(Component);
         }
     }
-    _LastUsedPressed = nullptr;
 }
 
 /******** USE ITEM LEFT *********/
