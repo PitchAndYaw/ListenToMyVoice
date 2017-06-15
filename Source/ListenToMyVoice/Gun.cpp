@@ -50,7 +50,7 @@ void UGun::OnFire() {
 				_Socket->GetSocketTransform(SocketTransform, mesh);
 			}
 
-			if (_PlayerCharacter->GetMesh()->DoesSocketExist(TEXT("ShootCamera"))) {
+			if (_PlayerCharacter && _PlayerCharacter->GetMesh()->DoesSocketExist(TEXT("ShootCamera"))) {
 				_CameraSocket = _PlayerCharacter->GetMesh()->GetSocketByName(TEXT("ShootCamera"));
 				CameraSocketTransform = _CameraSocket->GetSocketTransform(_PlayerCharacter->GetMesh());
 			}
