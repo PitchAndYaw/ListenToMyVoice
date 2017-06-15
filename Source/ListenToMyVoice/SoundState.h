@@ -3,24 +3,25 @@
 #pragma once
 
 #include "ItfSwitcheable.h"
+#include "FMODAudioComponent.h"
 
 #include "Components/ActorComponent.h"
 #include "SoundState.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class LISTENTOMYVOICE_API USoundState : public UAudioComponent, public IItfSwitcheable {
+class LISTENTOMYVOICE_API USoundState : public UFMODAudioComponent, public IItfSwitcheable {
     GENERATED_BODY()
 
 public:
     USoundState();
     virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	bool _onPress;
     
     /* Interfaces */
-    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Item")
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Switcheable Interface")
     int SwitchState();
     virtual int SwitchState_Implementation() override;
+
+private:
+    float _Parameter;
 };
