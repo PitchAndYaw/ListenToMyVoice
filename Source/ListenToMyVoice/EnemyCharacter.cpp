@@ -19,7 +19,6 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
 	_DestructibleMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
 	_DestructibleMesh->SetRelativeLocation(GetMesh()->GetComponentLocation());
 
-    GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
     AutoPossessAI = EAutoPossessAI::Disabled;
     _SightRadius = 500.0f;
     _LoseSightRadius = 1000.0f;
@@ -28,6 +27,7 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
     _Damage = 1;
 	_IsDamaged = false;
 
+    GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 	GetCharacterMovement()->MaxWalkSpeed = 170.0f;
 }
 
