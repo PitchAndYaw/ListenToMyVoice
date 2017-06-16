@@ -106,13 +106,15 @@ int UDisplaceState::SwitchState_Implementation() {
 }
 
 void UDisplaceState::ToogleSound() {
-    UFMODAudioComponent* AudioComp = Cast<UFMODAudioComponent>(GetOwner()->->GetComponentByClass(
+    UFMODAudioComponent* AudioComp = Cast<UFMODAudioComponent>(GetOwner()->GetComponentByClass(
         UFMODAudioComponent::StaticClass()));
     if (AudioComp) {
         if (AudioComp->IsPlaying()) {
+            ULibraryUtils::Log("STOP");
             AudioComp->Stop();
         }
         else {
+            ULibraryUtils::Log("PLAY");
             AudioComp->Play();
         }
     }
