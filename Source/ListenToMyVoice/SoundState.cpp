@@ -7,8 +7,6 @@
 USoundState::USoundState() {
     PrimaryComponentTick.bCanEverTick = true;
     bAutoActivate = false;
-    
-    _Parameter = 0;
 }
 
 void USoundState::BeginPlay() {
@@ -16,13 +14,11 @@ void USoundState::BeginPlay() {
 }
 
 int USoundState::SwitchState_Implementation() {
-	if (_Parameter == 0) {
+	if (!IsPlaying()) {
 		Play();
-        _Parameter = 1;
 	}
     else {
-        Play();
-        _Parameter = 0;
+        Stop();
     }
     return 0;
 }

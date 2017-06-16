@@ -3,6 +3,8 @@
 #include "ListenToMyVoice.h"
 #include "DisplaceState.h"
 
+#include "FMODAudioComponent.h"
+
 
 UDisplaceState::UDisplaceState() {
     PrimaryComponentTick.bCanEverTick = true;
@@ -59,6 +61,7 @@ void UDisplaceState::TickComponent(float DeltaTime, ELevelTick TickType,
 
     if (_LocationFinished && _RotationFinished) {
         _State = _Direction == 1 ? EDisplaceState::FinalPosition : EDisplaceState::InitialPosition;
+        ToogleSound();
         SetComponentTickEnabled(false);
     }
 }
@@ -71,12 +74,14 @@ int UDisplaceState::SwitchState_Implementation() {
             {
                 _State = EDisplaceState::Moving;
                 _Direction = 1;
+                ToogleSound();
                 break;
             };
             case EDisplaceState::FinalPosition:
             {
                 _State = EDisplaceState::MovingReverse;
                 _Direction = -1;
+                ToogleSound();
                 break;
             };
             case EDisplaceState::Moving:
@@ -98,4 +103,17 @@ int UDisplaceState::SwitchState_Implementation() {
         SetComponentTickEnabled(true);
     }
     return 0;
+}
+
+void UDisplaceState::ToogleSound() {
+    UFMODAudioComponent* AudioComp = Cast<UFMODAudioComponent>(GetOwner()->->GetComponentByClass(
+        UFMODAudioComponent::StaticClass()));
+    if (AudioComp) {
+        if (AudioComp->IsPlaying()) {
+            AudioComp->Stop();
+        }
+        else {
+            AudioComp->Play();
+        }
+    }
 }

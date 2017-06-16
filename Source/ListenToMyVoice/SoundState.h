@@ -21,7 +21,4 @@ public:
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Switcheable Interface")
     int SwitchState();
     virtual int SwitchState_Implementation() override;
-
-private:
-    float _Parameter;
 };
