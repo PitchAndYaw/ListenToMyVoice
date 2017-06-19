@@ -15,7 +15,7 @@ UInputMenu::UInputMenu(const FObjectInitializer& OI) : Super(OI) {
     LightingChannels.bChannel1 = true;
 
     _Color = FColor::FromHex("E7DE40FF"); 
-    _HoverColor = FColor::FromHex("2D4543FF");
+    _HoverColor = FColor::FromHex("FF0100FF");
 
     _TextRender = CreateDefaultSubobject<UTextRenderComponent>(TEXT("_TextRender"));
     
