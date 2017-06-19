@@ -10,6 +10,8 @@
 /* VR Includes */
 #include "HeadMountedDisplay.h"
 
+#include "MoviePlayer.h"
+
 
 void UNWGameInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -470,4 +472,31 @@ void UNWGameInstance::OnRes800(UInputMenu* InputMenu) {
 void UNWGameInstance::ChangeResolution(FString Resolution) {
     FString Command = "r.SetRes " + Resolution;
     GetFirstLocalPlayerController()->ConsoleCommand(Command);
+}
+
+/*Loading Screen*/
+
+void UNWGameInstance::Init()
+{
+	UGameInstance::Init();
+
+	FCoreUObjectDelegates::PreLoadMap.AddUObject(this, &UNWGameInstance::BeginLoadingScreen);
+	FCoreUObjectDelegates::PostLoadMap.AddUObject(this, &UNWGameInstance::EndLoadingScreen);
+}
+
+void UNWGameInstance::BeginLoadingScreen(const FString& MapName)
+{
+	if (!IsRunningDedicatedServer())
+	{
+		FLoadingScreenAttributes LoadingScreen;
+		LoadingScreen.bAutoCompleteWhenLoadingCompletes = false;
+		LoadingScreen.WidgetLoadingScreen = FLoadingScreenAttributes::NewTestLoadingScreenWidget();
+
+		GetMoviePlayer()->SetupLoadingScreen(LoadingScreen);
+	}
+}
+
+void UNWGameInstance::EndLoadingScreen()
+{
+
 }

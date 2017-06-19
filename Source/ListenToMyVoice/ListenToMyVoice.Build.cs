@@ -13,7 +13,8 @@ public class ListenToMyVoice : ModuleRules {
                                                             "OnlineSubsystemUtils",
                                                             "AIModule",
                                                             "GameplayTasks",
-                                                            "UMG" });
+                                                            "UMG",
+															"MoviePlayer" });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "HeadMountedDisplay",
                                                              "SteamVR",
