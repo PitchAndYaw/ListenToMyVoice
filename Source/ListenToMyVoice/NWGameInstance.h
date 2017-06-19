@@ -149,6 +149,16 @@ public:
     void OnRes1600(UInputMenu* InputMenu);
     void OnRes1280(UInputMenu* InputMenu);
     void OnRes800(UInputMenu* InputMenu);
+
+	/*Loading Screen*/
+	
+	virtual void Init() override;
+
+	UFUNCTION()
+	virtual void BeginLoadingScreen(const FString& MapName);
+	UFUNCTION()
+	virtual void EndLoadingScreen();
+	
     
 protected:
     TSubclassOf<ACharacter> _BoyClass;
