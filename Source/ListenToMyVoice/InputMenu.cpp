@@ -18,6 +18,12 @@ UInputMenu::UInputMenu(const FObjectInitializer& OI) : Super(OI) {
     _HoverColor = FColor::FromHex("ECCF00FF");
 
     _TextRender = CreateDefaultSubobject<UTextRenderComponent>(TEXT("_TextRender"));
+    static ConstructorHelpers::FObjectFinder<UMaterial> Finder2(
+        TEXT("Material'/Game/Art/Common/Fonts/TextMenuMaterial.TextMenuMaterial'"));
+    _TextRender->SetMaterial(0, Finder2.Object);
+    static ConstructorHelpers::FObjectFinder<UFont> Finder3(
+        TEXT("Font'/Game/Art/Common/Fonts/FontMenu.FontMenu'"));
+    _TextRender->SetFont(Finder3.Object);
     _TextRender->SetWorldSize(12);
     _TextRender->SetTextRenderColor(_Color);
     _TextRender->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
