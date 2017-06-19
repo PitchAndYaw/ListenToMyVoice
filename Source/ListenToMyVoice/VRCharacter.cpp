@@ -3,6 +3,8 @@
 #include "ListenToMyVoice.h"
 #include "VRCharacter.h"
 
+#include "InventoryItem.h"
+
 #include "ItfUsable.h"
 #include "ItfUsableItem.h"
 #include "GrabItem.h"
@@ -18,6 +20,8 @@
 AVRCharacter::AVRCharacter(const FObjectInitializer& OI) : Super(OI) {
     PrimaryActorTick.bCanEverTick = true;
     bPositionalHeadTracking = true;
+
+    _NextInventoryIndex = 0;
 
     /* VR TURN */
     _TurnSide = 0;
@@ -516,6 +520,8 @@ void AVRCharacter::ItemGrabbedLeft() {
             _ActorGrabbing->SetActorEnableCollision(false);
             _ItemLeft = _ActorGrabbing;
             _ActorGrabbing = nullptr;
+
+            if (_ItemLeft->GetComponentByClass(UInventoryItem::StaticClass())) _Items.AddUnique(_ItemLeft);
         }
     }
 }
@@ -540,19 +546,66 @@ void AVRCharacter::ItemGrabbedRight() {
             _ActorGrabbing->SetActorEnableCollision(false);
             _ItemRight = _ActorGrabbing;
             _ActorGrabbing = nullptr;
+
+            if (_ItemRight->GetComponentByClass(UInventoryItem::StaticClass())) _Items.AddUnique(_ItemRight);
         }
     }
 }
 
 void AVRCharacter::DropLeft() {
-    if (_ItemLeft && _ItemLeft->GetComponentByClass(UGrabItem::StaticClass())) {
+    if (_ItemLeft && !_ItemLeft->GetComponentByClass(UInventoryItem::StaticClass())) {
         SERVER_Drop(_ItemLeft, 1);
+    }
+    else {
+        SERVER_SwitchItem(_ItemLeft, 1);
     }
 }
 
 void AVRCharacter::DropRight() {
-    if (_ItemRight && _ItemRight->GetComponentByClass(UGrabItem::StaticClass())) {
+    if (_ItemRight && !_ItemRight->GetComponentByClass(UInventoryItem::StaticClass())) {
         SERVER_Drop(_ItemRight, 2);
+    }
+    else {
+        SERVER_SwitchItem(_ItemRight, 2);
+    }
+}
+
+/********** SWITCH ITEM ***********/
+bool AVRCharacter::SERVER_SwitchItem_Validate(AActor* ItemActor, int Hand) { return true; }
+void AVRCharacter::SERVER_SwitchItem_Implementation(AActor* ItemActor, int Hand) {
+    CLIENT_ClearRadioDelegates(ItemActor);
+    MULTI_SwitchItem(ItemActor, Hand);
+}
+void AVRCharacter::MULTI_SwitchItem_Implementation(AActor* ItemActor, int Hand) {
+    if (ItemActor) {
+        UStaticMeshComponent* ItemMesh = Cast<UStaticMeshComponent>(ItemActor->GetComponentByClass(
+            UStaticMeshComponent::StaticClass()));
+        if (ItemMesh) {
+            ULibraryUtils::SetActorEnable(ItemActor, false);
+            ItemMesh->AttachToComponent(GetRootComponent(),
+                                        FAttachmentTransformRules::KeepRelativeTransform);
+
+            ItemMesh->RelativeLocation = FVector(0.0f, 0.0f, 0.0f);
+            ItemMesh->RelativeRotation = FRotator(0.0f, 0.0f, 0.0f);
+
+            if (Hand == 1) _ItemLeft = nullptr;
+            else if (Hand == 2) _ItemRight = nullptr;
+        }
+    }
+    else {
+        bool Found = false;
+        int ItemCount = 0;
+        while (!Found && ItemCount < _Items.Num()) {
+            if (_Items[_NextInventoryIndex] != _ItemLeft &&
+                _Items[_NextInventoryIndex] != _ItemRight) {
+
+                Found = true;
+                ULibraryUtils::SetActorEnable(_Items[_NextInventoryIndex]);
+                UseTriggerPressed(_Items[_NextInventoryIndex], Hand == 1 ? _SM_LeftHand : _SM_RightHand, Hand);
+            }
+            ItemCount++;
+            _NextInventoryIndex = ++_NextInventoryIndex % _Items.Num();
+        }
     }
 }
 

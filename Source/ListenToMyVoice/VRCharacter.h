@@ -61,6 +61,9 @@ public:
     UMotionControllerComponent* GetControllerByHand(EControllerHand Hand);
 
 protected:
+    int _NextInventoryIndex;
+    TArray<AActor*> _Items;
+
     UPROPERTY(EditDefaultsOnly, Category = "VR")
     bool bPositionalHeadTracking;
 
@@ -107,6 +110,13 @@ protected:
     void DropLeft();
     UFUNCTION()
     void DropRight();
+
+    /********** SWITCH ITEM ***********/
+    UFUNCTION(Server, Reliable, WithValidation)
+    void SERVER_SwitchItem(AActor* ItemActor, int Hand);
+    UFUNCTION(NetMulticast, Reliable)
+    void MULTI_SwitchItem(AActor* ItemActor, int Hand);
+
 
     /*********** MOVEMENT ***********/
     void MoveForward(float Value) override;

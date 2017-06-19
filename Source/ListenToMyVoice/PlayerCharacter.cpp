@@ -205,7 +205,6 @@ void APlayerCharacter::MULTI_TakeLeft_Implementation(AActor* Actor) {
 /********** DROP HAND ***********/
 bool APlayerCharacter::SERVER_Drop_Validate(AActor* ItemActor, int Hand) { return true; }
 void APlayerCharacter::SERVER_Drop_Implementation(AActor* ItemActor, int Hand) {
-    CLIENT_ClearRadioDelegates(ItemActor);
     MULTI_Drop(ItemActor, Hand);
 }
 void APlayerCharacter::MULTI_Drop_Implementation(AActor* ItemActor, int Hand) {
