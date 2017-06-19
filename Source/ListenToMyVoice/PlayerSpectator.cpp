@@ -16,6 +16,9 @@ APlayerSpectator::APlayerSpectator(const FObjectInitializer& OI) : Super(OI) {
     _PlayerCamera->bUsePawnControlRotation = true;
     _MenuInteractionComp->AttachToComponent(_PlayerCamera, FAttachmentTransformRules::KeepRelativeTransform);
     _MenuInteractionComp->_RayParameter = 100000;
+
+    USpectatorPawnMovement* Movement = Cast<USpectatorPawnMovement>(GetMovementComponent());
+    if (Movement) Movement->MaxSpeed = 10;
 }
 
 void APlayerSpectator::BeginPlay() {

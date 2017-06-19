@@ -43,6 +43,8 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
 
     _Health = 1;
 	_Damaged = false;
+
+    GetCharacterMovement()->MaxWalkSpeed = 200.0f;
 }
 
 void APlayerCharacter::Tick(float DeltaSeconds) {

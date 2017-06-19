@@ -27,7 +27,6 @@ AFPCharacter::AFPCharacter(const FObjectInitializer& OI) : Super(OI) {
 	_FirstPersonMesh->AttachToComponent(_PlayerCamera, FAttachmentTransformRules::KeepRelativeTransform);
 
     GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-	GetCharacterMovement()->MaxWalkSpeed = 200.0f;
     _IsInventoryHidden = true;
 }
 

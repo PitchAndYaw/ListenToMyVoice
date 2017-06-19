@@ -249,6 +249,24 @@ void APlayerControllerPlay::ToogleMenu() {
             PlayerCharacter->ToggleMenuInteraction(!_MenuActor->_IsMenuHidden);
         }
     }
+    else {
+        APlayerSpectator* PlayerSpectator = Cast<APlayerSpectator>(GetSpectatorPawn());
+        if (PlayerSpectator) {
+            /* MENU INTERFACE */
+            if (!_MenuActor) CreateMenuActor();
+
+            UCameraComponent* CameraComp = Cast<UCameraComponent>(PlayerCharacter->
+                                                                  FindComponentByClass<UCameraComponent>());
+            if (CameraComp) {
+                FVector Location = CameraComp->GetComponentLocation() +
+                    (CameraComp->GetForwardVector().GetSafeNormal() * 200);
+
+                _MenuActor->ToogleMenu(Location,
+                                       CameraComp->GetComponentRotation());
+                PlayerSpectator->ToggleMenuInteraction(!_MenuActor->_IsMenuHidden);
+            }
+        }
+    }
 }
 
 void APlayerControllerPlay::CreateMenuActor() {
