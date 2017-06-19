@@ -51,6 +51,7 @@ protected:
     void OnButtonBack(UInputMenu* InputMenu);
 
 private:
+    bool _FirstTime;
     TAssetPtr<class UFMODEvent> _AudioOpenCloseEvent;
     TAssetPtr<class UFMODEvent> _AudioSessionOkEvent;
     TAssetPtr<class UFMODEvent> _AudioSessionKoEvent;
