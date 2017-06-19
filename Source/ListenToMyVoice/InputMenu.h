@@ -62,6 +62,9 @@ protected:
     void BeginPlay() override;
 
 private:
+    TAssetPtr<class UFMODEvent> _AudioHoverEvent;
+    TAssetPtr<class UFMODEvent> _AudioClickEvent;
+
     FVector _InitialLocation;
     FVector _NextPoint;
     bool _IsFlee;

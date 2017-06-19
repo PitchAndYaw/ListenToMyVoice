@@ -25,6 +25,8 @@ public:
 
     int GetSubmenuNum();
 
+    void PlayEndFindSessions(bool Ok);
+
 protected:
     /*** DECORATORS ***/
     UPROPERTY(Category = "Menu Decorator", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -37,6 +39,9 @@ protected:
     UPROPERTY(Category = "Menu Decorator", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     UInputMenu* _BackSubmenu;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio Menu")
+    class UFMODAudioComponent* _AudioComp;
+
     virtual void BeginPlay() override;
 
     /*** PANELS  ***/
@@ -46,6 +51,10 @@ protected:
     void OnButtonBack(UInputMenu* InputMenu);
 
 private:
+    TAssetPtr<class UFMODEvent> _AudioOpenCloseEvent;
+    TAssetPtr<class UFMODEvent> _AudioSessionOkEvent;
+    TAssetPtr<class UFMODEvent> _AudioSessionKoEvent;
+
     float _BackMenuSize;
     TArray<int> _Breadcrumb;
 

@@ -31,8 +31,10 @@ UInputMenu::UInputMenu(const FObjectInitializer& OI) : Super(OI) {
     _TextRender->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
     _TextRender->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
 
+    _AudioHoverEvent = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/UI/Tic.Tic")));
+    _AudioClickEvent = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/UI/Ok.Ok")));
+    
     _AudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("_AudioComp"));
-    _AudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/UI/Tic.Tic")));
     _AudioComp->bAutoActivate = false;
 
     _NextPoint = FVector();
@@ -94,25 +96,32 @@ void UInputMenu::UpdateNextPoint() {
 
 void UInputMenu::PressEvents() {
     if (!_IsLoading) {
-        EndhoverInteraction();
+        _TextRender->SetTextRenderColor(_Color);
         _InputMenuPressedEvent.Broadcast(this);
     }
 }
 
 void UInputMenu::ReleaseEvents() {
     if (!_IsLoading) {
-        HoverInteraction();
+        _AudioComp->Event = _AudioClickEvent;
+        _TextRender->SetTextRenderColor(_HoverColor);
         _AudioComp->Play();
         _InputMenuReleasedEvent.Broadcast(this);
     }
 }
 
 void UInputMenu::HoverInteraction() {
-    if (_TextRender) _TextRender->SetTextRenderColor(_HoverColor);
+    if (_TextRender) {
+        _AudioComp->Event = _AudioHoverEvent;
+        _TextRender->SetTextRenderColor(_HoverColor);
+        _AudioComp->Play();
+    }
 }
 
 void UInputMenu::EndhoverInteraction() {
-    if (_TextRender) _TextRender->SetTextRenderColor(_Color);
+    if (_TextRender) {
+        _TextRender->SetTextRenderColor(_Color);
+    }
 }
 
 void UInputMenu::Enable(bool Enable) {

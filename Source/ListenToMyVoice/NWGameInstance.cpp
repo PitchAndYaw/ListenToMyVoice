@@ -245,6 +245,8 @@ void UNWGameInstance::OnFindSessionsComplete(bool bWasSuccessful) {
     int Index = _MenuActor->GetSubmenuNum() - 1;
     if (Ok) _MenuActor->SetInputMenuLoading(Index, 0, false, "");
     else _MenuActor->SetInputMenuLoading(Index, 0, false, _SessionOwner);
+
+    _MenuActor->PlayEndFindSessions(Ok);
 }
 
 bool UNWGameInstance::JoinAtSession(TSharedPtr<const FUniqueNetId> UserId, FName SessionName,
