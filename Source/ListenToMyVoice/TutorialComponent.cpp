@@ -40,6 +40,8 @@ void UTutorialComponent::TickComponent(float DeltaTime, ELevelTick TickType,
             FRotator PlayerRot = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(),
                                                                         _Character->GetPlayerCamera()->GetComponentLocation());
 
+            //if (_Character->_ItemLeft == _ActorRef) PlayerRot.Roll += 90;
+
             SetWorldRotation(PlayerRot);
         }
         if(_IsDynamic) CheckCondition();
