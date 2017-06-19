@@ -14,16 +14,18 @@ UInputMenu::UInputMenu(const FObjectInitializer& OI) : Super(OI) {
     SetStaticMesh(Finder.Object);
     LightingChannels.bChannel1 = true;
 
-    _Color = FColor::FromHex("293E3DFF"); 
-    _HoverColor = FColor::FromHex("ECCF00FF");
+    _Color = FColor::FromHex("E7DE40FF"); 
+    _HoverColor = FColor::FromHex("2D4543FF");
 
     _TextRender = CreateDefaultSubobject<UTextRenderComponent>(TEXT("_TextRender"));
+    
     static ConstructorHelpers::FObjectFinder<UMaterial> Finder2(
-        TEXT("Material'/Game/Art/Common/Fonts/TextMenuMaterial.TextMenuMaterial'"));
+        TEXT("Material'/Game/Art/Common/Fonts/TextLTMVMaterial.TextLTMVMaterial'"));
     _TextRender->SetMaterial(0, Finder2.Object);
     static ConstructorHelpers::FObjectFinder<UFont> Finder3(
-        TEXT("Font'/Game/Art/Common/Fonts/FontMenu.FontMenu'"));
+        TEXT("Font'/Game/Art/Common/Fonts/FontLTMV.FontLTMV'"));
     _TextRender->SetFont(Finder3.Object);
+
     _TextRender->SetWorldSize(12);
     _TextRender->SetTextRenderColor(_Color);
     _TextRender->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);

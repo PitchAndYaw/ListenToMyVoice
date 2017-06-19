@@ -17,7 +17,7 @@ UMenuInteraction::UMenuInteraction() {
     _Light->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);
     _Light->SetOuterConeAngle(10);
     _Light->SetInnerConeAngle(5);
-    _Light->SetIntensity(10000);
+    _Light->SetIntensity(3000);
     _Light->LightingChannels.bChannel0 = false;
     _Light->LightingChannels.bChannel1 = true;
 
