@@ -9,6 +9,7 @@
 UENUM(BlueprintType)
 enum class ETutorialCondition : uint8 {
     /* COMMON */
+    Save            UMETA(DisplayName = "Save Item"),
     ItemInHand      UMETA(DisplayName = "Equip Item"),
     NoItemInHand    UMETA(DisplayName = "UnEquip Item"),
     UseItemPressed  UMETA(DisplayName = "Use Item Pressed"),
@@ -21,7 +22,6 @@ enum class ETutorialCondition : uint8 {
     Drop	  UMETA(DisplayName = "VR Drop Item"),
     
     /* FP */
-    Save      UMETA(DisplayName = "FP Save Item"),
     OpenInv   UMETA(DisplayName = "FP Open Inventory"),
     CloseInv  UMETA(DisplayName = "FP Close Inventory")
 };

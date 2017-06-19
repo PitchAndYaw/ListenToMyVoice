@@ -521,7 +521,12 @@ void AVRCharacter::ItemGrabbedLeft() {
             _ItemLeft = _ActorGrabbing;
             _ActorGrabbing = nullptr;
 
-            if (_ItemLeft->GetComponentByClass(UInventoryItem::StaticClass())) _Items.AddUnique(_ItemLeft);
+            UInventoryItem* Item = Cast<UInventoryItem>(_ItemLeft->GetComponentByClass(
+                UInventoryItem::StaticClass()));
+            if (Item) {
+                _Items.AddUnique(_ItemLeft);
+                Item->SetEquipped(true);
+            }
         }
     }
 }
@@ -547,7 +552,12 @@ void AVRCharacter::ItemGrabbedRight() {
             _ItemRight = _ActorGrabbing;
             _ActorGrabbing = nullptr;
 
-            if (_ItemRight->GetComponentByClass(UInventoryItem::StaticClass())) _Items.AddUnique(_ItemRight);
+            UInventoryItem* Item = Cast<UInventoryItem>(_ItemRight->GetComponentByClass(
+                UInventoryItem::StaticClass()));
+            if (Item) {
+                _Items.AddUnique(_ItemRight);
+                Item->SetEquipped(true);
+            }
         }
     }
 }
