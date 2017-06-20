@@ -25,10 +25,6 @@ public:
     FVector _locationAttach_R;
     UPROPERTY(EditAnywhere)
     FRotator _rotationAttach_R;
-    UPROPERTY(EditAnyWhere)
-    FVector _locationAttach_C;
-    UPROPERTY(EditAnywhere)
-    FRotator _rotationAttach_C;
 
     FGrabEvent _GrabItemEvent;
     FDelegateHandle _OnGrabItemDelegateHandle;

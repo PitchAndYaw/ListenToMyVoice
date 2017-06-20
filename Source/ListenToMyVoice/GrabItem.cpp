@@ -7,9 +7,7 @@
 UGrabItem::UGrabItem() : Super(), _locationAttach_L(0.f, 0.f, 0.f),
                                   _rotationAttach_L(0.f, 0.f, 0.f),
                                   _locationAttach_R(0.f, 0.f, 0.f), 
-                                  _rotationAttach_R(0.f, 0.f, 0.f),
-                                  _locationAttach_C(0.f, 0.f, 0.f),
-                                  _rotationAttach_C(0.f, 0.f, 0.f) {
+                                  _rotationAttach_R(0.f, 0.f, 0.f) {
     
     PrimaryComponentTick.bCanEverTick = true;
 
