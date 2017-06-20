@@ -71,7 +71,7 @@ bool UTutorialComponent::CheckCondition() {
                     if (_ActorRef) {
                         UInventoryItem* Item = Cast<UInventoryItem>(_ActorRef->GetComponentByClass(
                             UInventoryItem::StaticClass()));
-                        if (Item && Item->IsEquipped()) { DetachFromParent(true); NextStep(); }
+                        if (Item && Item->IsEquipped()) { NextStep(); }
                     }
                 };
                 break;

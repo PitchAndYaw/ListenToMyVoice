@@ -93,6 +93,8 @@ void APlayerControllerPlay::ModifyVoiceAudioComponent(const FUniqueNetId& Remote
                     AudioComponent->AttachToComponent(MeshComponent,
                                                       FAttachmentTransformRules::KeepRelativeTransform);
                     AudioComponent->bOverrideAttenuation = true;
+                    AudioComponent->AttenuationOverrides.OmniRadius = 15;
+                    AudioComponent->AttenuationOverrides.FalloffDistance = 2000;
                     _VoiceAudioComp = AudioComponent;
 
                     _WalkieNoiseAudioComp->SetEvent(NoiseEvent);
