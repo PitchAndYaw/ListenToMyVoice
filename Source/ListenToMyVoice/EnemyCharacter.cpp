@@ -17,8 +17,11 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
     _StepsAudioComp->bAutoActivate = false;
 
     _BreathAudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("Audio_Breathing"));
-    _BreathAudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/HurtMale.HurtMale")));
+    _BreathAudioComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+    _BreathAudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/Beast.Beast")));
     _BreathAudioComp->bAutoActivate = false;
+
+    _DieEvent = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Scene/EnemyDead.EnemyDead")));
 
     AIControllerClass = AEnemyController::StaticClass();
 	OnActorHit.AddDynamic(this, &AEnemyCharacter::OnHit);
@@ -85,6 +88,10 @@ void AEnemyCharacter::Die() {
 		_DestructibleMesh->SetEnableGravity(true);
 		_DestructibleMesh->SetHiddenInGame(false);
 		_DestructibleMesh->ApplyRadiusDamage(100.0f, GetActorLocation(), 100.0f, 0.0f, false);
+
+        _BreathAudioComp->Event = _DieEvent;
+        _BreathAudioComp->Play();
+
 		if(GetController())
 			GetController()->UnPossess();
 	}

@@ -35,6 +35,7 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
     _StepsAudioComp->bAutoActivate = false;
 
 	_BreathAudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("Audio_Breathing"));
+    _BreathAudioComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
     _BreathAudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/HurtMale.HurtMale")));
     _BreathAudioComp->bAutoActivate = false;
 
@@ -296,6 +297,8 @@ float APlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const
 	_PlayerCamera->PostProcessSettings.bOverride_SceneFringeIntensity = true;
 	_PlayerCamera->PostProcessSettings.SceneFringeIntensity = 5.0f;
 	_Damaged = true;
+
+    _BreathAudioComp->Play();
 
 	if (_Health <= 0) {
 		AGameModePlay* GameMode = Cast<AGameModePlay>(GetWorld()->GetAuthGameMode());
