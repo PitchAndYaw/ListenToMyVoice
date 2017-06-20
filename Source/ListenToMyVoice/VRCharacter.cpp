@@ -518,13 +518,6 @@ void AVRCharacter::ItemGrabbedLeft() {
             _ActorGrabbing->SetActorEnableCollision(false);
             _ItemLeft = _ActorGrabbing;
             _ActorGrabbing = nullptr;
-
-            UInventoryItem* Item = Cast<UInventoryItem>(_ItemLeft->GetComponentByClass(
-                UInventoryItem::StaticClass()));
-            if (Item) {
-                _Items.AddUnique(_ItemLeft);
-                Item->SetEquipped(true);
-            }
         }
     }
 }
@@ -549,13 +542,6 @@ void AVRCharacter::ItemGrabbedRight() {
             _ActorGrabbing->SetActorEnableCollision(false);
             _ItemRight = _ActorGrabbing;
             _ActorGrabbing = nullptr;
-
-            UInventoryItem* Item = Cast<UInventoryItem>(_ItemRight->GetComponentByClass(
-                UInventoryItem::StaticClass()));
-            if (Item) {
-                _Items.AddUnique(_ItemRight);
-                Item->SetEquipped(true);
-            }
         }
     }
 }
@@ -598,6 +584,13 @@ void AVRCharacter::MULTI_SwitchItem_Implementation(AActor* ItemActor, int Hand) 
 
             if (Hand == 1) _ItemLeft = nullptr;
             else if (Hand == 2) _ItemRight = nullptr;
+
+            UInventoryItem* Item = Cast<UInventoryItem>(ItemActor->GetComponentByClass(
+                UInventoryItem::StaticClass()));
+            if (Item) {
+                _Items.AddUnique(ItemActor);
+                Item->SetEquipped(true);
+            }
         }
     }
     else {

@@ -66,6 +66,16 @@ bool UTutorialComponent::CheckCondition() {
         else {
             switch (_WidgetSteps[_StepPivot]._Condition) {
                 /* COMMON */
+                case ETutorialCondition::Save:
+                {
+                    if (_ActorRef) {
+                        UInventoryItem* Item = Cast<UInventoryItem>(_ActorRef->GetComponentByClass(
+                            UInventoryItem::StaticClass()));
+                        if (Item && Item->IsEquipped()) { DetachFromParent(true); NextStep(); }
+                    }
+                };
+                break;
+
                 case ETutorialCondition::ItemInHand:
                 {
                     if (_Character && (_Character->_ItemLeft == _ActorRef ||
@@ -126,13 +136,6 @@ bool UTutorialComponent::CheckCondition() {
                 break;
 
                 /* FP */
-                case ETutorialCondition::Save:
-                {
-                    UInventoryItem* Item = Cast<UInventoryItem>(_ActorRef->GetComponentByClass(
-                        UInventoryItem::StaticClass()));
-                    if (Item && Item->_equipped) { NextStep(); }
-                };
-                break;
                 case ETutorialCondition::OpenInv:
                 {
                     AFPCharacter* FPCharacter = Cast<AFPCharacter>(_Character);
@@ -167,6 +170,6 @@ void UTutorialComponent::NextStep() {
             //SetVisibility(true);
             //RegisterComponent();
         }
-        else  DestroyComponent();
+        else DestroyComponent();
     }
 }
