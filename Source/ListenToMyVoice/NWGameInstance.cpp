@@ -477,7 +477,7 @@ void UNWGameInstance::ChangeResolution(FString Resolution) {
 }
 
 /*Loading Screen*/
-
+/*
 void UNWGameInstance::Init()
 {
 	UGameInstance::Init();
@@ -502,3 +502,4 @@ void UNWGameInstance::EndLoadingScreen()
 {
 
 }
+*/

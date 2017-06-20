@@ -151,13 +151,14 @@ public:
     void OnRes800(UInputMenu* InputMenu);
 
 	/*Loading Screen*/
-	
+	/*
 	virtual void Init() override;
 
 	UFUNCTION()
 	virtual void BeginLoadingScreen(const FString& MapName);
 	UFUNCTION()
 	virtual void EndLoadingScreen();
+	*/
 	
     
 protected:
