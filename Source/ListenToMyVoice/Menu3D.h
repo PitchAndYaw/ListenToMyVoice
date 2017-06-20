@@ -17,7 +17,7 @@ public:
     bool _IsMenuHidden;
 
     AMenu3D(const class FObjectInitializer& OI);
-    void ToogleMenu(FVector Location, FRotator Rotation);
+    void ToogleMenu(FVector Location, FRotator Rotation, bool PlaySound = true);
 
     void AddSubmenu(UMenuPanel* Submenu);
     void SetSubmenuByIndex(const int& Index);
@@ -51,7 +51,6 @@ protected:
     void OnButtonBack(UInputMenu* InputMenu);
 
 private:
-    bool _FirstTime;
     TAssetPtr<class UFMODEvent> _AudioOpenCloseEvent;
     TAssetPtr<class UFMODEvent> _AudioSessionOkEvent;
     TAssetPtr<class UFMODEvent> _AudioSessionKoEvent;

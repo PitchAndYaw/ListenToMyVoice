@@ -14,20 +14,20 @@ UInputMenu::UInputMenu(const FObjectInitializer& OI) : Super(OI) {
     SetStaticMesh(Finder.Object);
     LightingChannels.bChannel1 = true;
 
-    _Color = FColor::FromHex("E7DE40FF"); 
-    _HoverColor = FColor::FromHex("FF0100FF");
-
     _TextRender = CreateDefaultSubobject<UTextRenderComponent>(TEXT("_TextRender"));
     
     static ConstructorHelpers::FObjectFinder<UMaterial> Finder2(
         TEXT("Material'/Game/Art/Common/Fonts/TextLTMVMaterial.TextLTMVMaterial'"));
-    _TextRender->SetMaterial(0, Finder2.Object);
-    static ConstructorHelpers::FObjectFinder<UFont> Finder3(
-        TEXT("Font'/Game/Art/Common/Fonts/FontLTMV.FontLTMV'"));
-    _TextRender->SetFont(Finder3.Object);
+    _Material = Finder2.Object;
+    static ConstructorHelpers::FObjectFinder<UMaterial> Finder3(
+        TEXT("Material'/Game/Art/Common/Fonts/TextLTMVMaterialHover.TextLTMVMaterialHover'"));
+    _MaterialHover = Finder3.Object;
+    _TextRender->SetMaterial(0, _Material);
+    static ConstructorHelpers::FObjectFinder<UFont> Finder4(
+        TEXT("Font'/Game/Art/Common/Fonts/FontIcarus.FontIcarus'"));
+    _TextRender->SetFont(Finder4.Object);
 
     _TextRender->SetWorldSize(12);
-    _TextRender->SetTextRenderColor(_Color);
     _TextRender->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
     _TextRender->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
 
@@ -96,7 +96,7 @@ void UInputMenu::UpdateNextPoint() {
 
 void UInputMenu::PressEvents() {
     if (!_IsLoading) {
-        _TextRender->SetTextRenderColor(_Color);
+        _TextRender->SetMaterial(0, _Material);
         _InputMenuPressedEvent.Broadcast(this);
     }
 }
@@ -104,7 +104,7 @@ void UInputMenu::PressEvents() {
 void UInputMenu::ReleaseEvents() {
     if (!_IsLoading) {
         _AudioComp->Event = _AudioClickEvent;
-        _TextRender->SetTextRenderColor(_HoverColor);
+        _TextRender->SetMaterial(0, _MaterialHover);
         _AudioComp->Play();
         _InputMenuReleasedEvent.Broadcast(this);
     }
@@ -113,14 +113,14 @@ void UInputMenu::ReleaseEvents() {
 void UInputMenu::HoverInteraction() {
     if (_TextRender) {
         _AudioComp->Event = _AudioHoverEvent;
-        _TextRender->SetTextRenderColor(_HoverColor);
+        _TextRender->SetMaterial(0, _MaterialHover);
         _AudioComp->Play();
     }
 }
 
 void UInputMenu::EndhoverInteraction() {
     if (_TextRender) {
-        _TextRender->SetTextRenderColor(_Color);
+        _TextRender->SetMaterial(0, _Material);
     }
 }
 
