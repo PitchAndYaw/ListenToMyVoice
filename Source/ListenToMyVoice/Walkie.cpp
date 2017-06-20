@@ -3,6 +3,7 @@
 #include "ListenToMyVoice.h"
 #include "Walkie.h"
 
+#include "FMODAudioComponent.h"
 
 UWalkie::UWalkie() {
     _AreDelegatesBinded = false;
@@ -13,11 +14,19 @@ void UWalkie::BeginPlay() {
 }
 
 void UWalkie::UseItemPressed_Implementation() {
+    UFMODAudioComponent* AudioComp = Cast<UFMODAudioComponent>(GetOwner()->GetComponentByClass(
+        UFMODAudioComponent::StaticClass()));
+    if (AudioComp) AudioComp->Play();
+
     _RadioPressedEvent.Broadcast();
 }
 
 
 void UWalkie::UseItemReleased_Implementation() {
+    UFMODAudioComponent* AudioComp = Cast<UFMODAudioComponent>(GetOwner()->GetComponentByClass(
+        UFMODAudioComponent::StaticClass()));
+    if (AudioComp) AudioComp->Play();
+
     _RadioReleasedEvent.Broadcast();
 }
 

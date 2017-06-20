@@ -4,6 +4,7 @@
 
 #include "Projectile.h"
 #include "Gun.h"
+#include "FMODAudioComponent.h"
 
 
 // Sets default values for this component's properties
@@ -20,6 +21,11 @@ void UGun::UseItemPressed_Implementation() {
 	if (GetAmmo() > 0) { 
 		AddAmmo(-1);
 		OnFire();
+
+        UFMODAudioComponent* AudioComp = Cast<UFMODAudioComponent>(GetOwner()->GetComponentByClass(
+            UFMODAudioComponent::StaticClass()));
+        if (AudioComp) AudioComp->Play();
+
 	}
 	ULibraryUtils::Log(FString::Printf(TEXT("Ammo : %i"), GetAmmo()), 0, 60);
 }

@@ -3,6 +3,7 @@
 #include "ListenToMyVoice.h"
 #include "Lantern.h"
 
+#include "FMODAudioComponent.h"
 
 ULantern::ULantern(){
     _batteryLife = 100.0;
@@ -50,17 +51,19 @@ float ULantern::GetBatteryLife() {
 void ULantern::UseItemPressed_Implementation() {}
 
 void ULantern::UseItemReleased_Implementation() {
+    UFMODAudioComponent* AudioComp = Cast<UFMODAudioComponent>(GetOwner()->GetComponentByClass(
+        UFMODAudioComponent::StaticClass()));
+    if (AudioComp) AudioComp->Play();
+
     if (!_isLanternOn && _batteryLife > 0) {
         _isLanternOn = true;
         PowerOn();
         SetComponentTickEnabled(true);
-        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Lantern On...")));
     }
     else if(_isLanternOn) {
         _isLanternOn = false;
         PowerOff();
         SetComponentTickEnabled(false);
-        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Lantern Off...")));  
     }
 
 }
