@@ -32,8 +32,12 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
     _StepsAudioComp->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("Foot"));
     _StepsAudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/pasos.pasos")));
     _StepsAudioComp->ComponentTags.Add("step");
+    _StepsAudioComp->bAutoActivate = false;
 
 	_BreathAudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("Audio_Breathing"));
+    _BreathAudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/HurtMale.HurtMale")));
+    _BreathAudioComp->bAutoActivate = false;
+
 	_PlayerPointerComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Player Pointer"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Plane(TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
 	if (StaticMesh_Plane.Object) {

@@ -60,7 +60,7 @@ protected:
     class UFMODAudioComponent* _StepsAudioComp;
 	UPROPERTY(Category = Audio, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UFMODAudioComponent* _BreathAudioComp;
-    UPROPERTY(Category = Audio, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(Category = Menu , VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UMenuInteraction* _MenuInteractionComp;
 	UPROPERTY(Category = "Diary", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* _PlayerPointerComp;

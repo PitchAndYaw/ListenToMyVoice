@@ -39,6 +39,11 @@ public:
     AEnemyCharacter(const FObjectInitializer& OI);
 
 protected:
+    UPROPERTY(Category = Audio, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    class UFMODAudioComponent* _StepsAudioComp;
+    UPROPERTY(Category = Audio, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    class UFMODAudioComponent* _BreathAudioComp;
+
     virtual void BeginPlay() override;
 
 public:

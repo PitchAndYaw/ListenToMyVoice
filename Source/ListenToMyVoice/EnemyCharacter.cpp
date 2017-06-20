@@ -10,6 +10,16 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
     bReplicates = true;
     bReplicateMovement = true;
 
+    _StepsAudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("Audio"));
+    _StepsAudioComp->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("Foot"));
+    _StepsAudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/pasos.pasos")));
+    _StepsAudioComp->ComponentTags.Add("step");
+    _StepsAudioComp->bAutoActivate = false;
+
+    _BreathAudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("Audio_Breathing"));
+    _BreathAudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/HurtMale.HurtMale")));
+    _BreathAudioComp->bAutoActivate = false;
+
     AIControllerClass = AEnemyController::StaticClass();
 	OnActorHit.AddDynamic(this, &AEnemyCharacter::OnHit);
 
