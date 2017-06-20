@@ -24,7 +24,7 @@ UInputMenu::UInputMenu(const FObjectInitializer& OI) : Super(OI) {
     _MaterialHover = Finder3.Object;
     _TextRender->SetMaterial(0, _Material);
     static ConstructorHelpers::FObjectFinder<UFont> Finder4(
-        TEXT("Font'/Game/Art/Common/Fonts/FontLTMV.FontLTMV'"));
+        TEXT("Font'/Game/Art/Common/Fonts/FontIcarus.FontIcarus'"));
     _TextRender->SetFont(Finder4.Object);
 
     _TextRender->SetWorldSize(12);
