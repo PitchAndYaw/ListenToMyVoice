@@ -83,7 +83,7 @@ void AVRCharacter::BuildLeft() {
     _LeftSphere = CreateDefaultSubobject<USphereComponent>(TEXT("_LeftSphere"));
     _LeftSphere->AttachToComponent(_SM_LeftHand, FAttachmentTransformRules::KeepRelativeTransform);
     _LeftSphere->SetRelativeLocation(FVector(10.f, 0.f, 0.f));
-    _LeftSphere->SetSphereRadius(10.f);
+    _LeftSphere->SetSphereRadius(12.f);
 }
 
 void AVRCharacter::BuildRight() {
@@ -103,7 +103,7 @@ void AVRCharacter::BuildRight() {
     _RightSphere = CreateDefaultSubobject<USphereComponent>(TEXT("_RightSphere"));
     _RightSphere->AttachToComponent(_SM_RightHand, FAttachmentTransformRules::KeepRelativeTransform);
     _RightSphere->SetRelativeLocation(FVector(10.f, 0.f, 0.f));
-    _RightSphere->SetSphereRadius(10.f);
+    _RightSphere->SetSphereRadius(12.f);
 }
 
 void AVRCharacter::BeginPlay() {
