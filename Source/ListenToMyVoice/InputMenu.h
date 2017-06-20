@@ -18,9 +18,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Text Menu")
     UTextRenderComponent* _TextRender;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Text Menu")
-    FColor _Color;
+    UMaterial* _Material;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Text Menu")
-    FColor _HoverColor;
+    UMaterial* _MaterialHover;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio Menu")
     class UFMODAudioComponent* _AudioComp;

@@ -11,7 +11,6 @@ AMenu3D::AMenu3D(const class FObjectInitializer& OI) : Super(OI) {
     PrimaryActorTick.bCanEverTick = true;
 
     /* SOUNDS */
-    _FirstTime = true;
     _AudioOpenCloseEvent = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/UI/Ok2.Ok2")));
     _AudioSessionOkEvent = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/UI/Tic.Tic")));
     _AudioSessionKoEvent = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/UI/Cancel2.Cancel2")));
@@ -76,12 +75,12 @@ void AMenu3D::AddSubmenu(UMenuPanel* Submenu) {
     _Submenus.Add(Submenu);
 }
 
-void AMenu3D::ToogleMenu(FVector Location, FRotator Rotation) {
-    if (_FirstTime) {
+void AMenu3D::ToogleMenu(FVector Location, FRotator Rotation, bool PlaySound) {
+    if (PlaySound) {
         _AudioComp->Event = _AudioOpenCloseEvent;
         _AudioComp->Play();
-        _FirstTime = false;
     }
+
     if (_IsMenuHidden) {
         SetSubmenuByIndex(0);
         

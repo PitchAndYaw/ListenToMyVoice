@@ -57,7 +57,7 @@ void APlayerControllerLobby::CLIENT_CreateMenu_Implementation() {
                 Location.X += 50;
             }
             _MenuActor->ToogleMenu(Location,
-                                   CameraComp->GetComponentRotation());
+                                   CameraComp->GetComponentRotation(), false);
 
             APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
             if (PlayerCharacter) {
