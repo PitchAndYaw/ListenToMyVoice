@@ -257,7 +257,7 @@ void APlayerControllerPlay::ToogleMenu() {
             /* MENU INTERFACE */
             if (!_MenuActor) CreateMenuActor();
 
-            UCameraComponent* CameraComp = Cast<UCameraComponent>(PlayerCharacter->
+            UCameraComponent* CameraComp = Cast<UCameraComponent>(PlayerSpectator->
                                                                   FindComponentByClass<UCameraComponent>());
             if (CameraComp) {
                 FVector Location = CameraComp->GetComponentLocation() +

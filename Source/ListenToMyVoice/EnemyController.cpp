@@ -30,7 +30,7 @@ void AEnemyController::Possess(APawn* InPawn) {
     if (EnemyCharacter) {
         Super::Possess(InPawn);
 
-        EnemyCharacter->_BreathAudioComp->Play();
+        //EnemyCharacter->_BreathAudioComp->Play();
 
         RunBehaviorTree(Cast<AEnemyCharacter>(GetPawn())->_BehaviourTree);
 
