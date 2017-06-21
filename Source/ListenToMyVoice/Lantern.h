@@ -12,13 +12,6 @@ class LISTENTOMYVOICE_API ULantern : public UActorComponent, public IItfUsableIt
 	GENERATED_BODY()
 
 public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Light")
-    float _InnerLightIntensity;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Light")
-    float _MiddleLightIntensity;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Light")
-    float _OuterLightIntensity;
-
 	ULantern();
 
     virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -48,6 +41,10 @@ public:
 
 
 protected:
+    float _InnerLightIntensity;
+    float _MiddleLightIntensity;
+    float _OuterLightIntensity;
+
     USpotLightComponent* _InnerLight;
     USpotLightComponent* _MiddleLight;
     USpotLightComponent* _OuterLight;

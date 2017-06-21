@@ -25,6 +25,7 @@ void ULantern::BeginPlay(){
     USpotLightComponent* LightComponent;
     for (UActorComponent* Component : SpotLightArray) {
         LightComponent = Cast<USpotLightComponent>(Component);
+
         if (LightComponent->ComponentHasTag("inner")) {
             _InnerLight = LightComponent;
             _InnerLightIntensity = LightComponent->Intensity;
@@ -37,6 +38,7 @@ void ULantern::BeginPlay(){
             _OuterLight = LightComponent;
             _OuterLightIntensity = LightComponent->Intensity;
         }
+        LightComponent->SetIntensity(0);
     }
 }
 
