@@ -41,7 +41,7 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
 	_IsDamaged = false;
 
     GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-	GetCharacterMovement()->MaxWalkSpeed = 170.0f;
+	GetCharacterMovement()->MaxWalkSpeed = 150.0f;
 }
 
 void AEnemyCharacter::BeginPlay() {
