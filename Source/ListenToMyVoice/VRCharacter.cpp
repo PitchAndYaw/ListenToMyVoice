@@ -509,7 +509,7 @@ void AVRCharacter::ItemGrabbedLeft() {
         if (ItemMesh && GrabItemComp) {
             ItemMesh->SetSimulatePhysics(false);
             ItemMesh->AttachToComponent(_SM_LeftHand,
-                                        FAttachmentTransformRules::KeepRelativeTransform,
+                                        FAttachmentTransformRules::SnapToTargetNotIncludingScale,
                                         TEXT("TakeSocket"));
 
             ItemMesh->RelativeLocation = GrabItemComp->_locationAttach_L;
@@ -533,7 +533,7 @@ void AVRCharacter::ItemGrabbedRight() {
         if (ItemMesh && GrabItemComp) {
             ItemMesh->SetSimulatePhysics(false);
             ItemMesh->AttachToComponent(_SM_RightHand,
-                                        FAttachmentTransformRules::KeepRelativeTransform,
+                                        FAttachmentTransformRules::SnapToTargetNotIncludingScale,
                                         TEXT("TakeSocket"));
 
             ItemMesh->RelativeLocation = GrabItemComp->_locationAttach_R;
@@ -577,7 +577,7 @@ void AVRCharacter::MULTI_SwitchItem_Implementation(AActor* ItemActor, int Hand) 
         if (ItemMesh) {
             ULibraryUtils::SetActorEnable(ItemActor, false);
             ItemMesh->AttachToComponent(GetRootComponent(),
-                                        FAttachmentTransformRules::KeepRelativeTransform);
+                                        FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 
             ItemMesh->RelativeLocation = FVector(0.0f, 0.0f, 0.0f);
             ItemMesh->RelativeRotation = FRotator(0.0f, 0.0f, 0.0f);
