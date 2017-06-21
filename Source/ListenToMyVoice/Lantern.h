@@ -11,11 +11,16 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LISTENTOMYVOICE_API ULantern : public UActorComponent, public IItfUsableItem {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Light")
+    float _InnerLightIntensity;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Light")
+    float _MiddleLightIntensity;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Light")
+    float _OuterLightIntensity;
+
 	ULantern();
 
-    // Called every frame
     virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 
@@ -43,7 +48,10 @@ public:
 
 
 protected:
-	// Called when the game starts
+    USpotLightComponent* _InnerLight;
+    USpotLightComponent* _MiddleLight;
+    USpotLightComponent* _OuterLight;
+
 	virtual void BeginPlay() override;
 
     bool _isLanternOn;

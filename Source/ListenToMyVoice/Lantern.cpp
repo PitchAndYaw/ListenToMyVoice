@@ -10,12 +10,34 @@ ULantern::ULantern(){
     _isLanternOn = false;
 
     PrimaryComponentTick.bCanEverTick = true;
+
+    _InnerLightIntensity = 0;
+    _MiddleLightIntensity = 0;
+    _OuterLightIntensity = 0;
 }
 
 
 void ULantern::BeginPlay(){
 	Super::BeginPlay();
     SetComponentTickEnabled(false);
+
+    TArray<UActorComponent*> SpotLightArray = GetOwner()->GetComponentsByClass(USpotLightComponent::StaticClass());
+    USpotLightComponent* LightComponent;
+    for (UActorComponent* Component : SpotLightArray) {
+        LightComponent = Cast<USpotLightComponent>(Component);
+        if (LightComponent->ComponentHasTag("inner")) {
+            _InnerLight = LightComponent;
+            _InnerLightIntensity = LightComponent->Intensity;
+        }
+        else if (LightComponent->ComponentHasTag("middle")) {
+            _MiddleLight = LightComponent;
+            _MiddleLightIntensity = LightComponent->Intensity;
+        }
+        else if (LightComponent->ComponentHasTag("outer")) {
+            _OuterLight = LightComponent;
+            _OuterLightIntensity = LightComponent->Intensity;
+        }
+    }
 }
 
 
@@ -69,19 +91,13 @@ void ULantern::UseItemReleased_Implementation() {
 }
 
 void ULantern::PowerOff() {
-    TArray<UActorComponent*> SpotLightArray;
-    SpotLightArray = GetOwner()->GetComponentsByClass(USpotLightComponent::StaticClass());
-
-    Cast<USpotLightComponent>(SpotLightArray[0])->SetIntensity(0);
-    Cast<USpotLightComponent>(SpotLightArray[1])->SetIntensity(0);
-    Cast<USpotLightComponent>(SpotLightArray[2])->SetIntensity(0);
+    if (_InnerLight) _InnerLight->SetIntensity(0);
+    if (_MiddleLight) _MiddleLight->SetIntensity(0);
+    if (_OuterLight) _OuterLight->SetIntensity(0);
 }
 
 void ULantern::PowerOn() {
-    TArray<UActorComponent*> SpotLightArray;
-    SpotLightArray = GetOwner()->GetComponentsByClass(USpotLightComponent::StaticClass());
-
-    Cast<USpotLightComponent>(SpotLightArray[0])->SetIntensity(2333.0);
-    Cast<USpotLightComponent>(SpotLightArray[1])->SetIntensity(8318.0);
-    Cast<USpotLightComponent>(SpotLightArray[2])->SetIntensity(4527.0);
+    if (_InnerLight) _InnerLight->SetIntensity(_InnerLightIntensity);
+    if (_MiddleLight) _MiddleLight->SetIntensity(_MiddleLightIntensity);
+    if (_OuterLight) _OuterLight->SetIntensity(_OuterLightIntensity);
 }
