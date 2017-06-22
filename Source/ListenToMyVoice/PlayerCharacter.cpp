@@ -97,7 +97,7 @@ void APlayerCharacter::CheckFloorMaterial() {
 			_StepsAudioComp->SetParameter("Humedad", 0.0f);
 		}
 		else {
-			_StepsAudioComp->SetParameter("Humedad", 1.0f);
+			_StepsAudioComp->SetParameter("Humedad", 0.5f);
 		}
 	}
 }
