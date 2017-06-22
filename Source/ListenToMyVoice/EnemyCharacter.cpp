@@ -21,6 +21,14 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
     _BreathAudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/Beast.Beast")));
     _BreathAudioComp->bAutoActivate = false;
 
+	_PlayerPointerComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Player Pointer"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Plane(TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
+	if (StaticMesh_Plane.Object) {
+		_PlayerPointerComp->SetStaticMesh(StaticMesh_Plane.Object);
+	}
+	_PlayerPointerComp->SetRelativeLocation({ 0,0,300 });
+	_PlayerPointerComp->bOwnerNoSee = true;
+
     _DieEvent = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Scene/EnemyDead.EnemyDead")));
 
     AIControllerClass = AEnemyController::StaticClass();
