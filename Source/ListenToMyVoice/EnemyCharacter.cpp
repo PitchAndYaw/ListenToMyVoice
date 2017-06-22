@@ -22,6 +22,7 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
     _BreathAudioComp->bAutoActivate = false;
 
 	_PlayerPointerComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Player Pointer"));
+    _PlayerPointerComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Plane(TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
 	if (StaticMesh_Plane.Object) {
 		_PlayerPointerComp->SetStaticMesh(StaticMesh_Plane.Object);
@@ -30,6 +31,7 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
 	_PlayerPointerComp->bOwnerNoSee = true;
 
     _DieEvent = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Scene/EnemyDead.EnemyDead")));
+    _HurtEvent = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/HurtEnemy.HurtEnemy")));
 
     AIControllerClass = AEnemyController::StaticClass();
 	OnActorHit.AddDynamic(this, &AEnemyCharacter::OnHit);
@@ -78,6 +80,10 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const&
 	ULibraryUtils::Log(FString::Printf(TEXT("Me han dado")), 0, 60);
 	/*The enemy doesn't receive damage*/
 	SetDamaged(true);
+
+    _BreathAudioComp->Event = _HurtEvent;
+    _BreathAudioComp->Play();
+
 	return 0.0f;
 }
 

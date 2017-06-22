@@ -124,12 +124,6 @@ void AVRCharacter::BeginPlay() {
 void AVRCharacter::Tick(float DeltaTime) {
     Super::Tick(DeltaTime);
 
-    SERVER_UpdateComponentPosition(_LeftHandComp, _LeftHandComp->RelativeLocation,
-                                                  _LeftHandComp->RelativeRotation);
-
-    SERVER_UpdateComponentPosition(_RightHandComp, _RightHandComp->RelativeLocation,
-                                                   _RightHandComp->RelativeRotation);
-
     /* VR TURN  */
     if (_TurnSide != 0) {
         AddControllerYawInput(_TurnSide*_TurnActualVelocity*DeltaTime);
@@ -139,21 +133,6 @@ void AVRCharacter::Tick(float DeltaTime) {
             _TurnActualVelocity = _TurnVelocity;
         }
     }
-}
-
-/********** UPDATE LOCATIONS ***********/
-bool AVRCharacter::SERVER_UpdateComponentPosition_Validate(USceneComponent* Component,
-                                                           FVector Location,
-                                                           FRotator Rotation) { return true; }
-void AVRCharacter::SERVER_UpdateComponentPosition_Implementation(USceneComponent* Component,
-                                                                 FVector Location,
-                                                                 FRotator Rotation) {
-    MULTI_UpdateComponentPosition(Component, Location, Rotation);
-}
-void AVRCharacter::MULTI_UpdateComponentPosition_Implementation(USceneComponent* Component,
-                                                                FVector Location,
-                                                                FRotator Rotation) {
-    Component->SetRelativeLocationAndRotation(Location, Rotation);
 }
 
 void AVRCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput) {
@@ -309,7 +288,7 @@ void AVRCharacter::UseLeftPressed(bool IsMenuHidden) {
                     IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
                     if (ItfObject) {
                         ItfObject->Execute_UseItemPressed(Component);
-                        _LastItemUsedPressed = _ItemLeft;
+                        _LastItemUsedPressedLeft = _ItemLeft;
                     }
                 }
             }
@@ -324,7 +303,7 @@ void AVRCharacter::UseLeftPressed(bool IsMenuHidden) {
 
 void AVRCharacter::UseLeftReleased(bool IsMenuHidden) {
     if (IsMenuHidden) {
-        if (_ItemLeft && _LastItemUsedPressed == _ItemLeft) {
+        if (_ItemLeft && _LastItemUsedPressedLeft == _ItemLeft) {
             TArray<UActorComponent*> Components;
             _ItemLeft->GetComponents(Components);
 
@@ -333,7 +312,7 @@ void AVRCharacter::UseLeftReleased(bool IsMenuHidden) {
                     IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
                     if (ItfObject) {
                         ItfObject->Execute_UseItemReleased(Component);
-                        _LastItemUsedReleased = _ItemLeft;
+                        _LastItemUsedReleasedLeft = _ItemLeft;
                     }
                 }
             }
@@ -359,7 +338,7 @@ void AVRCharacter::UseRightPressed(bool IsMenuHidden) {
                     IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
                     if (ItfObject) {
                         ItfObject->Execute_UseItemPressed(Component);
-                        _LastItemUsedPressed = _ItemRight;
+                        _LastItemUsedPressedRight = _ItemRight;
                     }
                 }
             }
@@ -374,7 +353,7 @@ void AVRCharacter::UseRightPressed(bool IsMenuHidden) {
 
 void AVRCharacter::UseRightReleased(bool IsMenuHidden) {
     if (IsMenuHidden) {
-        if (_ItemRight && _LastItemUsedPressed == _ItemRight) {
+        if (_ItemRight && _LastItemUsedPressedRight == _ItemRight) {
             TArray<UActorComponent*> Components;
             _ItemRight->GetComponents(Components);
 
@@ -383,7 +362,7 @@ void AVRCharacter::UseRightReleased(bool IsMenuHidden) {
                     IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
                     if (ItfObject) {
                         ItfObject->Execute_UseItemReleased(Component);
-                        _LastItemUsedReleased = _ItemRight;
+                        _LastItemUsedReleasedRight = _ItemRight;
                     }
                 }
             }

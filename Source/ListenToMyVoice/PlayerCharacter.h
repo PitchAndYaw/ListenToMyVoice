@@ -15,8 +15,10 @@ public:
     AActor* _ItemLeft;
     AActor* _ItemRight;
 
-    AActor* _LastItemUsedPressed;
-    AActor* _LastItemUsedReleased;
+    AActor* _LastItemUsedPressedLeft;
+    AActor* _LastItemUsedReleasedLeft;
+    AActor* _LastItemUsedPressedRight;
+    AActor* _LastItemUsedReleasedRight;
 
     AActor* _LastUsedPressed;
     AActor* _LastUsedReleased;

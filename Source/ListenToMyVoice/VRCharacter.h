@@ -130,12 +130,6 @@ protected:
     UFUNCTION(NetMulticast, Reliable)
     void MULTI_UpdateAnimation(EGripEnum NewAnim, int Hand);
 
-    /********** UPDATE LOCATIONS ***********/
-    UFUNCTION(Server, Reliable, WithValidation)
-    void SERVER_UpdateComponentPosition(USceneComponent* Component, FVector Location, FRotator Rotation);
-    UFUNCTION(NetMulticast, Reliable)
-    void MULTI_UpdateComponentPosition(USceneComponent* Component, FVector Location, FRotator Rotation);
-
 private:
     IHeadMountedDisplay* HMD;
 

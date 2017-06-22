@@ -18,8 +18,10 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
 
     _ItemLeft = nullptr;
     _ItemRight = nullptr;
-    _LastItemUsedPressed = nullptr;
-    _LastItemUsedReleased = nullptr;
+    _LastItemUsedPressedLeft = nullptr;
+    _LastItemUsedReleasedLeft = nullptr;
+    _LastItemUsedPressedRight = nullptr;
+    _LastItemUsedReleasedRight = nullptr;
     _LastUsedPressed = nullptr;
     _LastUsedReleased = nullptr;
 
@@ -40,6 +42,7 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
     _BreathAudioComp->bAutoActivate = false;
 
 	_PlayerPointerComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Player Pointer"));
+    _PlayerPointerComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Plane(TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
 	if (StaticMesh_Plane.Object) {
 		_PlayerPointerComp->SetStaticMesh(StaticMesh_Plane.Object);

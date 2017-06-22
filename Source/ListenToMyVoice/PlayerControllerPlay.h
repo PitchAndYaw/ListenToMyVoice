@@ -16,8 +16,6 @@ public:
     virtual void TickActor(float DeltaTime, enum ELevelTick TickType,
                            FActorTickFunction & ThisTickFunction) override;
 
-    virtual void BeginPlay() override;
-
     void AfterPossessed();
     //This override is because CLIENT_AfterPossessed does not work in host (Client-server)
     UFUNCTION()
@@ -50,6 +48,7 @@ protected:
     class UNWGameInstance* _GameInstance;
 
     virtual void SetupInputComponent() override;
+    virtual void BeginPlay() override;
 
     /********************************** ACTION MAPPINGS ******************************************/
     /******** USE ITEM LEFT *********/

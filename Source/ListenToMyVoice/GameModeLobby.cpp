@@ -21,7 +21,7 @@ AGameModeLobby::AGameModeLobby(const class FObjectInitializer& OI) : Super(OI) {
     bUseSeamlessTravel = true;
     
     _MaxPlayers = 2;
-    _ServerName = "";
+    _ServerName = "ServerName";
     _MapNameGM = USettings::Get()->LevelToPlay.GetLongPackageName();
 }
 

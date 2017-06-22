@@ -7,6 +7,7 @@
 #include "NWGameInstance.h"
 #include "FMODAudioComponent.h"
 #include "PlayerCharacter.h"
+#include "FPCharacter.h"
 #include "PlayerSpectator.h"
 #include "PlayerStatePlay.h"
 
@@ -32,9 +33,14 @@ void APlayerControllerPlay::SetupInputComponent() {
 void APlayerControllerPlay::BeginPlay() {
     Super::BeginPlay();
 
-    if (IsLocalController()) {
-        _GameInstance = Cast<UNWGameInstance>(GetGameInstance());
-        if (_GameInstance) {
+    _GameInstance = Cast<UNWGameInstance>(GetGameInstance());
+    if (_GameInstance) {
+        AFPCharacter* FPCharacter = Cast<AFPCharacter>(GetPawn());
+        if (FPCharacter) {
+            UUserWidget* HUD = CreateWidget<UUserWidget>(this, FPCharacter->_HUDClass);
+            if (HUD) HUD->AddToViewport();
+        }
+        if (IsLocalController()) {
             SERVER_CallUpdate(_GameInstance->_PlayerInfoSaved);
         }
     }
@@ -76,6 +82,7 @@ void APlayerControllerPlay::ModifyVoiceAudioComponent(const FUniqueNetId& Remote
     APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
     bool FullVolume = false;
     if (PlayerCharacter) {
+        ULibraryUtils::Log("ModifyVoiceAudioComponent");
         FullVolume = PlayerCharacter->IsWalkieInHand();
 
         if (!_VoiceAudioComp) {
@@ -103,6 +110,10 @@ void APlayerControllerPlay::ModifyVoiceAudioComponent(const FUniqueNetId& Remote
                     _WalkieNoiseAudioComp->bOverrideAttenuation = true;
                     ULibraryUtils::Log("Setup Voice");
                 }
+            }
+            else if(AudioComponent) {
+                AudioComponent->SetVolumeMultiplier(0);
+                ULibraryUtils::Log("VOLUME: 0");
             }
         }
 
@@ -238,13 +249,13 @@ void APlayerControllerPlay::ToogleMenu() {
     APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
     if (PlayerCharacter) {
         /* MENU INTERFACE */
-        if(!_MenuActor) CreateMenuActor();
+        if (!_MenuActor) CreateMenuActor();
 
         UCameraComponent* CameraComp = Cast<UCameraComponent>(PlayerCharacter->
                                                               FindComponentByClass<UCameraComponent>());
         if (CameraComp) {
             FVector Location = CameraComp->GetComponentLocation() +
-                              (CameraComp->GetForwardVector().GetSafeNormal() * 200);
+                (CameraComp->GetForwardVector().GetSafeNormal() * 200);
 
             _MenuActor->ToogleMenu(Location,
                                    CameraComp->GetComponentRotation());
@@ -285,7 +296,7 @@ void APlayerControllerPlay::CLIENT_ShowMenu_Implementation() {
                                                                   FindComponentByClass<UCameraComponent>());
             if (CameraComp) {
                 FVector Location = CameraComp->GetComponentLocation() +
-                                  (CameraComp->GetForwardVector().GetSafeNormal() * 200);
+                    (CameraComp->GetForwardVector().GetSafeNormal() * 200);
 
                 _MenuActor->ToogleMenu(Location,
                                        CameraComp->GetComponentRotation());

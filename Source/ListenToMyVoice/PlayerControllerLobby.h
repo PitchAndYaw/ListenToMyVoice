@@ -33,7 +33,9 @@ public:
     void CLIENT_CreateMenu();
 
 protected:
+
     virtual void SetupInputComponent() override;
+    virtual void BeginPlay() override;
 
     /********************************** ACTION MAPPINGS ******************************************/
     /******** USE ITEM LEFT *********/

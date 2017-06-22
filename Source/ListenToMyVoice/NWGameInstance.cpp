@@ -94,8 +94,6 @@ void UNWGameInstance::InitGame() {
             HMD->EnableStereo(_IsVRMode);
         }
     }
-    ULibraryUtils::Log(FString::Printf(TEXT("_IsVRMode: %s"), _IsVRMode ? TEXT("true") : TEXT("false")));
-
 
     APlayerControllerLobby* const PlayerControllerLobby = Cast<APlayerControllerLobby>(
                                                                 GetFirstLocalPlayerController());

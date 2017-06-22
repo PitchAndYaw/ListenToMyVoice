@@ -4,7 +4,9 @@
 #include "PlayerControllerLobby.h"
 
 #include "GameModeLobby.h"
+#include "NWGameInstance.h"
 #include "PlayerCharacter.h"
+#include "FPCharacter.h"
 #include "Menu3D.h"
 
 
@@ -26,6 +28,16 @@ void APlayerControllerLobby::SetupInputComponent() {
     InputComponent->BindAction("ClickLeft", IE_Released, this, &APlayerControllerLobby::UseLeftReleased);
     InputComponent->BindAction("ClickRight", IE_Pressed, this, &APlayerControllerLobby::UseRightPressed);
     InputComponent->BindAction("ClickRight", IE_Released, this, &APlayerControllerLobby::UseRightReleased);
+}
+
+void APlayerControllerLobby::BeginPlay() {
+    Super::BeginPlay();
+
+    AFPCharacter* FPCharacter = Cast<AFPCharacter>(GetPawn());
+    if (FPCharacter) {
+        UUserWidget* HUD = CreateWidget<UUserWidget>(this, FPCharacter->_HUDClass);
+        if (HUD) HUD->AddToViewport();
+    }
 }
 
 void APlayerControllerLobby::CLIENT_InitialSetup_Implementation() {

@@ -45,6 +45,7 @@ public:
 
 protected:
     TAssetPtr<class UFMODEvent> _DieEvent;
+    TAssetPtr<class UFMODEvent> _HurtEvent;
 
     UPROPERTY(Category = Audio, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UFMODAudioComponent* _StepsAudioComp;

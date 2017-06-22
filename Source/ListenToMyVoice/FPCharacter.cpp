@@ -50,12 +50,13 @@ void AFPCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput)
 void AFPCharacter::BeginPlay() {
     Super::BeginPlay();
 
-    APlayerController* PlayerController = Cast<APlayerController>(GetController());
-    if (PlayerController && PlayerController->IsLocalPlayerController()) {
-        /* HUD */
-        UUserWidget* HUD = CreateWidget<UUserWidget>(PlayerController, _HUDClass);
-        if (HUD) HUD->AddToViewport();
-    }
+    //APlayerController* PlayerController = Cast<APlayerController>(GetController());
+    //if (PlayerController/* && PlayerController->IsLocalPlayerController()*/) {
+    //    ULibraryUtils::Log("HUD");
+    //    /* HUD */
+    //    UUserWidget* HUD = CreateWidget<UUserWidget>(PlayerController, _HUDClass);
+    //    if (HUD) HUD->AddToViewport();
+    //}
 }
 
 void AFPCharacter::AfterPossessed(bool SetInventory) {
@@ -204,7 +205,7 @@ void AFPCharacter::UseLeftPressed(bool IsMenuHidden) {
                     IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
                     if (ItfObject) {
                         ItfObject->Execute_UseItemPressed(Component);
-                        _LastItemUsedPressed = _ItemLeft;
+                        _LastItemUsedPressedLeft = _ItemLeft;
                     }
                 }
             }
@@ -215,7 +216,7 @@ void AFPCharacter::UseLeftPressed(bool IsMenuHidden) {
 
 void AFPCharacter::UseLeftReleased(bool IsMenuHidden) {
     if (IsMenuHidden) {
-        if (_ItemLeft && _IsInventoryHidden && _LastItemUsedPressed == _ItemLeft) {
+        if (_ItemLeft && _IsInventoryHidden && _LastItemUsedPressedLeft == _ItemLeft) {
             TArray<UActorComponent*> Components;
             _ItemLeft->GetComponents(Components);
 
@@ -224,7 +225,7 @@ void AFPCharacter::UseLeftReleased(bool IsMenuHidden) {
                     IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
                     if (ItfObject) {
                         ItfObject->Execute_UseItemReleased(Component);
-                        _LastItemUsedReleased = _ItemLeft;
+                        _LastItemUsedReleasedLeft = _ItemLeft;
                     }
                 }
             }
@@ -244,7 +245,7 @@ void AFPCharacter::UseRightPressed(bool IsMenuHidden) {
                 IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
                 if (ItfObject) {
                     ItfObject->Execute_UseItemPressed(Component);
-                    _LastItemUsedPressed = _ItemRight;
+                    _LastItemUsedPressedRight = _ItemRight;
                 }
             }
         }
@@ -252,7 +253,7 @@ void AFPCharacter::UseRightPressed(bool IsMenuHidden) {
 }
 
 void AFPCharacter::UseRightReleased(bool IsMenuHidden) {
-    if (_ItemRight && _IsInventoryHidden && _LastItemUsedPressed == _ItemRight) {
+    if (_ItemRight && _IsInventoryHidden && _LastItemUsedPressedRight == _ItemRight) {
         TArray<UActorComponent*> Components;
         _ItemRight->GetComponents(Components);
 
@@ -261,7 +262,7 @@ void AFPCharacter::UseRightReleased(bool IsMenuHidden) {
                 IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
                 if (ItfObject) {
                     ItfObject->Execute_UseItemReleased(Component);
-                    _LastItemUsedReleased = _ItemRight;
+                    _LastItemUsedReleasedRight = _ItemRight;
                 }
             }
         }

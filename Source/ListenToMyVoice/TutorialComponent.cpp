@@ -94,14 +94,16 @@ bool UTutorialComponent::CheckCondition() {
                 break;
                 case ETutorialCondition::UseItemPressed:
                 {
-                    if (_Character && (_Character->_LastItemUsedPressed == _ActorRef)) {
+                    if (_Character && (_Character->_LastItemUsedPressedLeft == _ActorRef ||
+                                       _Character->_LastItemUsedPressedRight == _ActorRef)) {
                         NextStep();
                     }
                 };
                 break;
                 case ETutorialCondition::UseItemReleased:
                 {
-                    if (_Character && (_Character->_LastItemUsedReleased == _ActorRef)) {
+                    if (_Character && (_Character->_LastItemUsedReleasedLeft == _ActorRef ||
+                                       _Character->_LastItemUsedReleasedRight == _ActorRef)) {
                         NextStep();
                     }
                 };
