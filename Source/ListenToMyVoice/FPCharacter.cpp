@@ -204,6 +204,7 @@ void AFPCharacter::UseLeftPressed(bool IsMenuHidden) {
                 if (Component->GetClass()->ImplementsInterface(UItfUsableItem::StaticClass())) {
                     IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
                     if (ItfObject) {
+                        _ItemPressedLeft = true;
                         ItfObject->Execute_UseItemPressed(Component);
                         _LastItemUsedPressedLeft = _ItemLeft;
                     }
@@ -224,6 +225,7 @@ void AFPCharacter::UseLeftReleased(bool IsMenuHidden) {
                 if (Component->GetClass()->ImplementsInterface(UItfUsableItem::StaticClass())) {
                     IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
                     if (ItfObject) {
+                        _ItemPressedLeft = false;
                         ItfObject->Execute_UseItemReleased(Component);
                         _LastItemUsedReleasedLeft = _ItemLeft;
                     }
@@ -244,6 +246,7 @@ void AFPCharacter::UseRightPressed(bool IsMenuHidden) {
             if (Component->GetClass()->ImplementsInterface(UItfUsableItem::StaticClass())) {
                 IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
                 if (ItfObject) {
+                    _ItemPressedRight = true;
                     ItfObject->Execute_UseItemPressed(Component);
                     _LastItemUsedPressedRight = _ItemRight;
                 }
@@ -261,6 +264,7 @@ void AFPCharacter::UseRightReleased(bool IsMenuHidden) {
             if (Component->GetClass()->ImplementsInterface(UItfUsableItem::StaticClass())) {
                 IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
                 if (ItfObject) {
+                    _ItemPressedRight = false;
                     ItfObject->Execute_UseItemReleased(Component);
                     _LastItemUsedReleasedRight = _ItemRight;
                 }
@@ -388,7 +392,7 @@ void AFPCharacter::TakeDropLeft() {
 void AFPCharacter::ToggleInventory() {
     if (!_MenuInteractionComp->IsActive()) {
         APlayerController* PlayerController = Cast<APlayerController>(GetController());
-        if (PlayerController && _InventoryWidget) {
+        if (PlayerController && _InventoryWidget && !_ItemPressedRight && !_ItemPressedLeft) {
             if (_IsInventoryHidden) {
                 _InventoryWidget->SetVisibility(ESlateVisibility::Visible);
                 PlayerController->bShowMouseCursor = true;

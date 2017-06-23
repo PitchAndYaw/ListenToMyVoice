@@ -23,6 +23,9 @@ public:
     AActor* _LastUsedPressed;
     AActor* _LastUsedReleased;
 
+    bool _ItemPressedLeft;
+    bool _ItemPressedRight;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Life")
     int _Health;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Life")

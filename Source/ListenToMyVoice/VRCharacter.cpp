@@ -287,6 +287,7 @@ void AVRCharacter::UseLeftPressed(bool IsMenuHidden) {
                 if (Component->GetClass()->ImplementsInterface(UItfUsableItem::StaticClass())) {
                     IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
                     if (ItfObject) {
+                        _ItemPressedLeft = true;
                         ItfObject->Execute_UseItemPressed(Component);
                         _LastItemUsedPressedLeft = _ItemLeft;
                     }
@@ -311,6 +312,7 @@ void AVRCharacter::UseLeftReleased(bool IsMenuHidden) {
                 if (Component->GetClass()->ImplementsInterface(UItfUsableItem::StaticClass())) {
                     IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
                     if (ItfObject) {
+                        _ItemPressedLeft = false;
                         ItfObject->Execute_UseItemReleased(Component);
                         _LastItemUsedReleasedLeft = _ItemLeft;
                     }
@@ -337,6 +339,7 @@ void AVRCharacter::UseRightPressed(bool IsMenuHidden) {
                 if (Component->GetClass()->ImplementsInterface(UItfUsableItem::StaticClass())) {
                     IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
                     if (ItfObject) {
+                        _ItemPressedRight = true;
                         ItfObject->Execute_UseItemPressed(Component);
                         _LastItemUsedPressedRight = _ItemRight;
                     }
@@ -361,6 +364,7 @@ void AVRCharacter::UseRightReleased(bool IsMenuHidden) {
                 if (Component->GetClass()->ImplementsInterface(UItfUsableItem::StaticClass())) {
                     IItfUsableItem* ItfObject = Cast<IItfUsableItem>(Component);
                     if (ItfObject) {
+                        _ItemPressedRight = false;
                         ItfObject->Execute_UseItemReleased(Component);
                         _LastItemUsedReleasedRight = _ItemRight;
                     }

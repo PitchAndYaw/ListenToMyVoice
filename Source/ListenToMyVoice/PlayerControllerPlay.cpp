@@ -247,7 +247,7 @@ void APlayerControllerPlay::UseRightReleased() {
 /*************** TRIGGER MENU *************/
 void APlayerControllerPlay::ToogleMenu() {
     APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
-    if (PlayerCharacter) {
+    if (PlayerCharacter && !PlayerCharacter->_ItemPressedLeft && !PlayerCharacter->_ItemPressedRight) {
         /* MENU INTERFACE */
         if (!_MenuActor) CreateMenuActor();
 

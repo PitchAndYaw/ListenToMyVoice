@@ -24,6 +24,8 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
     _LastItemUsedReleasedRight = nullptr;
     _LastUsedPressed = nullptr;
     _LastUsedReleased = nullptr;
+    _ItemPressedLeft = false;
+    _ItemPressedRight = false;
 
     _PlayerCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Player Camera"));
     _MenuInteractionComp = CreateDefaultSubobject<UMenuInteraction>(TEXT("Menu Interaction"));
