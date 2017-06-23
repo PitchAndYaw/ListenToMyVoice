@@ -134,6 +134,7 @@ public:
     /* BINDINGS */
     void OnButtonNewGame(UInputMenu* InputMenu);
     void OnButtonOptions(UInputMenu* InputMenu);
+    void OnButtonDestroyExitGame(UInputMenu* InputMenu);
     void OnButtonExitGame(UInputMenu* InputMenu);
 
     void OnButtonHostGame(UInputMenu* InputMenu);
@@ -176,6 +177,8 @@ protected:
     IOnlineSessionPtr GetSessions();
 
 private:
+    bool _Exit;
+
     /* MENU INTERFACE */
     AMenu3D* _MenuActor;
 

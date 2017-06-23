@@ -6,7 +6,6 @@
 #include "GameModeLobby.h"
 #include "NWGameInstance.h"
 #include "PlayerCharacter.h"
-#include "FPCharacter.h"
 #include "Menu3D.h"
 
 
@@ -32,12 +31,6 @@ void APlayerControllerLobby::SetupInputComponent() {
 
 void APlayerControllerLobby::BeginPlay() {
     Super::BeginPlay();
-
-    AFPCharacter* FPCharacter = Cast<AFPCharacter>(GetPawn());
-    if (FPCharacter) {
-        UUserWidget* HUD = CreateWidget<UUserWidget>(this, FPCharacter->_HUDClass);
-        if (HUD) HUD->AddToViewport();
-    }
 }
 
 void APlayerControllerLobby::CLIENT_InitialSetup_Implementation() {

@@ -45,6 +45,7 @@ UNWGameInstance::UNWGameInstance(const FObjectInitializer& OI) : Super(OI) {
     _ServerName = "";
     _SessionOwner = "";
     _IsVRMode = false;
+    _Exit = false;
 
     static ConstructorHelpers::FClassFinder<AActor> BoyClassFinder(TEXT(
         "/Game/BluePrints/Characters/FPCharacterBoy"));
@@ -279,8 +280,15 @@ void UNWGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSucce
         Sessions->ClearOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegateHandle);
         if (bWasSuccessful) {
             //UGameplayStatics::OpenLevel(GetWorld(), _MapMenuName, true);
-            APlayerController * const PlayerController = GetFirstLocalPlayerController();
-            if (PlayerController) PlayerController->ClientReturnToMainMenu("");
+
+            if (_Exit) {
+                _Exit = false;
+                FGenericPlatformMisc::RequestExit(false);
+            }
+            else {
+                APlayerController * const PlayerController = GetFirstLocalPlayerController();
+                if (PlayerController) PlayerController->ClientReturnToMainMenu("");
+            }
         }
     }
 }
@@ -354,7 +362,7 @@ AMenu3D* UNWGameInstance::CreateMenuPlay() {
     Slot_Options->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonOptions);
     Slot_Options->AddOnInputMenuDelegate();
     UInputMenu* Slot_ExitGame = NewObject<UInputMenu>(_MenuActor, FName("EXIT GAME"));
-    Slot_ExitGame->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonExitGame);
+    Slot_ExitGame->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonDestroyExitGame);
     Slot_ExitGame->AddOnInputMenuDelegate();
 
     _MenuActor->AddSubmenu(MenuPlay);
@@ -419,8 +427,12 @@ void UNWGameInstance::OnButtonOptions(UInputMenu* InputMenu) {
     _MenuActor->SetSubmenuByIndex(1);
 }
 
-void UNWGameInstance::OnButtonExitGame(UInputMenu* InputMenu) {
+void UNWGameInstance::OnButtonDestroyExitGame(UInputMenu* InputMenu) {
+    _Exit = true;
     DestroySession();
+}
+
+void UNWGameInstance::OnButtonExitGame(UInputMenu* InputMenu) {
     FGenericPlatformMisc::RequestExit(false);
 }
 

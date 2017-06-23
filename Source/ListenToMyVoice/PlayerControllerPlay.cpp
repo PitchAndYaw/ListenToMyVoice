@@ -7,7 +7,6 @@
 #include "NWGameInstance.h"
 #include "FMODAudioComponent.h"
 #include "PlayerCharacter.h"
-#include "FPCharacter.h"
 #include "PlayerSpectator.h"
 #include "PlayerStatePlay.h"
 
@@ -35,11 +34,6 @@ void APlayerControllerPlay::BeginPlay() {
 
     _GameInstance = Cast<UNWGameInstance>(GetGameInstance());
     if (_GameInstance) {
-        AFPCharacter* FPCharacter = Cast<AFPCharacter>(GetPawn());
-        if (FPCharacter) {
-            UUserWidget* HUD = CreateWidget<UUserWidget>(this, FPCharacter->_HUDClass);
-            if (HUD) HUD->AddToViewport();
-        }
         if (IsLocalController()) {
             SERVER_CallUpdate(_GameInstance->_PlayerInfoSaved);
         }

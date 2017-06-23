@@ -21,6 +21,11 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
     _BreathAudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/Beast.Beast")));
     _BreathAudioComp->bAutoActivate = false;
 
+    _HurtAudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("Audio_Hurt"));
+    _HurtAudioComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+    _HurtAudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/HurtEnemy.HurtEnemy")));
+    _HurtAudioComp->bAutoActivate = false;
+
 	_PlayerPointerComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Player Pointer"));
     _PlayerPointerComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Plane(TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
@@ -31,7 +36,6 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
 	_PlayerPointerComp->bOwnerNoSee = true;
 
     _DieEvent = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Scene/EnemyDead.EnemyDead")));
-    _HurtEvent = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/HurtEnemy.HurtEnemy")));
 
     AIControllerClass = AEnemyController::StaticClass();
 	OnActorHit.AddDynamic(this, &AEnemyCharacter::OnHit);
@@ -49,17 +53,10 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
 	_HearingRange = 1500.0f;
     _Damage = 1;
 	_IsDamaged = false;
+    _IsDead = false;
 
     GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 	GetCharacterMovement()->MaxWalkSpeed = 150.0f;
-}
-
-void AEnemyCharacter::BeginPlay() {
-    Super::BeginPlay();
-}
-
-void AEnemyCharacter::Tick(float DeltaTime) {
-    Super::Tick(DeltaTime);
 }
 
 void AEnemyCharacter::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit) {
@@ -77,13 +74,13 @@ void AEnemyCharacter::OnHit(AActor* SelfActor, AActor* OtherActor, FVector Norma
 
 float AEnemyCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 				 class AController* EventInstigator, class AActor* DamageCauser) {
-	ULibraryUtils::Log(FString::Printf(TEXT("Me han dado")), 0, 60);
-	/*The enemy doesn't receive damage*/
-	SetDamaged(true);
+    if (!_IsDead) {
+        ULibraryUtils::Log(FString::Printf(TEXT("Me han dado")), 0, 60);
+        /*The enemy doesn't receive damage*/
+        SetDamaged(true);
 
-    _BreathAudioComp->Event = _HurtEvent;
-    _BreathAudioComp->Play();
-
+        if (_HurtAudioComp) _HurtAudioComp->Play();
+    }
 	return 0.0f;
 }
 
@@ -103,8 +100,14 @@ void AEnemyCharacter::Die() {
 		_DestructibleMesh->SetHiddenInGame(false);
 		_DestructibleMesh->ApplyRadiusDamage(100.0f, GetActorLocation(), 100.0f, 0.0f, false);
 
-        _BreathAudioComp->Event = _DieEvent;
-        _BreathAudioComp->Play();
+        _StepsAudioComp->Event = _DieEvent;
+        _StepsAudioComp->Play();
+
+        _BreathAudioComp->Stop();
+
+        _IsDead = true;
+
+        SetActorTickEnabled(false);
 
 		if(GetController())
 			GetController()->UnPossess();

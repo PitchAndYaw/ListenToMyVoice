@@ -53,7 +53,7 @@ protected:
     bool _RotationFinished;
 
     virtual void BeginPlay() override;
-    void ToogleSound();
+    void ToogleSound(bool Activate);
 
 public:
     virtual void TickComponent(float DeltaTime, ELevelTick TickType,

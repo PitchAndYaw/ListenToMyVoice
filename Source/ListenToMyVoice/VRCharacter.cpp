@@ -126,7 +126,7 @@ void AVRCharacter::Tick(float DeltaTime) {
 
     /* VR TURN  */
     if (_TurnSide != 0) {
-        AddControllerYawInput(_TurnSide*_TurnActualVelocity*DeltaTime);
+        AddControllerYawInput(_TurnSide * _TurnActualVelocity * DeltaTime);
         _TurnActualVelocity += _TurnAcceleration;
         if (_TurnActualVelocity <= 0) {
             _TurnSide = 0;
@@ -402,6 +402,7 @@ void AVRCharacter::UseTriggerPressed(AActor* ActorFocused, USceneComponent* InPa
             ActorFocused->GetComponents(Components);
             for (UActorComponent* Component : Components) {
                 if (Component->GetClass()->ImplementsInterface(UItfUsable::StaticClass())) {
+                    ULibraryUtils::Log("SERVER_UsePressed");
                     SERVER_UsePressed(Component);
                 }
             }
@@ -432,6 +433,7 @@ void AVRCharacter::UseTriggerReleased(AActor* ActorFocused, USceneComponent* InP
         ActorFocused->GetComponents(Components);
         for (UActorComponent* Component : Components) {
             if (Component->GetClass()->ImplementsInterface(UItfUsable::StaticClass())) {
+                ULibraryUtils::Log("SERVER_UseReleased");
                 SERVER_UseReleased(Component);
             }
         }

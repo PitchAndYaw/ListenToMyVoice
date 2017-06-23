@@ -6,7 +6,6 @@
 #include "FMODAudioComponent.h"
 
 ULantern::ULantern(){
-    _batteryLife = 100.0;
     _isLanternOn = false;
 
     PrimaryComponentTick.bCanEverTick = true;
@@ -42,34 +41,6 @@ void ULantern::BeginPlay(){
     }
 }
 
-
-void ULantern::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction){
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-    _batteryLife -= 0.01;
-    UsingBattery();
-}
-
-
-/***************************************ACTIONS****************************************************/
-void ULantern::UsingBattery() {    
-    if (_batteryLife > 0.0 && _batteryLife < 1.0 || _batteryLife < 0) {
-        SetComponentTickEnabled(false);
-
-        _batteryLife = 0.0;  
-        PowerOff();
-        _isLanternOn = false;
-    }
-}
-
-void ULantern::AddBatteryLife(float BatteryAmount) {
-    _batteryLife += BatteryAmount;
-}
-
-float ULantern::GetBatteryLife() {
-    return _batteryLife;
-}
-
-
 /******************Interfaces*****************/
 
 void ULantern::UseItemPressed_Implementation() {}
@@ -79,7 +50,7 @@ void ULantern::UseItemReleased_Implementation() {
         UFMODAudioComponent::StaticClass()));
     if (AudioComp) AudioComp->Play();
 
-    if (!_isLanternOn && _batteryLife > 0) {
+    if (!_isLanternOn) {
         _isLanternOn = true;
         PowerOn();
         SetComponentTickEnabled(true);

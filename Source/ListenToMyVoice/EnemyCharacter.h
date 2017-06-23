@@ -42,18 +42,17 @@ public:
 
     UPROPERTY(Category = Audio, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UFMODAudioComponent* _BreathAudioComp;
+    UPROPERTY(Category = Audio, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    class UFMODAudioComponent* _HurtAudioComp;
 
 protected:
+    bool _IsDead;
     TAssetPtr<class UFMODEvent> _DieEvent;
-    TAssetPtr<class UFMODEvent> _HurtEvent;
 
     UPROPERTY(Category = Audio, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UFMODAudioComponent* _StepsAudioComp;
 
-    virtual void BeginPlay() override;
-
 public:
-    virtual void Tick(float DeltaTime) override;
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	void SetDamaged(bool Damaged);
 	UFUNCTION(BlueprintCallable, Category = "Damage")

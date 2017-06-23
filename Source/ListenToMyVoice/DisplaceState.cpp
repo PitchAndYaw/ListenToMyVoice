@@ -61,7 +61,7 @@ void UDisplaceState::TickComponent(float DeltaTime, ELevelTick TickType,
 
     if (_LocationFinished && _RotationFinished) {
         _State = _Direction == 1 ? EDisplaceState::FinalPosition : EDisplaceState::InitialPosition;
-        ToogleSound();
+        ToogleSound(false);
         SetComponentTickEnabled(false);
     }
 }
@@ -74,14 +74,14 @@ int UDisplaceState::SwitchState_Implementation() {
             {
                 _State = EDisplaceState::Moving;
                 _Direction = 1;
-                ToogleSound();
+                ToogleSound(true);
                 break;
             };
             case EDisplaceState::FinalPosition:
             {
                 _State = EDisplaceState::MovingReverse;
                 _Direction = -1;
-                ToogleSound();
+                ToogleSound(true);
                 break;
             };
             case EDisplaceState::Moving:
@@ -105,17 +105,15 @@ int UDisplaceState::SwitchState_Implementation() {
     return 0;
 }
 
-void UDisplaceState::ToogleSound() {
+void UDisplaceState::ToogleSound(bool Activate) {
     UFMODAudioComponent* AudioComp = Cast<UFMODAudioComponent>(GetOwner()->GetComponentByClass(
         UFMODAudioComponent::StaticClass()));
     if (AudioComp) {
-        if (AudioComp->IsPlaying()) {
-            ULibraryUtils::Log("STOP");
-            AudioComp->Stop();
+        if (Activate && !AudioComp->IsPlaying()) {
+            AudioComp->Play();
         }
         else {
-            ULibraryUtils::Log("PLAY");
-            AudioComp->Play();
+            AudioComp->Stop();
         }
     }
 }
