@@ -15,16 +15,24 @@ void UTextureState::BeginPlay() {
 }
 
 int UTextureState::SwitchState_Implementation() {
+	TArray<UActorComponent*> TextArray = GetOwner()->GetComponentsByClass(UTextRenderComponent::StaticClass());
+
     UTextRenderComponent* textureComp = Cast<UTextRenderComponent>(GetOwner()->GetComponentByClass(
         UTextRenderComponent::StaticClass()));
-    if (textureComp) {
-        if (textureComp->bVisible == false) {
-            textureComp->SetVisibility(true);
-        }
-        else {
-            textureComp->SetVisibility(false);
-        }
-    }
 
+	UTextRenderComponent* TextComponent;
+
+	for (UActorComponent* Component : TextArray)
+	{
+		TextComponent = Cast<UTextRenderComponent>(Component);
+
+		if (TextComponent->bVisible == false) {
+			TextComponent->SetVisibility(true);
+		}
+		else {
+			TextComponent->SetVisibility(false);
+		}
+	}
+	
     return 0;
 }
