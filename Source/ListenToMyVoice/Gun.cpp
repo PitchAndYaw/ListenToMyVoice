@@ -17,16 +17,17 @@ UGun::UGun(){
 /*Interfaces*/
 void UGun::UseItemPressed_Implementation() {
 	_PlayerCharacter = Cast<APlayerCharacter>(GetOwner()->GetAttachParentActor());
+    UFMODAudioComponent* AudioComp = Cast<UFMODAudioComponent>(GetOwner()->GetComponentByClass(
+        UFMODAudioComponent::StaticClass()));
 
 	if (GetAmmo() > 0) { 
 		AddAmmo(-1);
 		OnFire();
-
-        UFMODAudioComponent* AudioComp = Cast<UFMODAudioComponent>(GetOwner()->GetComponentByClass(
-            UFMODAudioComponent::StaticClass()));
-        if (AudioComp) AudioComp->Play();
-
 	}
+    else if(AudioComp) AudioComp->SetParameter("bullet", 1);
+
+    if (AudioComp) AudioComp->Play();
+
 	ULibraryUtils::Log(FString::Printf(TEXT("Ammo : %i"), GetAmmo()), 0, 60);
 }
 
