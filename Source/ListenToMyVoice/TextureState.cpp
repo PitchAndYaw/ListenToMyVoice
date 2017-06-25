@@ -21,16 +21,33 @@ int UTextureState::SwitchState_Implementation() {
         UTextRenderComponent::StaticClass()));
 
 	UTextRenderComponent* TextComponent;
+	
+	if (Toggleable) {
+		for (UActorComponent* Component : TextArray)
+		{
+			TextComponent = Cast<UTextRenderComponent>(Component);
 
-	for (UActorComponent* Component : TextArray)
-	{
-		TextComponent = Cast<UTextRenderComponent>(Component);
-
-		if (TextComponent->bVisible == false) {
-			TextComponent->SetVisibility(true);
+			if (TextComponent->bVisible == false) {
+				TextComponent->SetVisibility(true);
+			}
+			else {
+				TextComponent->SetVisibility(false);
+			}
 		}
-		else {
-			TextComponent->SetVisibility(false);
+	}
+	else if(!Active){
+		for (UActorComponent* Component : TextArray)
+		{
+			TextComponent = Cast<UTextRenderComponent>(Component);
+
+			if (TextComponent->bVisible == false) {
+				TextComponent->SetVisibility(true);
+				Active = true;
+			}
+			else {
+				TextComponent->SetVisibility(false);
+				Active = true;
+			}
 		}
 	}
 	

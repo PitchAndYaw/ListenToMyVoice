@@ -22,4 +22,9 @@ public:
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Texture")
     int SwitchState();
     virtual int SwitchState_Implementation() override;
+	
+	UPROPERTY(EditAnywhere, Category = "Switcher")
+	bool Toggleable;
+
+	bool Active;
 };
