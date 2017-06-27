@@ -26,7 +26,7 @@ AVRCharacter::AVRCharacter(const FObjectInitializer& OI) : Super(OI) {
     /* VR TURN */
     _TurnTime = 0;
     _TurnSide = 0;
-    _BaseTurnRate = 2000.f;
+    _BaseTurnRate = 11.f;
     _TurnVelocity = 500;
     _TurnActualVelocity = 500;
     _TurnAcceleration = -100;
@@ -262,7 +262,7 @@ void AVRCharacter::MoveForward(float Value) {
 void AVRCharacter::TurnVRLeft() {
     UNWGameInstance* GameInst = Cast<UNWGameInstance>(GetWorld()->GetGameInstance());
     if (GameInst && GameInst->_MenuOptions.bComfortMode) {
-        AddControllerYawInput(-_BaseTurnRate * GetWorld()->GetDeltaSeconds());
+        AddControllerYawInput(-_BaseTurnRate);
     }
     else if (_TurnSide == 0) { _TurnSide = -1; }
 }
@@ -270,7 +270,7 @@ void AVRCharacter::TurnVRLeft() {
 void AVRCharacter::TurnVRRight() {
     UNWGameInstance* GameInst = Cast<UNWGameInstance>(GetWorld()->GetGameInstance());
     if (GameInst && GameInst->_MenuOptions.bComfortMode) {
-        AddControllerYawInput(_BaseTurnRate * GetWorld()->GetDeltaSeconds());
+        AddControllerYawInput(_BaseTurnRate);
     }
     else if (_TurnSide == 0) { _TurnSide = 1; }
 }

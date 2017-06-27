@@ -44,7 +44,7 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
     _BreathAudioComp->bAutoActivate = false;
 
 	_PlayerPointerComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Player Pointer"));
-    _PlayerPointerComp->AttachToComponent(_PlayerCamera, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+    _PlayerPointerComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Plane(TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
 	if (StaticMesh_Plane.Object) {
 		_PlayerPointerComp->SetStaticMesh(StaticMesh_Plane.Object);
