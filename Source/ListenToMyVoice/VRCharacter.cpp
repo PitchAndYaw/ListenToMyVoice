@@ -24,11 +24,12 @@ AVRCharacter::AVRCharacter(const FObjectInitializer& OI) : Super(OI) {
     _NextInventoryIndex = 0;
 
     /* VR TURN */
+    _TurnTime = 0;
     _TurnSide = 0;
-    _BaseTurnRate = 1000.f;
+    _BaseTurnRate = 2000.f;
     _TurnVelocity = 500;
     _TurnActualVelocity = 500;
-    _TurnAcceleration = -70;
+    _TurnAcceleration = -100;
 
     /* VR MOVE */
     GetCharacterMovement()->MaxAcceleration = 512;
@@ -126,10 +127,12 @@ void AVRCharacter::Tick(float DeltaTime) {
 
     /* VR TURN  */
     if (_TurnSide != 0) {
-        AddControllerYawInput(_TurnSide * _TurnActualVelocity * DeltaTime);
+        _TurnTime += DeltaTime;
+        AddControllerYawInput(_TurnSide * _TurnActualVelocity * _TurnTime);
         _TurnActualVelocity += _TurnAcceleration;
         if (_TurnActualVelocity <= 0) {
             _TurnSide = 0;
+            _TurnTime = 0;
             _TurnActualVelocity = _TurnVelocity;
         }
     }
@@ -246,12 +249,12 @@ void AVRCharacter::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 /****************************************** ACTION MAPPINGS **************************************/
 /*********** MOVEMENT ***********/
 void AVRCharacter::MoveForward(float Value) {
-    _PlayerCamera->PostProcessSettings.bOverride_VignetteIntensity = true;
+    //_PlayerCamera->PostProcessSettings.bOverride_VignetteIntensity = true;
 
-    UNWGameInstance* GameInst = Cast<UNWGameInstance>(GetWorld()->GetGameInstance());
-    if (GameInst && GameInst->_MenuOptions.bComfortMode && Value != 0)
-        _PlayerCamera->PostProcessSettings.VignetteIntensity = 4;
-    else _PlayerCamera->PostProcessSettings.VignetteIntensity = 0;
+    //UNWGameInstance* GameInst = Cast<UNWGameInstance>(GetWorld()->GetGameInstance());
+    //if (GameInst && GameInst->_MenuOptions.bComfortMode && Value != 0)
+    //    _PlayerCamera->PostProcessSettings.VignetteIntensity = 4;
+    //else _PlayerCamera->PostProcessSettings.VignetteIntensity = 0;
 
     AddMovementInput(_PlayerCamera->GetForwardVector(), Value);
 }
