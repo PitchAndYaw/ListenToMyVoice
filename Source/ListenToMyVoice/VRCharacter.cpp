@@ -24,12 +24,10 @@ AVRCharacter::AVRCharacter(const FObjectInitializer& OI) : Super(OI) {
     _NextInventoryIndex = 0;
 
     /* VR TURN */
-    _TurnTime = 0;
     _TurnSide = 0;
     _BaseTurnRate = 11.f;
-    _TurnVelocity = 500;
-    _TurnActualVelocity = 500;
-    _TurnAcceleration = -100;
+    _TurnVelocity = 200;
+    _TurnAcceleration = -15;
 
     /* VR MOVE */
     GetCharacterMovement()->MaxAcceleration = 512;
@@ -113,11 +111,6 @@ void AVRCharacter::BeginPlay() {
     HMD = (IHeadMountedDisplay*)(GEngine->HMDDevice.Get());
     if (HMD) HMD->EnablePositionalTracking(bPositionalHeadTracking);
 
-    if (IsPlayerControlled()) {
-        APlayerController* const PC = Cast<APlayerController>(GetController());
-        PC->InputYawScale = 1.0f;
-    }
-
     _GrabDelegateLeft.BindUObject(this, &AVRCharacter::ItemGrabbedLeft);
     _GrabDelegateRight.BindUObject(this, &AVRCharacter::ItemGrabbedRight);
 }
@@ -125,14 +118,12 @@ void AVRCharacter::BeginPlay() {
 void AVRCharacter::Tick(float DeltaTime) {
     Super::Tick(DeltaTime);
 
-    /* VR TURN  */
+    /* VR TURN */
     if (_TurnSide != 0) {
-        _TurnTime += DeltaTime;
-        AddControllerYawInput(_TurnSide * _TurnActualVelocity * _TurnTime);
+        AddControllerYawInput(_TurnSide * _TurnActualVelocity * DeltaTime);
         _TurnActualVelocity += _TurnAcceleration;
         if (_TurnActualVelocity <= 0) {
             _TurnSide = 0;
-            _TurnTime = 0;
             _TurnActualVelocity = _TurnVelocity;
         }
     }
