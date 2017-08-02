@@ -19,6 +19,9 @@ public:
 
     AFPCharacter(const FObjectInitializer& OI);
     void BeginPlay() override;
+    void PossessedBy(AController* NewController) override;
+    UFUNCTION(Client, Reliable)
+    void CLIENT_PossessedBy(AController* NewController);
     void AfterPossessed(bool SetInventory) override;
     void Tick(float DeltaSeconds) override;
 

@@ -49,11 +49,17 @@ void AFPCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput)
 
 void AFPCharacter::BeginPlay() {
     Super::BeginPlay();
+}
 
-    APlayerController* PlayerController = Cast<APlayerController>(GetController());
-    if (PlayerController && PlayerController->IsLocalPlayerController()) {
-        ULibraryUtils::Log("HUD");
-        /* HUD */
+void AFPCharacter::PossessedBy(AController* NewController) {
+    Super::PossessedBy(NewController);
+
+    CLIENT_PossessedBy(NewController);
+}
+
+void AFPCharacter::CLIENT_PossessedBy_Implementation(AController* NewController) {
+    APlayerController* PlayerController = Cast<APlayerController>(NewController);
+    if (PlayerController) {
         UUserWidget* HUD = CreateWidget<UUserWidget>(PlayerController, _HUDClass);
         if (HUD) HUD->AddToViewport();
     }
