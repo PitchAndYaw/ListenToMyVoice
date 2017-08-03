@@ -71,7 +71,7 @@ void AFPCharacter::AfterPossessed(bool SetInventory) {
     APlayerController* PlayerController = Cast<APlayerController>(GetController());
     if (PlayerController->IsLocalPlayerController()) {
         if (SetInventory) {
-            _InventoryWidget = CreateWidget<UInventoryWidget>(PlayerController, _InventoryUIClass);
+            _InventoryWidget = CreateWidget<UUserWidget>(PlayerController, _InventoryUIClass);
             if (_InventoryWidget) {
                 _InventoryWidget->AddToViewport(); // Add it to the viewport so the Construct() method in the UUserWidget:: is run.
                 _InventoryWidget->SetVisibility(ESlateVisibility::Hidden); // Set it to hidden so its not open on spawn.

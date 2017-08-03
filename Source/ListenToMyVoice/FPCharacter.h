@@ -28,7 +28,7 @@ public:
     /************* INVENTORY ************/
     // The class that will be used for the players Inventory UI
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
-    TSubclassOf<class UInventoryWidget> _InventoryUIClass;
+    TSubclassOf<UUserWidget> _InventoryUIClass;
 
     UFUNCTION(BlueprintCallable, Category = "Player pool Items")
     UTexture2D* GetItemTextureAt(int itemIndex);
@@ -71,7 +71,7 @@ protected:
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USkeletalMeshComponent* _FirstPersonMesh;
 
-    class UInventoryWidget* _InventoryWidget;
+    UUserWidget* _InventoryWidget;
 
     void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
