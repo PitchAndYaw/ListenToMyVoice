@@ -10,7 +10,6 @@
 #include "ItfUsableItem.h"
 #include "HandPickItem.h"
 #include "MenuInteraction.h"
-#include "InventoryWidget.h"
 #include "FMODAudioComponent.h"
 
 AFPCharacter::AFPCharacter(const FObjectInitializer& OI) : Super(OI) {
@@ -442,9 +441,9 @@ void AFPCharacter::MULTI_SaveItemInventory_Implementation(AActor* ItemActor, int
     }
 }
 
-void AFPCharacter::PickItemInventory(AActor* ItemActor, FKey KeyStruct) {
+void AFPCharacter::PickItemInventory(AActor* ItemActor, bool IsLeft) {
     if (ItemActor) {
-        if (KeyStruct == EKeys::LeftMouseButton) {
+        if (IsLeft && _ItemLeft != ItemActor) {
             if (_ItemLeft && _ItemLeft->GetComponentByClass(UInventoryItem::StaticClass())) {
                 /* Save hand inventory item */
                 SERVER_SaveItemInventory(_ItemLeft, 1);
@@ -455,7 +454,7 @@ void AFPCharacter::PickItemInventory(AActor* ItemActor, FKey KeyStruct) {
             }
             SERVER_PickItemInventoryLeft(ItemActor);
         }
-        else if (KeyStruct == EKeys::RightMouseButton) {
+        else if (_ItemRight != ItemActor){
             if (_ItemRight && _ItemRight->GetComponentByClass(UInventoryItem::StaticClass())) {
                 /* Save hand inventory item */
                 SERVER_SaveItemInventory(_ItemRight, 2);

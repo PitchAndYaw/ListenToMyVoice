@@ -35,7 +35,7 @@ public:
 
     /************** PICK ITEM *************/
     UFUNCTION(BlueprintCallable, Category = "Inventory")
-    void PickItemInventory(AActor* ItemActor, FKey KeyStruct);
+    void PickItemInventory(AActor* ItemActor, bool IsLeft);
     UFUNCTION(Server, Reliable, WithValidation)
     void SERVER_PickItemInventoryLeft(AActor* ItemActor);
     UFUNCTION(NetMulticast, Reliable)
