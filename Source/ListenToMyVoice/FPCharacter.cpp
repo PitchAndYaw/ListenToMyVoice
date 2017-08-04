@@ -18,7 +18,7 @@ AFPCharacter::AFPCharacter(const FObjectInitializer& OI) : Super(OI) {
     _RayParameter = 250.0f;
 
     _PlayerCamera->bUsePawnControlRotation = true;
-    _PlayerCamera->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("FPVCamera"));
+    _PlayerCamera->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform, FName("FPVCamera"));
     _Inventory->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("inventory"));
 	_BreathAudioComp->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("spine_03"));
 	_FirstPersonMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ThirdPersonMesh"));
