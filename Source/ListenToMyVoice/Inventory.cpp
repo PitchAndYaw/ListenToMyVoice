@@ -4,11 +4,17 @@
 #include "Inventory.h"
 
 #include "InventoryItem.h"
+#include "FMODAudioComponent.h"
 
 UInventory::UInventory() : Super() {
     _items = {};
     bReplicates = true;
     SetIsReplicated(true);
+
+    _AudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("Audio"));
+    _AudioComp->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);
+    _AudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("FMODEvent'/Game/FMOD/Events/UI/Inventory.Inventory'")));
+    _AudioComp->bAutoActivate = false;
 }
 
 void UInventory::BeginPlay() {

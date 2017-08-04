@@ -36,4 +36,7 @@ public:
     //                           FActorComponentTickFunction* ThisTickFunction) override;
 
     AActor* PickItem(AActor* ItemActor);
+
+    UPROPERTY(Category = Audio, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    class UFMODAudioComponent* _AudioComp;
 };

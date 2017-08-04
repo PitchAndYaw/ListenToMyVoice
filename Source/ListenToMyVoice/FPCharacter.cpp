@@ -280,6 +280,8 @@ void AFPCharacter::UseRightReleased(bool IsMenuHidden) {
 
 /********** TAKE & DROP RIGHT HAND ***********/
 void AFPCharacter::TakeDropRight() {
+    _Inventory->_AudioComp->Play();
+
     AActor* ActorFocused = GetItemFocused();
     if (ActorFocused) {
         if (ActorFocused->GetComponentByClass(UInventoryItem::StaticClass())) {
@@ -337,6 +339,8 @@ void AFPCharacter::TakeDropRight() {
 
 /********** TAKE & DROP LEFT HAND ***********/
 void AFPCharacter::TakeDropLeft() {
+    _Inventory->_AudioComp->Play();
+
     AActor* ActorFocused = GetItemFocused();
     if (ActorFocused) {
         if (ActorFocused->GetComponentByClass(UInventoryItem::StaticClass())) {
@@ -444,6 +448,7 @@ void AFPCharacter::MULTI_SaveItemInventory_Implementation(AActor* ItemActor, int
 void AFPCharacter::PickItemInventory(AActor* ItemActor, bool IsLeft) {
     if (ItemActor) {
         if (IsLeft && _ItemLeft != ItemActor) {
+            _Inventory->_AudioComp->Play();
             if (_ItemLeft && _ItemLeft->GetComponentByClass(UInventoryItem::StaticClass())) {
                 /* Save hand inventory item */
                 SERVER_SaveItemInventory(_ItemLeft, 1);
@@ -455,6 +460,7 @@ void AFPCharacter::PickItemInventory(AActor* ItemActor, bool IsLeft) {
             SERVER_PickItemInventoryLeft(ItemActor);
         }
         else if (_ItemRight != ItemActor){
+            _Inventory->_AudioComp->Play();
             if (_ItemRight && _ItemRight->GetComponentByClass(UInventoryItem::StaticClass())) {
                 /* Save hand inventory item */
                 SERVER_SaveItemInventory(_ItemRight, 2);
