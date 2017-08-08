@@ -2,6 +2,8 @@
 
 #include "ListenToMyVoice.h"
 #include "EnemyCharacter.h"
+#include "PaperSprite.h"
+#include "PaperSpriteComponent.h"
 
 #include "EnemyController.h"
 
@@ -26,12 +28,12 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
     _HurtAudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/HurtEnemy.HurtEnemy")));
     _HurtAudioComp->bAutoActivate = false;
 
-	_PlayerPointerComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Player Pointer"));
+	_PlayerPointerComp = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("Player Pointer"));
     _PlayerPointerComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Plane(TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
-	if (StaticMesh_Plane.Object) {
-		_PlayerPointerComp->SetStaticMesh(StaticMesh_Plane.Object);
-	}
+	//static ConstructorHelpers::FObjectFinder<UPaperSprite> SpritePlane(TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
+	//if (SpritePlane.Object) {
+	//	_PlayerPointerComp->SetSprite(SpritePlane.Object);
+	//}
 	_PlayerPointerComp->SetRelativeLocation({ 0,0,300 });
 	_PlayerPointerComp->bOwnerNoSee = true;
 
