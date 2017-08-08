@@ -4,6 +4,7 @@
 #include "GameModeLobby.h"
 
 #include "NWGameInstance.h"
+#include "GameSessionDedicated.h"
 
 
 void AGameModeLobby::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const {
@@ -17,6 +18,7 @@ void AGameModeLobby::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLi
 AGameModeLobby::AGameModeLobby(const class FObjectInitializer& OI) : Super(OI) {
     DefaultPawnClass = nullptr;
     PlayerControllerClass = APlayerControllerLobby::StaticClass();
+    GameSessionClass = AGameSessionDedicated::StaticClass();
 
     bUseSeamlessTravel = true;
     

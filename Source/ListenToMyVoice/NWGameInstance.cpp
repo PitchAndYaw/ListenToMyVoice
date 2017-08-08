@@ -123,7 +123,8 @@ void UNWGameInstance::LaunchLobby() {
 
     _ServerName = "ServerName";
     ULocalPlayer* const Player = GetFirstGamePlayer();
-    HostSession(Player->GetPreferredUniqueNetId(), GameSessionName, true, true, _MaxPlayers);
+    //HostSession(Player->GetPreferredUniqueNetId(), GameSessionName, true, true, _MaxPlayers);
+    UGameplayStatics::OpenLevel(GetWorld(), "127.0.0.1", true);
 }
 
 void UNWGameInstance::FindOnlineGames() {
