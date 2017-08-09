@@ -31,6 +31,18 @@ void AGameModePlay::InitGame(const FString & MapName, const FString & Options,
 void AGameModePlay::PostLogin(APlayerController* NewPlayer) {
     Super::PostLogin(NewPlayer);
     ULibraryUtils::Log("AGameModePlay::PostLogin");
+
+    APlayerControllerPlay* PC = Cast<APlayerControllerPlay>(NewPlayer);
+    if (PC) {
+        APlayerStatePlay* PS = Cast<APlayerStatePlay>(PC->PlayerState);
+        if (PS) {
+            ULibraryUtils::Log(FString::Printf(TEXT("AGameModePlay::PostLogin: %s"), *PS->PlayerName));
+
+            FTransform Transform = FindPlayerStart(PC, PS->PlayerName)->GetActorTransform();
+            APawn* Actor = Cast<APawn>(GetWorld()->SpawnActor(PS->_CharacterClass, &Transform));
+            if (Actor) PC->Possess(Actor);
+        }
+    }
 }
 
 //bool AGameModePlay::SERVER_RespawnPlayer_Validate(APlayerControllerPlay* PlayerController,

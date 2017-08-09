@@ -16,13 +16,8 @@ public:
     virtual void TickActor(float DeltaTime, enum ELevelTick TickType,
                            FActorTickFunction & ThisTickFunction) override;
 
-    void AfterPossessed();
-    //This override is because CLIENT_AfterPossessed does not work in host (Client-server)
     UFUNCTION()
     void OnRep_Pawn() override;
-    
-    //UFUNCTION(Server, Reliable, WithValidation)
-    //void SERVER_CallUpdate(FPlayerInfo info);
 
     /*************************************** VOICE ***********************************************/
     virtual void ModifyVoiceAudioComponent(const FUniqueNetId& RemoteTalkerId,
