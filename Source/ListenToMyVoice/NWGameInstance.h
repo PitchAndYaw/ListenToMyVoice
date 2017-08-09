@@ -9,19 +9,6 @@
 class AMenu3D;
 class UInputMenu;
 
-USTRUCT(BlueprintType, Category = "Player Info")
-struct FPlayerInfo {
-    GENERATED_USTRUCT_BODY()
-
-public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info")
-    FString Name;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info")
-    TSubclassOf<ACharacter> CharacterClass;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info")
-    bool IsHost;
-};
-
 USTRUCT(BlueprintType, Category = "Menu Options")
 struct FMenuOptions {
     GENERATED_USTRUCT_BODY()
@@ -40,18 +27,9 @@ public:
     bool _IsVRMode;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info")
     FMenuOptions _MenuOptions;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info")
-    FPlayerInfo _PlayerInfoSaved;
-    UPROPERTY(Replicated)
-    FName _ServerName;
-    UPROPERTY(Replicated)
-    int _MaxPlayers;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Session")
     FString _SessionOwner;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Session")
-    FString _MapLobbyName;
 
     UNWGameInstance(const FObjectInitializer& OI);
 
@@ -59,8 +37,8 @@ public:
     void InitGame();
 
     /*** BLUEPRINTS ***/
-    UFUNCTION(BlueprintCallable, Category = "Session")
-    void LaunchLobby();
+    //UFUNCTION(BlueprintCallable, Category = "Session")
+    //void LaunchLobby();
     UFUNCTION(BlueprintCallable, Category = "Session")
     void FindOnlineGames();
     UFUNCTION(BlueprintCallable, Category = "Session")
@@ -68,17 +46,6 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Session")
     void DestroySession();
 
-    /**
-    *	Function to host a game!
-    *
-    *	@Param	UserID - User that started the request
-    *	@Param	SessionName - Name of the Session
-    *	@Param	bIsLAN - Is this is LAN Game?
-    *	@Param	bIsPresence - "Is the Session to create a presence Session"
-    *	@Param	MaxNumPlayers - Number of Maximum allowed players on this "Session" (Server)
-    */
-    bool HostSession(TSharedPtr<const FUniqueNetId> UserId, FName SessionName, bool bIsLAN,
-                     bool bIsPresence, int32 MaxNumPlayers);
 
     /**
     *	Find an online session
@@ -100,17 +67,6 @@ public:
     */
     bool JoinAtSession(TSharedPtr<const FUniqueNetId> UserId, FName SessionName,
                        const FOnlineSessionSearchResult& SearchResult);
-
-    /* Delegate called when session created */
-    FOnCreateSessionCompleteDelegate OnCreateSessionCompleteDelegate;
-    FDelegateHandle OnCreateSessionCompleteDelegateHandle;
-    virtual void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
-
-    /* Delegate called when session started */
-    FOnStartSessionCompleteDelegate OnStartSessionCompleteDelegate;
-    FDelegateHandle OnStartSessionCompleteDelegateHandle;
-    void OnStartOnlineGameComplete(FName SessionName, bool bWasSuccessful);
-
 
     /* Delegate for searching for sessions */
     FOnFindSessionsCompleteDelegate OnFindSessionsCompleteDelegate;
@@ -150,19 +106,7 @@ public:
     void OnRes1600(UInputMenu* InputMenu);
     void OnRes1280(UInputMenu* InputMenu);
     void OnRes800(UInputMenu* InputMenu);
-
-	/*Loading Screen*/
-	/*
-	virtual void Init() override;
-
-	UFUNCTION()
-	virtual void BeginLoadingScreen(const FString& MapName);
-	UFUNCTION()
-	virtual void EndLoadingScreen();
-	*/
-	
     
-protected:
     TSubclassOf<ACharacter> _BoyClass;
     TSubclassOf<ACharacter> _GirlClass;
     TSubclassOf<ACharacter> _VRBoyClass;

@@ -5,25 +5,24 @@
 
 #include "NWGameInstance.h"
 #include "GameSessionDedicated.h"
+#include "PlayerControllerLobby.h"
+#include "PlayerStatePlay.h"
 
 
 void AGameModeLobby::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-    DOREPLIFETIME(AGameModeLobby, _ServerName);
     DOREPLIFETIME(AGameModeLobby, _MapNameGM);
-    DOREPLIFETIME(AGameModeLobby, _MaxPlayers);
 }
 
 AGameModeLobby::AGameModeLobby(const class FObjectInitializer& OI) : Super(OI) {
     DefaultPawnClass = nullptr;
     PlayerControllerClass = APlayerControllerLobby::StaticClass();
+    PlayerStateClass = APlayerStatePlay::StaticClass();
     GameSessionClass = AGameSessionDedicated::StaticClass();
 
     bUseSeamlessTravel = true;
-    
-    _MaxPlayers = 2;
-    _ServerName = "ServerName";
+
     _MapNameGM = USettings::Get()->LevelToPlay.GetLongPackageName();
 }
 
@@ -36,33 +35,32 @@ void AGameModeLobby::InitGame(const FString & MapName, const FString & Options,
 
 void AGameModeLobby::PostLogin(APlayerController* NewPlayer) {
     Super::PostLogin(NewPlayer);
+    ULibraryUtils::Log("AGameModeLobby::PostLogin");
 
-    if (HasAuthority()) {
-        UNWGameInstance* GameInstance = Cast<UNWGameInstance>(GetGameInstance());
-        if (GameInstance) {
-            _ServerName = GameInstance->_ServerName;
-            _MaxPlayers = GameInstance->_MaxPlayers;
-        }
+    APlayerControllerLobby* PC = Cast<APlayerControllerLobby>(NewPlayer);
+    UNWGameInstance* GI = Cast<UNWGameInstance>(GetGameInstance());
+    if (HasAuthority() && PC && GI) {
+        /* SPAWN PLAYER */
+        ULibraryUtils::Log("SPAWN PLAYER");
+        if (PC->GetPawn()) PC->GetPawn()->Destroy();
 
-        APlayerControllerLobby* PlayerController = Cast<APlayerControllerLobby>(NewPlayer);
-        if (PlayerController) PlayerController->CLIENT_InitialSetup();
-    }
-}
+        APlayerStatePlay* PS = Cast<APlayerStatePlay>(PC->PlayerState);
+        if (PS) {
+            PS->SetIsVR(PC->_IsVR);
 
-bool AGameModeLobby::SERVER_SwapCharacter_Validate(APlayerControllerLobby* PlayerController,
-                                                   FPlayerInfo info,
-                                                   bool ChangeStatus) { return true; }
-void AGameModeLobby::SERVER_SwapCharacter_Implementation(APlayerControllerLobby* PlayerController,
-                                                         FPlayerInfo info,
-                                                         bool ChangeStatus) {
-    if (!ChangeStatus) {
-        if (PlayerController->GetPawn()) PlayerController->GetPawn()->Destroy();
+            ULibraryUtils::Log(FString::Printf(TEXT("NumPlayers=%i"), NumPlayers));
+            if (NumPlayers == 1) {
+                PS->SetPlayerName("host");
+                PS->SetCharacterClass(PC->_IsVR ? GI->_VRBoyClass : GI->_BoyClass);
+            }
+            else {
+                PS->SetPlayerName("guest");
+                PS->SetCharacterClass(PC->_IsVR ? GI->_VRGirlClass : GI->_GirlClass);
+            }
 
-        FTransform transform = FindPlayerStart(PlayerController, info.Name)->GetActorTransform();
-        APawn* actor = Cast<APawn>(GetWorld()->SpawnActor(info.CharacterClass, &transform));
-        if (actor) {
-            PlayerController->Possess(actor);
-            PlayerController->AfterPossessed();
+            FTransform Transform = FindPlayerStart(PC, PS->PlayerName)->GetActorTransform();
+            APawn* Actor = Cast<APawn>(GetWorld()->SpawnActor(PS->_CharacterClass, &Transform));
+            if (Actor) PC->Possess(Actor);
         }
     }
 }

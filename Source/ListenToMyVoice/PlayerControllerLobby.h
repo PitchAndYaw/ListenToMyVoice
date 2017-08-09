@@ -13,19 +13,16 @@ class LISTENTOMYVOICE_API APlayerControllerLobby : public APlayerController {
     GENERATED_BODY()
 
 public:
+    UPROPERTY(Replicated)
+    bool _IsVR;
+
     /* TUTORIAL */
     bool _IsLefReleased;
     bool _IsRightReleased;
 
     APlayerControllerLobby(const FObjectInitializer& OI);
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const override;
 
-    UFUNCTION(Client, Reliable)
-    void CLIENT_InitialSetup();
-    UFUNCTION(Server, Reliable, WithValidation)
-    void SERVER_CallUpdate(FPlayerInfo info, bool changedStatus);
-
-    void AfterPossessed();
-    //This override is because CLIENT_AfterPossessed does not work in host (Client-server)
     UFUNCTION()
     void OnRep_Pawn() override;
 

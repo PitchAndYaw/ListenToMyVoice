@@ -32,21 +32,21 @@ void APlayerControllerPlay::SetupInputComponent() {
 void APlayerControllerPlay::BeginPlay() {
     Super::BeginPlay();
 
-    _GameInstance = Cast<UNWGameInstance>(GetGameInstance());
-    if (_GameInstance) {
-        if (IsLocalController()) {
-            SERVER_CallUpdate(_GameInstance->_PlayerInfoSaved);
-        }
-    }
+    //_GameInstance = Cast<UNWGameInstance>(GetGameInstance());
+    //if (_GameInstance) {
+    //    if (IsLocalController()) {
+    //        SERVER_CallUpdate(_GameInstance->_PlayerInfoSaved);
+    //    }
+    //}
 }
 
-bool APlayerControllerPlay::SERVER_CallUpdate_Validate(FPlayerInfo info) {
-    return true;
-}
-void APlayerControllerPlay::SERVER_CallUpdate_Implementation(FPlayerInfo info) {
-    AGameModePlay* gameMode = Cast<AGameModePlay>(GetWorld()->GetAuthGameMode());
-    if (gameMode) gameMode->SERVER_RespawnPlayer(this, info);
-}
+//bool APlayerControllerPlay::SERVER_CallUpdate_Validate(FPlayerInfo info) {
+//    return true;
+//}
+//void APlayerControllerPlay::SERVER_CallUpdate_Implementation(FPlayerInfo info) {
+//    AGameModePlay* gameMode = Cast<AGameModePlay>(GetWorld()->GetAuthGameMode());
+//    if (gameMode) gameMode->SERVER_RespawnPlayer(this, info);
+//}
 
 void APlayerControllerPlay::AfterPossessed() {
     /* CLIENT-SERVER EXCEPTION */
@@ -54,7 +54,7 @@ void APlayerControllerPlay::AfterPossessed() {
         APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
         if (!_GameInstance || !PlayerCharacter) return;
 
-        if (PlayerCharacter->IsA(_GameInstance->_PlayerInfoSaved.CharacterClass)) {
+        if (PlayerCharacter) {
             PlayerCharacter->_OnRadioPressedDelegate.BindUObject(this, &APlayerControllerPlay::OnRadioPressed);
             PlayerCharacter->_OnRadioReleasedDelegate.BindUObject(this, &APlayerControllerPlay::OnRadioReleased);
             PlayerCharacter->AfterPossessed(true);

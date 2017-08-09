@@ -28,25 +28,30 @@ void AGameModePlay::InitGame(const FString & MapName, const FString & Options,
     if (GameSession) GameSession->bRequiresPushToTalk = true;
 }
 
-bool AGameModePlay::SERVER_RespawnPlayer_Validate(APlayerControllerPlay* PlayerController,
-                                                  FPlayerInfo info) {
-    return true;
+void AGameModePlay::PostLogin(APlayerController* NewPlayer) {
+    Super::PostLogin(NewPlayer);
+    ULibraryUtils::Log("AGameModePlay::PostLogin");
 }
 
-void AGameModePlay::SERVER_RespawnPlayer_Implementation(APlayerControllerPlay* PlayerController,
-                                                        FPlayerInfo info) {
-    if (PlayerController->GetPawn()) PlayerController->GetPawn()->Destroy();
-
-    FTransform transform = FindPlayerStart(PlayerController, info.Name)->GetActorTransform();
-    APawn* actor = Cast<APawn>(GetWorld()->SpawnActor(info.CharacterClass, &transform));
-    if (actor) {
-        PlayerController->Possess(actor);
-        PlayerController->AfterPossessed();
-
-        if (!_HostController) _HostController = PlayerController;
-        else _GuestController = PlayerController;
-    }
-}
+//bool AGameModePlay::SERVER_RespawnPlayer_Validate(APlayerControllerPlay* PlayerController,
+//                                                  FPlayerInfo info) {
+//    return true;
+//}
+//
+//void AGameModePlay::SERVER_RespawnPlayer_Implementation(APlayerControllerPlay* PlayerController,
+//                                                        FPlayerInfo info) {
+//    if (PlayerController->GetPawn()) PlayerController->GetPawn()->Destroy();
+//
+//    FTransform transform = FindPlayerStart(PlayerController, info.Name)->GetActorTransform();
+//    APawn* actor = Cast<APawn>(GetWorld()->SpawnActor(info.CharacterClass, &transform));
+//    if (actor) {
+//        PlayerController->Possess(actor);
+//        PlayerController->AfterPossessed();
+//
+//        if (!_HostController) _HostController = PlayerController;
+//        else _GuestController = PlayerController;
+//    }
+//}
 
 bool AGameModePlay::SERVER_PlayerDead_Validate(AController* PlayerController) {
     return true;

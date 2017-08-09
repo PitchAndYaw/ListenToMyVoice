@@ -12,9 +12,7 @@ class LISTENTOMYVOICE_API AGameModePlay : public AGameMode {
 
 public:
     AGameModePlay(const class FObjectInitializer& OI);
-
-    UFUNCTION(Server, Reliable, WithValidation)
-    void SERVER_RespawnPlayer(class APlayerControllerPlay* PlayerController, FPlayerInfo info);
+    virtual void PostLogin(APlayerController * NewPlayer) override;
 
     UFUNCTION(Server, Reliable, WithValidation)
     void SERVER_PlayerDead(AController* PlayerController);

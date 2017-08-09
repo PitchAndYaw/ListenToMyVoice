@@ -9,6 +9,12 @@
 #include "Menu3D.h"
 
 
+void APlayerControllerLobby::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const {
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME(APlayerControllerLobby, _IsVR);
+}
+
 APlayerControllerLobby::APlayerControllerLobby(const FObjectInitializer& OI) : Super(OI) {
     GConfig->GetString(
         TEXT("/Script/EngineSettings.GameMapsSettings"),
@@ -31,19 +37,21 @@ void APlayerControllerLobby::SetupInputComponent() {
 
 void APlayerControllerLobby::BeginPlay() {
     Super::BeginPlay();
-}
 
-void APlayerControllerLobby::CLIENT_InitialSetup_Implementation() {
     UNWGameInstance* GameInstance = Cast<UNWGameInstance>(GetGameInstance());
-    if (GameInstance) SERVER_CallUpdate(GameInstance->_PlayerInfoSaved, false);
+    if (GameInstance) _IsVR = GameInstance->_IsVRMode;
 }
 
-bool APlayerControllerLobby::SERVER_CallUpdate_Validate(FPlayerInfo info,
-                                                        bool changedStatus) { return true; }
-void APlayerControllerLobby::SERVER_CallUpdate_Implementation(FPlayerInfo info,
-                                                              bool changedStatus) {
-    AGameModeLobby* gameMode = Cast<AGameModeLobby>(GetWorld()->GetAuthGameMode());
-    if (gameMode) gameMode->SERVER_SwapCharacter(this, info, changedStatus);
+void APlayerControllerLobby::OnRep_Pawn() {
+    Super::OnRep_Pawn();
+
+    if (!_ClientPossesed) {
+        APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+        if (PlayerCharacter) {
+            PlayerCharacter->AfterPossessed(false);
+            _ClientPossesed = true;
+        }
+    }
 }
 
 void APlayerControllerLobby::CLIENT_CreateMenu_Implementation() {
@@ -71,23 +79,6 @@ void APlayerControllerLobby::CLIENT_CreateMenu_Implementation() {
             }
         }
     }
-}
-
-void APlayerControllerLobby::AfterPossessed() {
-    /* CLIENT-SERVER EXCEPTION  */
-    if (!_ClientPossesed) {
-        APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
-        if (PlayerCharacter) {
-            PlayerCharacter->AfterPossessed(false);
-            _ClientPossesed = true;
-        }
-    }
-}
-
-void APlayerControllerLobby::OnRep_Pawn() {
-    Super::OnRep_Pawn();
-    /* CLIENT-SERVER EXCEPTION  */
-    AfterPossessed();
 }
 
 /****************************************** ACTION MAPPINGS **************************************/

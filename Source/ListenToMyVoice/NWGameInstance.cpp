@@ -10,23 +10,8 @@
 /* VR Includes */
 #include "HeadMountedDisplay.h"
 
-#include "MoviePlayer.h"
-
-
-void UNWGameInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const {
-    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-    DOREPLIFETIME(UNWGameInstance, _MaxPlayers);
-    DOREPLIFETIME(UNWGameInstance, _ServerName);
-}
 
 UNWGameInstance::UNWGameInstance(const FObjectInitializer& OI) : Super(OI) {
-    /** Bind function for CREATING a Session */
-    OnCreateSessionCompleteDelegate =
-        FOnCreateSessionCompleteDelegate::CreateUObject(this, &UNWGameInstance::OnCreateSessionComplete);
-    OnStartSessionCompleteDelegate =
-        FOnStartSessionCompleteDelegate::CreateUObject(this, &UNWGameInstance::OnStartOnlineGameComplete);
-
     /** Bind function for FINDING a Session */
     OnFindSessionsCompleteDelegate =
         FOnFindSessionsCompleteDelegate::CreateUObject(this, &UNWGameInstance::OnFindSessionsComplete);
@@ -38,11 +23,7 @@ UNWGameInstance::UNWGameInstance(const FObjectInitializer& OI) : Super(OI) {
     /** Bind function for DESTROYING a Session */
     OnDestroySessionCompleteDelegate =
         FOnDestroySessionCompleteDelegate::CreateUObject(this, &UNWGameInstance::OnDestroySessionComplete);
-
-    _MapLobbyName = USettings::Get()->LevelLobby.GetAssetName();
     
-    _MaxPlayers = 2;
-    _ServerName = "";
     _SessionOwner = "";
     _IsVRMode = false;
     _Exit = false;
@@ -96,47 +77,28 @@ void UNWGameInstance::InitGame() {
         }
     }
 
-    APlayerControllerLobby* const PlayerControllerLobby = Cast<APlayerControllerLobby>(
-                                                                GetFirstLocalPlayerController());
+    APlayerControllerLobby* const PC = Cast<APlayerControllerLobby>(GetFirstLocalPlayerController());
     AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
-    if (PlayerControllerLobby && GameMode) {
+    if (PC && GameMode) {
         TSubclassOf<ACharacter> CharacterClass = _IsVRMode ? _VRDefaultCharacterClass :
                                                              _DefaultCharacterClass;
-        FTransform Transform = GameMode->FindPlayerStart(PlayerControllerLobby, TEXT("playerstart"))
+        FTransform Transform = GameMode->FindPlayerStart(PC, TEXT("playerstart"))
                                             ->GetActorTransform();
         APawn* Actor = Cast<APawn>(GetWorld()->SpawnActor(CharacterClass, &Transform));
         if (Actor) {
-            PlayerControllerLobby->Possess(Actor);
+            PC->Possess(Actor);
+            PC->CLIENT_CreateMenu();
         }
-
-        PlayerControllerLobby->CLIENT_CreateMenu();
     }
 }
 
 /**************************************** BLUEPRINTS *********************************************/
-void UNWGameInstance::LaunchLobby() {
-    _PlayerInfoSaved.Name = "host";
-    _PlayerInfoSaved.CharacterClass = _IsVRMode ? _VRBoyClass : _BoyClass;
-    _PlayerInfoSaved.IsHost = true;
-
-    DestroySession();
-
-    _ServerName = "ServerName";
-    ULocalPlayer* const Player = GetFirstGamePlayer();
-    //HostSession(Player->GetPreferredUniqueNetId(), GameSessionName, true, true, _MaxPlayers);
-    UGameplayStatics::OpenLevel(GetWorld(), "127.0.0.1", true);
-}
-
 void UNWGameInstance::FindOnlineGames() {
     ULocalPlayer* const Player = GetFirstGamePlayer();
     FindSessions(Player->GetPreferredUniqueNetId(), true, true);
 }
 
 void UNWGameInstance::JoinOnlineGame() {
-    _PlayerInfoSaved.Name = "guest";
-    _PlayerInfoSaved.CharacterClass = _IsVRMode ? _VRGirlClass : _GirlClass;
-    _PlayerInfoSaved.IsHost = false;
-
     ULocalPlayer* const Player = GetFirstGamePlayer();
     FOnlineSessionSearchResult SearchResult;
     if (_SessionSearch->SearchResults.Num() > 0) {
@@ -154,56 +116,13 @@ void UNWGameInstance::DestroySession() {
     IOnlineSessionPtr Sessions = GetSessions();
     if (Sessions.IsValid()) {
         Sessions->AddOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegate);
+
+        ULibraryUtils::Log("DestroySession");
         Sessions->DestroySession(GameSessionName);
     }
 }
 
 /**************************************** SESSION ************************************************/
-bool UNWGameInstance::HostSession(TSharedPtr<const FUniqueNetId> UserId, FName SessionName,
-                                  bool bIsLAN, bool bIsPresence, int32 MaxNumPlayers) {
-    IOnlineSessionPtr Sessions = GetSessions();
-    if (Sessions.IsValid() && UserId.IsValid()) {
-        _SessionSettings = MakeShareable(new FOnlineSessionSettings());
-
-        _SessionSettings->bIsLANMatch = bIsLAN;
-        _SessionSettings->bUsesPresence = bIsPresence;
-        _SessionSettings->NumPublicConnections = MaxNumPlayers;
-        _SessionSettings->NumPrivateConnections = 0;
-        _SessionSettings->bAllowInvites = true;
-        _SessionSettings->bAllowJoinInProgress = true;
-        _SessionSettings->bShouldAdvertise = true;
-        _SessionSettings->bAllowJoinViaPresence = true;
-        _SessionSettings->bAllowJoinViaPresenceFriendsOnly = false;
-        _SessionSettings->Set(SETTING_MAPNAME, _MapLobbyName,
-                              EOnlineDataAdvertisementType::ViaOnlineService);
-        OnCreateSessionCompleteDelegateHandle = 
-            Sessions->AddOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegate);
-
-        return Sessions->CreateSession(*UserId, SessionName, *_SessionSettings);
-    }
-    return false;
-}
-
-void UNWGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful) {
-    IOnlineSessionPtr Sessions = GetSessions();
-    if (Sessions.IsValid()) {
-        Sessions->ClearOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegateHandle);
-        OnStartSessionCompleteDelegateHandle =
-            Sessions->AddOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegate);
-        Sessions->StartSession(GameSessionName);
-    }
-}
-
-void UNWGameInstance::OnStartOnlineGameComplete(FName SessionName, bool bWasSuccessful) {
-    IOnlineSessionPtr Sessions = GetSessions();
-    if (Sessions.IsValid()) {
-        Sessions->ClearOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegateHandle);
-    }
-    if (bWasSuccessful) {
-        UGameplayStatics::OpenLevel(GetWorld(), FName(*_MapLobbyName), true, "listen");
-    }
-}
-
 void UNWGameInstance::FindSessions(TSharedPtr<const FUniqueNetId> UserId, bool bIsLAN, bool bIsPresence) {
     IOnlineSessionPtr Sessions = GetSessions();
     if (Sessions.IsValid() && UserId.IsValid()) {
@@ -212,10 +131,6 @@ void UNWGameInstance::FindSessions(TSharedPtr<const FUniqueNetId> UserId, bool b
         _SessionSearch->MaxSearchResults = 20;
         _SessionSearch->PingBucketSize = 50;
         _SessionSearch->TimeoutInSeconds = 15;
-
-        //if (bIsPresence) { 
-        //    _SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, bIsPresence, EOnlineComparisonOp::Equals);
-        //}
 
         TSharedRef<FOnlineSessionSearch> SearchSettingsRef = _SessionSearch.ToSharedRef();
         OnFindSessionsCompleteDelegateHandle = 
@@ -281,7 +196,7 @@ void UNWGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSucce
         Sessions->ClearOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegateHandle);
         if (bWasSuccessful) {
             //UGameplayStatics::OpenLevel(GetWorld(), _MapMenuName, true);
-
+            ULibraryUtils::Log("OnDestroySessionComplete");
             if (_Exit) {
                 _Exit = false;
                 FGenericPlatformMisc::RequestExit(false);
@@ -438,7 +353,7 @@ void UNWGameInstance::OnButtonExitGame(UInputMenu* InputMenu) {
 }
 
 void UNWGameInstance::OnButtonHostGame(UInputMenu* InputMenu) {
-    LaunchLobby();
+    //LaunchLobby();
 }
 
 void UNWGameInstance::OnButtonFindGame(UInputMenu* InputMenu) {
@@ -486,31 +401,3 @@ void UNWGameInstance::ChangeResolution(FString Resolution) {
     FString Command = "r.SetRes " + Resolution;
     GetFirstLocalPlayerController()->ConsoleCommand(Command);
 }
-
-/*Loading Screen*/
-/*
-void UNWGameInstance::Init()
-{
-	UGameInstance::Init();
-
-	FCoreUObjectDelegates::PreLoadMap.AddUObject(this, &UNWGameInstance::BeginLoadingScreen);
-	FCoreUObjectDelegates::PostLoadMap.AddUObject(this, &UNWGameInstance::EndLoadingScreen);
-}
-
-void UNWGameInstance::BeginLoadingScreen(const FString& MapName)
-{
-	if (!IsRunningDedicatedServer())
-	{
-		FLoadingScreenAttributes LoadingScreen;
-		LoadingScreen.bAutoCompleteWhenLoadingCompletes = false;
-		LoadingScreen.WidgetLoadingScreen = FLoadingScreenAttributes::NewTestLoadingScreenWidget();
-
-		GetMoviePlayer()->SetupLoadingScreen(LoadingScreen);
-	}
-}
-
-void UNWGameInstance::EndLoadingScreen()
-{
-
-}
-*/

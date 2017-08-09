@@ -14,9 +14,23 @@ public:
     UPROPERTY(Replicated)
     bool _IsTalking;
 
+    UPROPERTY(Replicated)
+    bool _IsVR;
+
+    UPROPERTY(Replicated)
+    TSubclassOf<ACharacter> _CharacterClass;
+
     APlayerStatePlay(const class FObjectInitializer& OI);
 
     UFUNCTION(Server, Reliable, WithValidation)
     void SetIsTalking(const bool IsTalking);
     bool GetIsTalking();
+
+    UFUNCTION(Server, Reliable, WithValidation)
+    void SetIsVR(const bool IsVR);
+    bool GetIsVR();
+
+    UFUNCTION(Server, Reliable, WithValidation)
+    void SetCharacterClass(TSubclassOf<ACharacter> CharacterClass);
+    TSubclassOf<ACharacter> GetCharacterClass();
 };

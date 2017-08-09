@@ -14,4 +14,8 @@ public:
     AGameSessionDedicated(const FObjectInitializer& OI);
 
     virtual void RegisterServer() override;
+    virtual void RegisterPlayer(APlayerController* NewPlayer,
+                                const TSharedPtr<const FUniqueNetId>& UniqueId,
+                                bool bWasFromInvite) override;
+    virtual void PostLogin(APlayerController* NewPlayer) override;
 };

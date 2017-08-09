@@ -17,10 +17,6 @@ public:
     virtual void PostLogin(APlayerController * NewPlayer) override;
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const override;
 
-    UFUNCTION(Server, Reliable, WithValidation)
-    void SERVER_SwapCharacter(APlayerControllerLobby* PlayerController, FPlayerInfo info,
-                              bool ChangeStatus);
-
     UFUNCTION(BlueprintCallable, Category = "Launch Game")
     void LaunchGame();
 
@@ -29,10 +25,5 @@ public:
 
 protected:
     UPROPERTY(Replicated)
-    FName _ServerName;
-    UPROPERTY(Replicated)
     FString _MapNameGM;
-
-    UPROPERTY(Replicated)
-    int32 _MaxPlayers;
 };
