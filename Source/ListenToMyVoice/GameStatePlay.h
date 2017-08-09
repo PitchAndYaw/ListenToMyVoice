@@ -11,8 +11,11 @@ class LISTENTOMYVOICE_API AGameStatePlay : public AGameState {
     GENERATED_BODY()
 
 public:
-    bool _StatueWakeUp;
-    TArray<TSharedPtr<const FUniqueNetId>> _UniqueNetIdArray;
+    UPROPERTY(Replicated)
+    bool _LobbyWallOn;
 
     AGameStatePlay(const class FObjectInitializer& OI);
+
+    UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation)
+    void ActivateWall(AActor* WallActor);
 };

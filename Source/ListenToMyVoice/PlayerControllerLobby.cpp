@@ -3,10 +3,8 @@
 #include "ListenToMyVoice.h"
 #include "PlayerControllerLobby.h"
 
-#include "GameModeLobby.h"
 #include "NWGameInstance.h"
 #include "PlayerCharacter.h"
-#include "Menu3D.h"
 
 
 void APlayerControllerLobby::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const {

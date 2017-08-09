@@ -6,6 +6,7 @@
 #include "NWGameInstance.h"
 #include "GameSessionDedicated.h"
 #include "PlayerControllerLobby.h"
+#include "GameStatePlay.h"
 #include "PlayerStatePlay.h"
 
 
@@ -18,6 +19,7 @@ void AGameModeLobby::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLi
 AGameModeLobby::AGameModeLobby(const class FObjectInitializer& OI) : Super(OI) {
     DefaultPawnClass = nullptr;
     PlayerControllerClass = APlayerControllerLobby::StaticClass();
+    GameStateClass = AGameStatePlay::StaticClass();
     PlayerStateClass = APlayerStatePlay::StaticClass();
     GameSessionClass = AGameSessionDedicated::StaticClass();
 
