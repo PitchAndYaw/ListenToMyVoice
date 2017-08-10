@@ -40,7 +40,6 @@ public:
     void CLIENT_HideMenu();
 
 protected:
-    class UNWGameInstance* _GameInstance;
 
     virtual void SetupInputComponent() override;
 

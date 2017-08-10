@@ -3,8 +3,6 @@
 #include "ListenToMyVoice.h"
 #include "PlayerControllerPlay.h"
 
-#include "GameModePlay.h"
-#include "NWGameInstance.h"
 #include "FMODAudioComponent.h"
 #include "PlayerCharacter.h"
 #include "PlayerSpectator.h"
@@ -35,7 +33,9 @@ void APlayerControllerPlay::OnRep_Pawn() {
     if (!_ClientPossesed) {
         APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
         if (PlayerCharacter) {
-            PlayerCharacter->AfterPossessed(false);
+            PlayerCharacter->_OnRadioPressedDelegate.BindUObject(this, &APlayerControllerPlay::OnRadioPressed);
+            PlayerCharacter->_OnRadioReleasedDelegate.BindUObject(this, &APlayerControllerPlay::OnRadioReleased);
+            PlayerCharacter->AfterPossessed(true);
             _ClientPossesed = true;
         }
     }
