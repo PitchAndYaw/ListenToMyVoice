@@ -43,7 +43,6 @@ protected:
     class UNWGameInstance* _GameInstance;
 
     virtual void SetupInputComponent() override;
-    virtual void BeginPlay() override;
 
     /********************************** ACTION MAPPINGS ******************************************/
     /******** USE ITEM LEFT *********/

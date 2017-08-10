@@ -28,47 +28,31 @@ void AGameModePlay::InitGame(const FString & MapName, const FString & Options,
     if (GameSession) GameSession->bRequiresPushToTalk = true;
 }
 
-void AGameModePlay::PostLogin(APlayerController* NewPlayer) {
-    Super::PostLogin(NewPlayer);
-    ULibraryUtils::Log("AGameModePlay::PostLogin");
+void AGameModePlay::HandleSeamlessTravelPlayer(AController*& C) {
+    Super::HandleSeamlessTravelPlayer(C);
 
-    APlayerControllerPlay* PC = Cast<APlayerControllerPlay>(NewPlayer);
+    ULibraryUtils::Log("AGameModePlay::HandleSeamlessTravelPlayer");
+    APlayerControllerPlay* PC = Cast<APlayerControllerPlay>(C);
     if (PC) {
+        ULibraryUtils::Log(FString::Printf(TEXT("AGameModePlay::HandleSeamlessTravelPlayer - PC: %s"), *PC->GetFName().ToString()));
+
         APlayerStatePlay* PS = Cast<APlayerStatePlay>(PC->PlayerState);
         if (PS) {
-            ULibraryUtils::Log(FString::Printf(TEXT("AGameModePlay::PostLogin: %s"), *PS->PlayerName));
+            ULibraryUtils::Log(FString::Printf(TEXT("Player Name: %s"), *PS->PlayerName));
+            ULibraryUtils::Log(FString::Printf(TEXT("Player Pawn: %s"), *PS->_CharacterClass));
 
             FTransform Transform = FindPlayerStart(PC, PS->PlayerName)->GetActorTransform();
             APawn* Actor = Cast<APawn>(GetWorld()->SpawnActor(PS->_CharacterClass, &Transform));
-            if (Actor) PC->Possess(Actor);
+            if (Actor) {
+                PC->Possess(Actor);
+                if (!_HostController) _HostController = PC;
+                else _GuestController = PC;
+            }
         }
     }
 }
 
-//bool AGameModePlay::SERVER_RespawnPlayer_Validate(APlayerControllerPlay* PlayerController,
-//                                                  FPlayerInfo info) {
-//    return true;
-//}
-//
-//void AGameModePlay::SERVER_RespawnPlayer_Implementation(APlayerControllerPlay* PlayerController,
-//                                                        FPlayerInfo info) {
-//    if (PlayerController->GetPawn()) PlayerController->GetPawn()->Destroy();
-//
-//    FTransform transform = FindPlayerStart(PlayerController, info.Name)->GetActorTransform();
-//    APawn* actor = Cast<APawn>(GetWorld()->SpawnActor(info.CharacterClass, &transform));
-//    if (actor) {
-//        PlayerController->Possess(actor);
-//        PlayerController->AfterPossessed();
-//
-//        if (!_HostController) _HostController = PlayerController;
-//        else _GuestController = PlayerController;
-//    }
-//}
-
-bool AGameModePlay::SERVER_PlayerDead_Validate(AController* PlayerController) {
-    return true;
-}
-
+bool AGameModePlay::SERVER_PlayerDead_Validate(AController* Controller) { return true; }
 void AGameModePlay::SERVER_PlayerDead_Implementation(AController* Controller) {
     APlayerControllerPlay* PlayerController = Cast<APlayerControllerPlay>(Controller);
     if (PlayerController) {

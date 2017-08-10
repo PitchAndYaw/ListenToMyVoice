@@ -9,6 +9,7 @@ void APlayerStatePlay::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & 
 
     DOREPLIFETIME(APlayerStatePlay, _IsTalking);
     DOREPLIFETIME(APlayerStatePlay, _IsVR);
+    DOREPLIFETIME(APlayerStatePlay, _CharacterClass);
 }
 
 APlayerStatePlay::APlayerStatePlay(const class FObjectInitializer& OI) : Super(OI) {
@@ -18,6 +19,22 @@ APlayerStatePlay::APlayerStatePlay(const class FObjectInitializer& OI) : Super(O
     _IsVR = false;
 }
 
+void APlayerStatePlay::OverrideWith(APlayerState* PlayerState) {
+    Super::OverrideWith(PlayerState);
+
+    APlayerStatePlay* PSP = Cast<APlayerStatePlay>(PlayerState);
+    if (PSP) _CharacterClass = PSP->_CharacterClass;
+}
+
+
+void APlayerStatePlay::CopyProperties(APlayerState* PlayerState) {
+    Super::CopyProperties(PlayerState);
+
+    APlayerStatePlay* PSP = Cast<APlayerStatePlay>(PlayerState);
+    if(PSP) PSP->_CharacterClass = _CharacterClass;
+}
+
+/******************************** GETTERS/SETTERS ************************************************/
 bool APlayerStatePlay::SetIsTalking_Validate(const bool IsTalking) {
     return true;
 }

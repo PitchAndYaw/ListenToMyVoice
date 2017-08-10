@@ -12,13 +12,14 @@ class LISTENTOMYVOICE_API AGameModePlay : public AGameMode {
 
 public:
     AGameModePlay(const class FObjectInitializer& OI);
-    virtual void PostLogin(APlayerController * NewPlayer) override;
-
-    UFUNCTION(Server, Reliable, WithValidation)
-    void SERVER_PlayerDead(AController* PlayerController);
 
     virtual void InitGame(const FString & MapName, const FString & Options,
                           FString & ErrorMessage) override;
+
+    virtual void HandleSeamlessTravelPlayer(AController*& C);
+
+    UFUNCTION(Server, Reliable, WithValidation)
+    void SERVER_PlayerDead(AController* Controller);
 
 protected:
     class APlayerControllerPlay* _HostController;

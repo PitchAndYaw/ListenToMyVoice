@@ -29,10 +29,6 @@ void APlayerControllerPlay::SetupInputComponent() {
     InputComponent->BindAction("ClickRight", IE_Released, this, &APlayerControllerPlay::UseRightReleased);
 }
 
-void APlayerControllerPlay::BeginPlay() {
-    Super::BeginPlay();
-}
-
 void APlayerControllerPlay::OnRep_Pawn() {
     Super::OnRep_Pawn();
 

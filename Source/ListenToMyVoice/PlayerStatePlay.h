@@ -33,4 +33,8 @@ public:
     UFUNCTION(Server, Reliable, WithValidation)
     void SetCharacterClass(TSubclassOf<ACharacter> CharacterClass);
     TSubclassOf<ACharacter> GetCharacterClass();
+
+protected:
+    void OverrideWith(APlayerState* PlayerState) override;
+    void CopyProperties(APlayerState* PlayerState) override;
 };
