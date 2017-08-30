@@ -43,28 +43,21 @@ void AGameModePlay::HandleSeamlessTravelPlayer(AController*& C) {
 
             FTransform Transform = FindPlayerStart(PC, PS->PlayerName)->GetActorTransform();
             APawn* Actor = Cast<APawn>(GetWorld()->SpawnActor(PS->_CharacterClass, &Transform));
-            if (Actor) {
-                PC->Possess(Actor);
-                if (!_HostController) _HostController = PC;
-                else _GuestController = PC;
-            }
+            if (Actor) PC->Possess(Actor);
         }
     }
 }
 
 bool AGameModePlay::SERVER_PlayerDead_Validate(AController* Controller) { return true; }
 void AGameModePlay::SERVER_PlayerDead_Implementation(AController* Controller) {
-    APlayerControllerPlay* PlayerController = Cast<APlayerControllerPlay>(Controller);
-    if (PlayerController) {
-        PlayerController->ChangeState(NAME_Spectating);
-
-        if (_HostController == PlayerController) {
-            _HostController->CLIENT_Dead();
-            if(_GuestController) _GuestController->CLIENT_ShowMenu();
-        }
-        if (_GuestController == PlayerController) {
-            _GuestController->CLIENT_GotoState(NAME_Spectating);
-            _HostController->CLIENT_ShowMenu();
+    APlayerControllerPlay* PC = Cast<APlayerControllerPlay>(Controller);
+    if (PC) {
+        PC->ChangeState(NAME_Spectating);
+        
+        APlayerControllerPlay* PCAux;
+        for (FConstPlayerControllerIterator I = GetWorld()->GetPlayerControllerIterator(); I; ++I) {
+            PCAux = Cast<APlayerControllerPlay>(I->Get());
+            PCAux->CLIENT_Dead(PCAux == PC);
         }
     }
 }

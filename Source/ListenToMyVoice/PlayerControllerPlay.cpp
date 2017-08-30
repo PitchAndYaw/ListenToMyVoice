@@ -261,41 +261,39 @@ void APlayerControllerPlay::CreateMenuActor() {
     if (GameInstance) _MenuActor = GameInstance->CreateMenuPlay();
 }
 
-void APlayerControllerPlay::CLIENT_ShowMenu_Implementation() {
-    if (!_MenuActor) CreateMenuActor();
-    if (_MenuActor->_IsMenuHidden) {
-        APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
-        if (PlayerCharacter) {
-            UCameraComponent* CameraComp = Cast<UCameraComponent>(PlayerCharacter->
-                                                                  FindComponentByClass<UCameraComponent>());
-            if (CameraComp) {
-                FVector Location = CameraComp->GetComponentLocation() +
-                    (CameraComp->GetForwardVector().GetSafeNormal() * 200);
+void APlayerControllerPlay::EnableMenu(bool Enable) {
+    APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+    if (PlayerCharacter) {
+        if (Enable) {
+            if (!_MenuActor) CreateMenuActor();
+            if (_MenuActor->_IsMenuHidden) {
+                UCameraComponent* CameraComp = Cast<UCameraComponent>(PlayerCharacter->
+                                                                      FindComponentByClass<UCameraComponent>());
+                if (CameraComp) {
+                    FVector Location = CameraComp->GetComponentLocation() +
+                        (CameraComp->GetForwardVector().GetSafeNormal() * 200);
 
-                _MenuActor->ToogleMenu(Location,
-                                       CameraComp->GetComponentRotation());
-                PlayerCharacter->ToggleMenuInteraction(true);
+                    _MenuActor->ToogleMenu(Location,
+                                           CameraComp->GetComponentRotation());
+                    PlayerCharacter->ToggleMenuInteraction(true);
+                }
+            }
+        }
+        else {
+            bool  IsMenuHidden = _MenuActor ? _MenuActor->_IsMenuHidden : true;
+            if (!IsMenuHidden) {
+                UCameraComponent* CameraComp = Cast<UCameraComponent>(PlayerCharacter->
+                                                                      FindComponentByClass<UCameraComponent>());
+                if (CameraComp) {
+                    _MenuActor->ToogleMenu(CameraComp->GetComponentLocation(),
+                                           CameraComp->GetComponentRotation());
+                    PlayerCharacter->ToggleMenuInteraction(false);
+                }
+
             }
         }
     }
 }
-
-void APlayerControllerPlay::CLIENT_HideMenu_Implementation() {
-    bool  IsMenuHidden = _MenuActor ? _MenuActor->_IsMenuHidden : true;
-    if (!IsMenuHidden) {
-        APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
-        if (PlayerCharacter) {
-            UCameraComponent* CameraComp = Cast<UCameraComponent>(PlayerCharacter->
-                                                                  FindComponentByClass<UCameraComponent>());
-            if (CameraComp) {
-                _MenuActor->ToogleMenu(CameraComp->GetComponentLocation(),
-                                       CameraComp->GetComponentRotation());
-                PlayerCharacter->ToggleMenuInteraction(false);
-            }
-        }
-    }
-}
-
 /*********************************************** DELEGATES ***************************************/
 void APlayerControllerPlay::OnRadioPressed() {
     APlayerStatePlay* PS = Cast<APlayerStatePlay>(PlayerState);
@@ -343,31 +341,31 @@ void APlayerControllerPlay::OnRadioReleased() {
 }
 
 /******************************************** GAME FLOW ******************************************/
-void APlayerControllerPlay::CLIENT_Dead_Implementation() {
-    bool  IsMenuHidden = _MenuActor ? _MenuActor->_IsMenuHidden : true;
-    APlayerSpectator* PlayerSpectator = Cast<APlayerSpectator>(GetSpectatorPawn());
-    if (IsMenuHidden && PlayerSpectator) {
-        /* MENU INTERFACE */
-        if (!_MenuActor) CreateMenuActor();
-
-        UCameraComponent* CameraComp = Cast<UCameraComponent>(PlayerSpectator->
-                                                              FindComponentByClass<UCameraComponent>());
-        if (CameraComp) {
-            FVector Location = CameraComp->GetComponentLocation() +
-                (CameraComp->GetForwardVector().GetSafeNormal() * 200);
-
-            _MenuActor->ToogleMenu(Location,
-                                   CameraComp->GetComponentRotation());
-            PlayerSpectator->ToggleMenuInteraction(true);
-        }
+void APlayerControllerPlay::CLIENT_Dead_Implementation(bool IsMe) {
+    
+    ClientGotoState(NAME_Spectating);
+    if (!IsMe) {
+        EnableMenu();
+        ULibraryUtils::Log("I DIED");
     }
-}
+    else {
+        bool  IsMenuHidden = _MenuActor ? _MenuActor->_IsMenuHidden : true;
+        APlayerSpectator* PlayerSpectator = Cast<APlayerSpectator>(GetSpectatorPawn());
+        if (IsMenuHidden && PlayerSpectator) {
+            /* MENU INTERFACE */
+            if (!_MenuActor) CreateMenuActor();
 
-void APlayerControllerPlay::CLIENT_GotoState_Implementation(FName NewState) {
-    if (GetPawn()) {// CLIENT-SERVER EXCEPTION
-        FVector Location = GetPawn()->GetActorLocation();
-        ClientGotoState(NewState);
-        GetSpectatorPawn()->SetActorLocation(Location);
-        CLIENT_Dead();
+            UCameraComponent* CameraComp = Cast<UCameraComponent>(PlayerSpectator->
+                                                                  FindComponentByClass<UCameraComponent>());
+            if (CameraComp) {
+                FVector Location = CameraComp->GetComponentLocation() +
+                    (CameraComp->GetForwardVector().GetSafeNormal() * 200);
+
+                _MenuActor->ToogleMenu(Location,
+                                       CameraComp->GetComponentRotation());
+                PlayerSpectator->ToggleMenuInteraction(true);
+                ULibraryUtils::Log("NOT DIED");
+            }
+        }
     }
 }

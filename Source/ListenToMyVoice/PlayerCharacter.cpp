@@ -308,8 +308,8 @@ float APlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const
 	if (_Health <= 0) {
 		AGameModePlay* GameMode = Cast<AGameModePlay>(GetWorld()->GetAuthGameMode());
         if (GameMode) {
-			GameMode->SERVER_PlayerDead(GetController());
             MULTI_CharacterDead();
+			GameMode->SERVER_PlayerDead(GetController());
         }
     }
     return _Health;	

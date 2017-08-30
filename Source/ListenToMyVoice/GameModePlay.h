@@ -20,8 +20,4 @@ public:
 
     UFUNCTION(Server, Reliable, WithValidation)
     void SERVER_PlayerDead(AController* Controller);
-
-protected:
-    class APlayerControllerPlay* _HostController;
-    class APlayerControllerPlay* _GuestController;
 };

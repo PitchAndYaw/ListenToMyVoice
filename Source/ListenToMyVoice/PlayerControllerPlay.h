@@ -28,16 +28,11 @@ public:
     void OnRadioReleased();
 
     UFUNCTION(Client, Reliable)
-    void CLIENT_Dead();
-    UFUNCTION(Client, Reliable)
-    void CLIENT_GotoState(FName NewState);
+    void CLIENT_Dead(bool IsMe);
 
     /*************** TRIGGER MENU *************/
     void ToogleMenu();
-    UFUNCTION(Client, Reliable)
-    void CLIENT_ShowMenu();
-    UFUNCTION(Client, Reliable)
-    void CLIENT_HideMenu();
+    void EnableMenu(bool Enable = true);
 
 protected:
 
