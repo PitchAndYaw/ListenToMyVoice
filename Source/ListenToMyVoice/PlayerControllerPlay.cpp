@@ -342,13 +342,14 @@ void APlayerControllerPlay::OnRadioReleased() {
 
 /******************************************** GAME FLOW ******************************************/
 void APlayerControllerPlay::CLIENT_Dead_Implementation(bool IsMe) {
-    
-    ClientGotoState(NAME_Spectating);
-    if (!IsMe) {
-        EnableMenu();
-        ULibraryUtils::Log("I DIED");
-    }
+    if (!IsMe) EnableMenu();
     else {
+        /* Change to Spectate Mode */
+        FVector ActorLocation = GetPawn()->GetActorLocation();
+        ClientGotoState(NAME_Spectating);
+        GetSpectatorPawn()->SetActorLocation(ActorLocation);
+
+        /* Show Menu */
         bool  IsMenuHidden = _MenuActor ? _MenuActor->_IsMenuHidden : true;
         APlayerSpectator* PlayerSpectator = Cast<APlayerSpectator>(GetSpectatorPawn());
         if (IsMenuHidden && PlayerSpectator) {
@@ -364,7 +365,6 @@ void APlayerControllerPlay::CLIENT_Dead_Implementation(bool IsMe) {
                 _MenuActor->ToogleMenu(Location,
                                        CameraComp->GetComponentRotation());
                 PlayerSpectator->ToggleMenuInteraction(true);
-                ULibraryUtils::Log("NOT DIED");
             }
         }
     }

@@ -37,20 +37,16 @@ void AGameModeLobby::InitGame(const FString & MapName, const FString & Options,
 
 void AGameModeLobby::PostLogin(APlayerController* NewPlayer) {
     Super::PostLogin(NewPlayer);
-    ULibraryUtils::Log("AGameModeLobby::PostLogin");
 
     APlayerControllerLobby* PC = Cast<APlayerControllerLobby>(NewPlayer);
     UNWGameInstance* GI = Cast<UNWGameInstance>(GetGameInstance());
     if (HasAuthority() && PC && GI) {
         /* SPAWN PLAYER */
-        ULibraryUtils::Log("SPAWN PLAYER");
         if (PC->GetPawn()) PC->GetPawn()->Destroy();
 
         APlayerStatePlay* PS = Cast<APlayerStatePlay>(PC->PlayerState);
         if (PS) {
             PS->SetIsVR(PC->_IsVR);
-
-            ULibraryUtils::Log(FString::Printf(TEXT("NumPlayers=%i"), NumPlayers));
             if (NumPlayers == 1) {
                 PS->SetPlayerName("host");
                 PS->SetCharacterClass(PC->_IsVR ? GI->_VRBoyClass : GI->_BoyClass);
