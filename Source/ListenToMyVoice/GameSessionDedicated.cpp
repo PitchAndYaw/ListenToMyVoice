@@ -25,6 +25,9 @@ void AGameSessionDedicated::RegisterServer() {
         if (Sessions.IsValid()) {
             FOnlineSessionSettings Settings;
 
+            Settings.Set(FName("SESSION_NAME"), FString("Partida"), EOnlineDataAdvertisementType::ViaOnlineService);
+
+            Settings.bIsDedicated = true;
             Settings.bIsLANMatch = true;
             Settings.bUsesPresence = true;
             Settings.NumPublicConnections = 2;

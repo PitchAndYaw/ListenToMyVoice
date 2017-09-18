@@ -22,6 +22,7 @@ public:
     void EnablePanel(bool Enable);
     UInputMenu* GetInputMenuAt(int Index);
     UInputMenu* GetInputMenuLast();
+    int GetIndexOf(UInputMenu* Input) const;
     void RemoveFrom(int From);
 
 protected:

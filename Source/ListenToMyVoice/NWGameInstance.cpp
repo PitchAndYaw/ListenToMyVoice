@@ -24,7 +24,6 @@ UNWGameInstance::UNWGameInstance(const FObjectInitializer& OI) : Super(OI) {
     OnDestroySessionCompleteDelegate =
         FOnDestroySessionCompleteDelegate::CreateUObject(this, &UNWGameInstance::OnDestroySessionComplete);
 
-    _SessionOwner = "";
     _IsVRMode = false;
     _Exit = false;
 
@@ -127,14 +126,13 @@ void UNWGameInstance::FindSessions(TSharedPtr<const FUniqueNetId> UserId, bool b
     if (Sessions.IsValid() && UserId.IsValid()) {
         _SessionSearch = MakeShareable(new FOnlineSessionSearch());
         _SessionSearch->bIsLanQuery = bIsLAN;
-        _SessionSearch->MaxSearchResults = 20;
+        _SessionSearch->MaxSearchResults = 5;
         _SessionSearch->PingBucketSize = 50;
         _SessionSearch->TimeoutInSeconds = 15;
 
         TSharedRef<FOnlineSessionSearch> SearchSettingsRef = _SessionSearch.ToSharedRef();
         OnFindSessionsCompleteDelegateHandle =
             Sessions->AddOnFindSessionsCompleteDelegate_Handle(OnFindSessionsCompleteDelegate);
-        _SessionOwner = "";
         Sessions->FindSessions(*UserId, SearchSettingsRef);
     }
 }
@@ -327,7 +325,8 @@ bool UNWGameInstance::FillMenuFindGame() {
         FString Result = "";
         for (int32 i = 0; i < _SessionSearch->SearchResults.Num(); i++) {
             if (_SessionSearch->SearchResults[i].Session.NumOpenPublicConnections > 0) {
-                Result = _SessionSearch->SearchResults[i].Session.OwningUserName;
+                Result = _SessionSearch->SearchResults[i].Session.SessionSettings.Settings.FindRef(FName("SESSION_NAME")).Data.ToString() + FString::FromInt(i);
+                //Result = _SessionSearch->SearchResults[i].Session.OwningUserName;
                 Ok = true;
 
                 UInputMenu* Slot_GameSlot = NewObject<UInputMenu>(_MenuActor, FName(*Result));
@@ -369,12 +368,11 @@ void UNWGameInstance::OnButtonFindGame(UInputMenu* InputMenu) {
 }
 
 void UNWGameInstance::OnButtonJoinGame(UInputMenu* InputMenu) {
-    for (int32 i = 0; i < _SessionSearch->SearchResults.Num(); i++) {
-        if (_SessionSearch->SearchResults[i].Session.NumOpenPublicConnections > 0) {
-            if (_SessionSearch->SearchResults[i].Session.OwningUserName == InputMenu->GetFName().ToString()) {
-                JoinOnlineGame(i);
-                break;
-            }
+    int Index = _MenuActor->GetSubmenu(_MenuActor->GetSubmenuNum() - 1)->GetIndexOf(InputMenu);
+    if (Index > 0 && Index <= _SessionSearch->SearchResults.Num()) {
+        Index -= 1;
+        if (_SessionSearch->SearchResults[Index].Session.NumOpenPublicConnections > 0) {
+            JoinOnlineGame(Index);
         }
     }
 }

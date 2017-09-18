@@ -63,3 +63,15 @@ void UMenuPanel::RemoveFrom(int From) {
         }
     }
 }
+
+int UMenuPanel::GetIndexOf(UInputMenu* Input) const {
+    bool found = false;
+    int i = 0;
+    while (!found && i < _MenuInputs.Num()) {
+        if (_MenuInputs[i] == Input) {
+            found = true;
+        }
+        else i++;
+    }
+    return found ? i : -1;
+}
