@@ -115,7 +115,8 @@ void UNWGameInstance::JoinOnlineGame() {
 void UNWGameInstance::DestroySession() {
     IOnlineSessionPtr Sessions = GetSessions();
     if (Sessions.IsValid()) {
-        Sessions->AddOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegate);
+        OnDestroySessionCompleteDelegateHandle = 
+            Sessions->AddOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegate);
 
         ULibraryUtils::Log("DestroySession");
         Sessions->DestroySession(GameSessionName);
