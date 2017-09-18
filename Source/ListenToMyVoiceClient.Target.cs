@@ -3,11 +3,11 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-[SupportedPlatforms(UnrealPlatformClass.Server)]
-public class ListenToMyVoiceServerTarget : TargetRules
+//[SupportedPlatforms(UnrealPlatformClass.Client)]
+public class ListenToMyVoiceClientTarget : TargetRules
 {
-  public ListenToMyVoiceServerTarget(TargetInfo Target) {
-    Type = TargetType.Server;
+  public ListenToMyVoiceClientTarget(TargetInfo Target) {
+    Type = TargetType.Client;
     //bUsesSteam = true;
   }
   //

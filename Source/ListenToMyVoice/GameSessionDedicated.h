@@ -13,9 +13,11 @@ class LISTENTOMYVOICE_API AGameSessionDedicated : public AGameSession {
 public:
     AGameSessionDedicated(const FObjectInitializer& OI);
 
-    virtual void RegisterServer() override;
-    virtual void RegisterPlayer(APlayerController* NewPlayer,
-                                const TSharedPtr<const FUniqueNetId>& UniqueId,
-                                bool bWasFromInvite) override;
-    virtual void PostLogin(APlayerController* NewPlayer) override;
+    void RegisterServer() override;
+    //void RegisterPlayer(APlayerController* NewPlayer,
+    //                            const TSharedPtr<const FUniqueNetId>& UniqueId,
+    //                            bool bWasFromInvite) override;
+    //void PostLogin(APlayerController* NewPlayer) override;
+
+    void UnregisterPlayer(FName InSessionName, const FUniqueNetIdRepl& UniqueId) override;
 };

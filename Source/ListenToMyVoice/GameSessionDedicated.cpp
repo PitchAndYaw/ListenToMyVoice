@@ -31,13 +31,31 @@ void AGameSessionDedicated::RegisterServer() {
     else ULibraryUtils::Log("No OnlineSubsytem found!");
 }
 
+//void AGameSessionDedicated::RegisterPlayer(APlayerController* NewPlayer, const TSharedPtr<const FUniqueNetId>& UniqueId, bool bWasFromInvite) {
+//    Super::RegisterPlayer(NewPlayer, UniqueId, bWasFromInvite);
+//    ULibraryUtils::Log("RegisterPlayer");
+//}
+//
+//void AGameSessionDedicated::PostLogin(APlayerController* NewPlayer) {
+//    Super::PostLogin(NewPlayer);
+//    ULibraryUtils::Log("AGameSessionDedicated::PostLogin");
+//}
 
-void AGameSessionDedicated::RegisterPlayer(APlayerController* NewPlayer, const TSharedPtr<const FUniqueNetId>& UniqueId, bool bWasFromInvite) {
-    Super::RegisterPlayer(NewPlayer, UniqueId, bWasFromInvite);
-    ULibraryUtils::Log("RegisterPlayer");
-}
+void AGameSessionDedicated::UnregisterPlayer(FName InSessionName, const FUniqueNetIdRepl& UniqueId) {
+    Super::UnregisterPlayer(InSessionName, UniqueId);
 
-void AGameSessionDedicated::PostLogin(APlayerController* NewPlayer) {
-    Super::PostLogin(NewPlayer);
-    ULibraryUtils::Log("AGameSessionDedicated::PostLogin");
+    IOnlineSessionPtr Sessions;
+    IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+    if (OnlineSub) {
+        Sessions = OnlineSub->GetSessionInterface();
+        if (Sessions.IsValid()) {
+            FNamedOnlineSession* Session = Sessions->GetNamedSession(InSessionName);
+            
+            if (Session->RegisteredPlayers.Num() == 0) {
+                ULibraryUtils::Log("NO PLAYERS");
+                Sessions->DestroySession(InSessionName);
+            }
+        }
+    }
+    else ULibraryUtils::Log("No OnlineSubsytem found!");
 }
