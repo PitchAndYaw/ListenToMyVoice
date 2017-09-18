@@ -23,9 +23,9 @@ UInputMenu::UInputMenu(const FObjectInitializer& OI) : Super(OI) {
         TEXT("Material'/Game/Art/Common/Fonts/TextLTMVMaterialHover.TextLTMVMaterialHover'"));
     _MaterialHover = Finder3.Object;
     _TextRender->SetMaterial(0, _Material);
-    static ConstructorHelpers::FObjectFinder<UFont> Finder4(
-        TEXT("Font'/Game/Art/Common/Fonts/FontIcarus.FontIcarus'"));
-    _TextRender->SetFont(Finder4.Object);
+
+    FStringAssetReference AssetRef(TEXT("/Game/Art/Common/Fonts/FontIcarus.FontIcarus"));
+    _TextRender->SetFont(TAssetPtr<UFont>(AssetRef).Get());
 
     _TextRender->SetWorldSize(12);
     _TextRender->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);

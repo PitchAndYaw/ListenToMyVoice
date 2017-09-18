@@ -66,6 +66,7 @@ IOnlineSessionPtr UNWGameInstance::GetSessions() {
 }
 
 void UNWGameInstance::InitGame() {
+    ULibraryUtils::Log("InitGame");
     /* SWITCH PLAYER MODE */
     if (FParse::Param(FCommandLine::Get(), TEXT("vr"))) _IsVRMode = true;
 
