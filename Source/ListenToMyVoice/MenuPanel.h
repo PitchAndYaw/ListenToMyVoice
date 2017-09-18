@@ -22,6 +22,7 @@ public:
     void EnablePanel(bool Enable);
     UInputMenu* GetInputMenuAt(int Index);
     UInputMenu* GetInputMenuLast();
+    void RemoveFrom(int From);
 
 protected:
     TArray<UInputMenu*> _MenuInputs;

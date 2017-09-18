@@ -37,12 +37,10 @@ public:
     void InitGame();
 
     /*** BLUEPRINTS ***/
-    //UFUNCTION(BlueprintCallable, Category = "Session")
-    //void LaunchLobby();
     UFUNCTION(BlueprintCallable, Category = "Session")
     void FindOnlineGames();
     UFUNCTION(BlueprintCallable, Category = "Session")
-    void JoinOnlineGame();
+    void JoinOnlineGame(int Index);
     UFUNCTION(BlueprintCallable, Category = "Session")
     void DestroySession();
 
@@ -93,7 +91,6 @@ public:
     void OnButtonDestroyExitGame(UInputMenu* InputMenu);
     void OnButtonExitGame(UInputMenu* InputMenu);
 
-    void OnButtonHostGame(UInputMenu* InputMenu);
     void OnButtonFindGame(UInputMenu* InputMenu);
 
     void OnButtonJoinGame(UInputMenu* InputMenu);
@@ -127,5 +124,6 @@ private:
     AMenu3D* _MenuActor;
 
     void CreateOptionsPanel();
+    bool FillMenuFindGame();
     void ChangeResolution(FString Resolution);
 };

@@ -22,6 +22,8 @@ public:
     void AddSubmenu(UMenuPanel* Submenu);
     void SetSubmenuByIndex(const int& Index);
     void SetInputMenuLoading(int IndexPanel, int IndexInputMenu, bool IsLoading, FString Text);
+    void RemoveSubmenu(const int& Index);
+    UMenuPanel* GetSubmenu(const int& Index);
 
     int GetSubmenuNum();
 

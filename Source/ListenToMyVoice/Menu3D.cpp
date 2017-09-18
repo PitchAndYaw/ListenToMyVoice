@@ -104,7 +104,12 @@ void AMenu3D::SetSubmenuByIndex(const int& Index) {
             _Submenus[i]->EnablePanel(true);
 
             PlaceDecorators(!(Index == 0), _Submenus[i]->_PanelHeight);
-            _Breadcrumb.Add(Index);
+            if (_Breadcrumb.Num() > 0) {
+                if (_Breadcrumb[_Breadcrumb.Num() - 1] != Index) _Breadcrumb.Add(Index);
+            }
+            else {
+                _Breadcrumb.Add(Index);
+            }
         }
         else {
             _Submenus[i]->EnablePanel(false);
@@ -112,6 +117,20 @@ void AMenu3D::SetSubmenuByIndex(const int& Index) {
     }
 
     if (Index < 0) _Breadcrumb.Reset();
+}
+
+void AMenu3D::RemoveSubmenu(const int& Index) {
+    if (Index >= 0 && Index < _Submenus.Num()) {
+        _Submenus[Index]->DestroyComponent(true);
+        _Submenus.RemoveAt(Index);
+    }
+}
+
+UMenuPanel* AMenu3D::GetSubmenu(const int& Index) {
+    if (Index >= 0 && Index < _Submenus.Num()) {
+        return _Submenus[Index];
+    }
+    return nullptr;
 }
 
 void AMenu3D::SetInputMenuLoading(int IndexPanel, int IndexInputMenu, bool IsLoading,

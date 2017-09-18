@@ -19,11 +19,11 @@ UNWGameInstance::UNWGameInstance(const FObjectInitializer& OI) : Super(OI) {
     /** Bind function for JOINING a Session */
     OnJoinSessionCompleteDelegate =
         FOnJoinSessionCompleteDelegate::CreateUObject(this, &UNWGameInstance::OnJoinSessionComplete);
-    
+
     /** Bind function for DESTROYING a Session */
     OnDestroySessionCompleteDelegate =
         FOnDestroySessionCompleteDelegate::CreateUObject(this, &UNWGameInstance::OnDestroySessionComplete);
-    
+
     _SessionOwner = "";
     _IsVRMode = false;
     _Exit = false;
@@ -70,7 +70,7 @@ void UNWGameInstance::InitGame() {
     /* SWITCH PLAYER MODE */
     if (FParse::Param(FCommandLine::Get(), TEXT("vr"))) _IsVRMode = true;
 
-    if(GEngine) {
+    if (GEngine) {
         IHeadMountedDisplay* HMD = (IHeadMountedDisplay*)(GEngine->HMDDevice.Get());
         if (HMD) {
             HMD->EnableHMD(_IsVRMode);
@@ -82,9 +82,9 @@ void UNWGameInstance::InitGame() {
     AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
     if (PC && GameMode) {
         TSubclassOf<ACharacter> CharacterClass = _IsVRMode ? _VRDefaultCharacterClass :
-                                                             _DefaultCharacterClass;
+            _DefaultCharacterClass;
         FTransform Transform = GameMode->FindPlayerStart(PC, TEXT("playerstart"))
-                                            ->GetActorTransform();
+            ->GetActorTransform();
         APawn* Actor = Cast<APawn>(GetWorld()->SpawnActor(CharacterClass, &Transform));
         if (Actor) {
             PC->Possess(Actor);
@@ -99,16 +99,13 @@ void UNWGameInstance::FindOnlineGames() {
     FindSessions(Player->GetPreferredUniqueNetId(), true, true);
 }
 
-void UNWGameInstance::JoinOnlineGame() {
+void UNWGameInstance::JoinOnlineGame(int Index) {
     ULocalPlayer* const Player = GetFirstGamePlayer();
     FOnlineSessionSearchResult SearchResult;
-    if (_SessionSearch->SearchResults.Num() > 0) {
-        for (int32 i = 0; i < _SessionSearch->SearchResults.Num(); i++) {
-            SearchResult = _SessionSearch->SearchResults[i];
-            if (SearchResult.Session.OwningUserId != Player->GetPreferredUniqueNetId()) {
-                JoinAtSession(Player->GetPreferredUniqueNetId(), GameSessionName, SearchResult);
-                break;
-            }
+    if (Index < _SessionSearch->SearchResults.Num()) {
+        SearchResult = _SessionSearch->SearchResults[Index];
+        if (SearchResult.Session.OwningUserId != Player->GetPreferredUniqueNetId()) {
+            JoinAtSession(Player->GetPreferredUniqueNetId(), GameSessionName, SearchResult);
         }
     }
 }
@@ -116,7 +113,7 @@ void UNWGameInstance::JoinOnlineGame() {
 void UNWGameInstance::DestroySession() {
     IOnlineSessionPtr Sessions = GetSessions();
     if (Sessions.IsValid()) {
-        OnDestroySessionCompleteDelegateHandle = 
+        OnDestroySessionCompleteDelegateHandle =
             Sessions->AddOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegate);
 
         ULibraryUtils::Log("DestroySession");
@@ -135,7 +132,7 @@ void UNWGameInstance::FindSessions(TSharedPtr<const FUniqueNetId> UserId, bool b
         _SessionSearch->TimeoutInSeconds = 15;
 
         TSharedRef<FOnlineSessionSearch> SearchSettingsRef = _SessionSearch.ToSharedRef();
-        OnFindSessionsCompleteDelegateHandle = 
+        OnFindSessionsCompleteDelegateHandle =
             Sessions->AddOnFindSessionsCompleteDelegate_Handle(OnFindSessionsCompleteDelegate);
         _SessionOwner = "";
         Sessions->FindSessions(*UserId, SearchSettingsRef);
@@ -146,24 +143,16 @@ void UNWGameInstance::OnFindSessionsComplete(bool bWasSuccessful) {
     ULibraryUtils::Log(FString::Printf(TEXT("Number of Sessions found: %d"),
                                        _SessionSearch->SearchResults.Num()), 3, 15);
     IOnlineSessionPtr Sessions = GetSessions();
-    FString Result = "";
     bool Ok = false;
     if (Sessions.IsValid()) {
         Sessions->ClearOnFindSessionsCompleteDelegate_Handle(OnFindSessionsCompleteDelegateHandle);
-        for (int32 i = 0; i < _SessionSearch->SearchResults.Num(); i++) {
-            if (_SessionSearch->SearchResults[i].Session.NumOpenPublicConnections > 0) {
-                Result = _SessionSearch->SearchResults[i].Session.OwningUserName;
-                Ok = true;
-            }
-        }
+        Ok = FillMenuFindGame();
     }
-    else Result = "INVALID SESSIONS";
-
-    _SessionOwner = Result.Len() > 0 ? Result : "NO SESSIONS";
 
     int Index = _MenuActor->GetSubmenuNum() - 1;
+    _MenuActor->SetSubmenuByIndex(Index);
     if (Ok) _MenuActor->SetInputMenuLoading(Index, 0, false, "");
-    else _MenuActor->SetInputMenuLoading(Index, 0, false, _SessionOwner);
+    else _MenuActor->SetInputMenuLoading(Index, 0, false, "NO GAMES");
 
     _MenuActor->PlayEndFindSessions(Ok);
 }
@@ -173,7 +162,7 @@ bool UNWGameInstance::JoinAtSession(TSharedPtr<const FUniqueNetId> UserId, FName
     bool bSuccessful = false;
     IOnlineSessionPtr Sessions = GetSessions();
     if (Sessions.IsValid() && UserId.IsValid()) {
-        OnJoinSessionCompleteDelegateHandle = 
+        OnJoinSessionCompleteDelegateHandle =
             Sessions->AddOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegate);
         bSuccessful = Sessions->JoinSession(*UserId, SessionName, SearchResult);
     }
@@ -238,22 +227,18 @@ AMenu3D* UNWGameInstance::CreateMenuMain() {
 
     /*** (TOTAL -2)NEW GAME MENU ***/
     UMenuPanel* MenuNewGame = NewObject<UMenuPanel>(_MenuActor, FName("MenuNewGame"));
-    UInputMenu* Slot_HostGame = NewObject<UInputMenu>(_MenuActor, FName("HOST GAME"));
-    Slot_HostGame->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonHostGame);
-    Slot_HostGame->AddOnInputMenuDelegate();
     UInputMenu* Slot_FindGame = NewObject<UInputMenu>(_MenuActor, FName("FIND GAME"));
     Slot_FindGame->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonFindGame);
     Slot_FindGame->AddOnInputMenuDelegate();
 
     _MenuActor->AddSubmenu(MenuNewGame);
-    MenuNewGame->AddMenuInput(Slot_HostGame);
     MenuNewGame->AddMenuInput(Slot_FindGame);
 
     /*** (TOTAL - 1)FIND GAME MENU ***/
     UMenuPanel* MenuFindGame = NewObject<UMenuPanel>(_MenuActor, FName("MenuFindGame"));
     UInputMenu* Slot_JoinGame = NewObject<UInputMenu>(_MenuActor, FName("JOIN GAME"));
-    Slot_JoinGame->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonJoinGame);
-    Slot_JoinGame->AddOnInputMenuDelegate();
+    //Slot_JoinGame->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonJoinGame);
+    //Slot_JoinGame->AddOnInputMenuDelegate();
 
     _MenuActor->AddSubmenu(MenuFindGame);
     MenuFindGame->AddMenuInput(Slot_JoinGame);
@@ -335,6 +320,27 @@ void UNWGameInstance::CreateOptionsPanel() {
     }
 }
 
+bool UNWGameInstance::FillMenuFindGame() {
+    int Index = _MenuActor->GetSubmenuNum() - 1;
+    bool Ok = false;
+    if (_SessionSearch.IsValid()) {
+        FString Result = "";
+        for (int32 i = 0; i < _SessionSearch->SearchResults.Num(); i++) {
+            if (_SessionSearch->SearchResults[i].Session.NumOpenPublicConnections > 0) {
+                Result = _SessionSearch->SearchResults[i].Session.OwningUserName;
+                Ok = true;
+
+                UInputMenu* Slot_GameSlot = NewObject<UInputMenu>(_MenuActor, FName(*Result));
+                Slot_GameSlot->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonJoinGame);
+                Slot_GameSlot->AddOnInputMenuDelegate();
+
+                _MenuActor->GetSubmenu(Index)->AddMenuInput(Slot_GameSlot);
+            }
+        }
+    }
+    return Ok;
+}
+
 /*********************************** BINDINGS ****************************************************/
 void UNWGameInstance::OnButtonNewGame(UInputMenu* InputMenu) {
     _MenuActor->SetSubmenuByIndex(_MenuActor->GetSubmenuNum() - 2);
@@ -353,19 +359,24 @@ void UNWGameInstance::OnButtonExitGame(UInputMenu* InputMenu) {
     FGenericPlatformMisc::RequestExit(false);
 }
 
-void UNWGameInstance::OnButtonHostGame(UInputMenu* InputMenu) {
-    //LaunchLobby();
-}
-
 void UNWGameInstance::OnButtonFindGame(UInputMenu* InputMenu) {
-    FindOnlineGames();
     int Index = _MenuActor->GetSubmenuNum() - 1;
+
+    _MenuActor->GetSubmenu(Index)->RemoveFrom(1);
+    FindOnlineGames();
     _MenuActor->SetSubmenuByIndex(Index);
     _MenuActor->SetInputMenuLoading(Index, 0, true, "SEARCHING...");
 }
 
 void UNWGameInstance::OnButtonJoinGame(UInputMenu* InputMenu) {
-    JoinOnlineGame();
+    for (int32 i = 0; i < _SessionSearch->SearchResults.Num(); i++) {
+        if (_SessionSearch->SearchResults[i].Session.NumOpenPublicConnections > 0) {
+            if (_SessionSearch->SearchResults[i].Session.OwningUserName == InputMenu->GetFName().ToString()) {
+                JoinOnlineGame(i);
+                break;
+            }
+        }
+    }
 }
 
 void UNWGameInstance::OnButtonSwitchComfortMode(UInputMenu* InputMenu) {

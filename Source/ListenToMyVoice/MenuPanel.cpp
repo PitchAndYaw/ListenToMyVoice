@@ -42,3 +42,24 @@ UInputMenu* UMenuPanel::GetInputMenuAt(int Index) {
 UInputMenu* UMenuPanel::GetInputMenuLast() {
     return _MenuInputs.Top();
 }
+
+
+// Removes from the last
+void UMenuPanel::RemoveFrom(int From) {
+    if (From >= 0 && From < _MenuInputs.Num()) {
+        int Tot = _MenuInputs.Num();
+        FVector Origin;
+        FVector BoxExtent;
+        float SphereRadius;
+        UInputMenu* Pivot;
+        for (int32 i = From; i < Tot; i++) {
+            Pivot = _MenuInputs[_MenuInputs.Num() - 1];
+            UKismetSystemLibrary::GetComponentBounds(Pivot, Origin, BoxExtent, SphereRadius);
+            _PanelHeight -= (2 * BoxExtent.Z) + _Margin;
+
+            Pivot->ClearOnInputMenuDelegate();
+            Pivot->DestroyComponent(true);
+            _MenuInputs.RemoveAt(_MenuInputs.Num() - 1);
+        }
+    }
+}

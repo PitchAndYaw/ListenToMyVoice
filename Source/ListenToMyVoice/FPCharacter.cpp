@@ -58,7 +58,7 @@ void AFPCharacter::PossessedBy(AController* NewController) {
 
 void AFPCharacter::CLIENT_PossessedBy_Implementation(AController* NewController) {
     APlayerController* PlayerController = Cast<APlayerController>(NewController);
-    if (PlayerController) {
+    if (PlayerController && PlayerController->IsLocalPlayerController()) {
         UUserWidget* HUD = CreateWidget<UUserWidget>(PlayerController, _HUDClass);
         if (HUD) HUD->AddToViewport();
     }
@@ -68,7 +68,7 @@ void AFPCharacter::AfterPossessed(bool SetInventory) {
     Super::AfterPossessed(SetInventory);
 
     APlayerController* PlayerController = Cast<APlayerController>(GetController());
-    if (PlayerController->IsLocalPlayerController()) {
+    if (PlayerController && PlayerController->IsLocalPlayerController()) {
         if (SetInventory) {
             _InventoryWidget = CreateWidget<UUserWidget>(PlayerController, _InventoryUIClass);
             if (_InventoryWidget) {
