@@ -20,4 +20,22 @@ public:
     //void PostLogin(APlayerController* NewPlayer) override;
 
     void UnregisterPlayer(FName InSessionName, const FUniqueNetIdRepl& UniqueId) override;
+
+    /* Delegate called when session created */
+    FOnCreateSessionCompleteDelegate OnCreateSessionCompleteDelegate;
+    FDelegateHandle OnCreateSessionCompleteDelegateHandle;
+    virtual void OnCreateSessionComplete(FName InSessionName, bool bWasSuccessful);
+
+    /* Delegate called when session started */
+    FOnStartSessionCompleteDelegate OnStartSessionCompleteDelegate;
+    FDelegateHandle OnStartSessionCompleteDelegateHandle;
+    void OnStartOnlineGameComplete(FName InSessionName, bool bWasSuccessful);
+
+    /* Delegate for destroying a session */
+    FOnDestroySessionCompleteDelegate OnDestroySessionCompleteDelegate;
+    FDelegateHandle OnDestroySessionCompleteDelegateHandle;
+    virtual void OnDestroySessionComplete(FName InSessionName, bool bWasSuccessful);
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Session")
+    FString _MapLobbyName;
 };

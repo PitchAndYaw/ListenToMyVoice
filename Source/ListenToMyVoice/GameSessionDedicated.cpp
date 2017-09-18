@@ -3,7 +3,19 @@
 #include "ListenToMyVoice.h"
 #include "GameSessionDedicated.h"
 
-AGameSessionDedicated::AGameSessionDedicated(const FObjectInitializer& OI) : Super(OI) {}
+AGameSessionDedicated::AGameSessionDedicated(const FObjectInitializer& OI) : Super(OI) {
+    /** Bind function for CREATING a Session */
+    OnCreateSessionCompleteDelegate =
+        FOnCreateSessionCompleteDelegate::CreateUObject(this, &AGameSessionDedicated::OnCreateSessionComplete);
+    OnStartSessionCompleteDelegate =
+        FOnStartSessionCompleteDelegate::CreateUObject(this, &AGameSessionDedicated::OnStartOnlineGameComplete);
+
+    /** Bind function for DESTROYING a Session */
+    OnDestroySessionCompleteDelegate =
+        FOnDestroySessionCompleteDelegate::CreateUObject(this, &AGameSessionDedicated::OnDestroySessionComplete);
+
+    _MapLobbyName = USettings::Get()->LevelLobby.GetAssetName();
+}
 
 void AGameSessionDedicated::RegisterServer() {
     IOnlineSessionPtr Sessions;
@@ -22,7 +34,10 @@ void AGameSessionDedicated::RegisterServer() {
             Settings.bShouldAdvertise = true;
             Settings.bAllowJoinViaPresence = true;
             Settings.bAllowJoinViaPresenceFriendsOnly = false;
+            Settings.Set(SETTING_MAPNAME, _MapLobbyName, EOnlineDataAdvertisementType::ViaOnlineService);
 
+            OnCreateSessionCompleteDelegateHandle =
+                Sessions->AddOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegate);
             Sessions->CreateSession(0, GameSessionName, Settings);
 
             ULibraryUtils::Log("CreateSession");
@@ -53,9 +68,52 @@ void AGameSessionDedicated::UnregisterPlayer(FName InSessionName, const FUniqueN
             
             if (Session->RegisteredPlayers.Num() == 0) {
                 ULibraryUtils::Log("NO PLAYERS");
-                Sessions->DestroySession(InSessionName);
+                Sessions->AddOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegate);
+                Sessions->DestroySession(GameSessionName);
             }
         }
     }
     else ULibraryUtils::Log("No OnlineSubsytem found!");
+}
+
+void AGameSessionDedicated::OnCreateSessionComplete(FName InSessionName, bool bWasSuccessful) {
+    IOnlineSessionPtr Sessions;
+    IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+    if (OnlineSub) {
+        Sessions = OnlineSub->GetSessionInterface();
+        if (Sessions.IsValid()) {
+            Sessions->ClearOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegateHandle);
+            OnStartSessionCompleteDelegateHandle =
+                Sessions->AddOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegate);
+            Sessions->StartSession(GameSessionName);
+        }
+    }
+}
+
+void AGameSessionDedicated::OnStartOnlineGameComplete(FName InSessionName, bool bWasSuccessful) {
+    IOnlineSessionPtr Sessions;
+    IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+    if (OnlineSub) {
+        Sessions = OnlineSub->GetSessionInterface();
+        if (Sessions.IsValid()) {
+            Sessions->ClearOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegateHandle);
+            UGameplayStatics::OpenLevel(GetWorld(), FName(*_MapLobbyName), true, "listen");
+            ULibraryUtils::Log("StartOnlineGameComplete");
+        }
+    }
+}
+
+void AGameSessionDedicated::OnDestroySessionComplete(FName InSessionName, bool bWasSuccessful) {
+    IOnlineSessionPtr Sessions;
+    IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+    if (OnlineSub) {
+        Sessions = OnlineSub->GetSessionInterface();
+        if (Sessions.IsValid()) {
+            Sessions->ClearOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegateHandle);
+            if (bWasSuccessful) {
+                ULibraryUtils::Log("AGameSessionDedicated::OnDestroySessionComplete");
+                RegisterServer();
+            }
+        }
+    }
 }

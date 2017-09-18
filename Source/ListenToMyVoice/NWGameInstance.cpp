@@ -195,8 +195,7 @@ void UNWGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSucce
     if (Sessions.IsValid()) {
         Sessions->ClearOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegateHandle);
         if (bWasSuccessful) {
-            //UGameplayStatics::OpenLevel(GetWorld(), _MapMenuName, true);
-            ULibraryUtils::Log("OnDestroySessionComplete");
+            ULibraryUtils::Log("UNWGameInstance::OnDestroySessionComplete");
             if (_Exit) {
                 _Exit = false;
                 FGenericPlatformMisc::RequestExit(false);
