@@ -297,30 +297,56 @@ void APlayerCharacter::CLIENT_ClearRadioDelegates_Implementation(AActor* Actor) 
 }
 
 /***********RECEIVE HIT AND DAMAGE*************/
-float APlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-                                   class AController* EventInstigator, class AActor* DamageCauser) {	
-    _Health -= DamageAmount;	
-	/*Fade to red when take damage*/
-	_PlayerCamera->PostProcessBlendWeight = 1;
-	_PlayerCamera->PostProcessSettings.bOverride_SceneFringeIntensity = true;
-	_PlayerCamera->PostProcessSettings.SceneFringeIntensity = 5.0f;
-	_Damaged = true;
+bool APlayerCharacter::SERVER_TakeDamage_Validate(int DamageAmount) { return true; }
+void APlayerCharacter::SERVER_TakeDamage_Implementation(int DamageAmount) {
+    ULibraryUtils::Log(FString::Printf(TEXT("APlayerCharacter::TakeDamage")), 0, 60);
+    _Health -= DamageAmount;
+    _Damaged = true;
 
-    _BreathAudioComp->Play();
-
-	if (_Health <= 0) {
-		AGameModePlay* GameMode = Cast<AGameModePlay>(GetWorld()->GetAuthGameMode());
+    MULTI_TakeDamage(DamageAmount);
+    if (_Health <= 0) {
+        AGameModePlay* GameMode = Cast<AGameModePlay>(GetWorld()->GetAuthGameMode());
         if (GameMode) {
             MULTI_CharacterDead();
-			GameMode->SERVER_PlayerDead(GetController());
+            GameMode->SERVER_PlayerDead(GetController());
         }
     }
-    return _Health;	
+}
+
+void APlayerCharacter::MULTI_TakeDamage_Implementation(int DamageAmount) {
+    /*Fade to red when take damage*/
+    _PlayerCamera->PostProcessBlendWeight = 1;
+    _PlayerCamera->PostProcessSettings.bOverride_SceneFringeIntensity = true;
+    _PlayerCamera->PostProcessSettings.SceneFringeIntensity = 5.0f;
+
+    _BreathAudioComp->Play();
 }
 
 void APlayerCharacter::MULTI_CharacterDead_Implementation() {
-	Cast<UPrimitiveComponent>(GetRootComponent())->SetCollisionProfileName(FName("Ragdoll"));
-	SetActorEnableCollision(true);
-	GetMesh()->SetSimulatePhysics(true);
+    Cast<UPrimitiveComponent>(GetRootComponent())->SetCollisionProfileName(FName("Ragdoll"));
+    SetActorEnableCollision(true);
+    GetMesh()->SetSimulatePhysics(true);
 }
 
+
+//float APlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+//                                   class AController* EventInstigator, class AActor* DamageCauser) {	
+//    ULibraryUtils::Log(FString::Printf(TEXT("APlayerCharacter::TakeDamage")), 0, 60);
+//    _Health -= DamageAmount;
+//	/*Fade to red when take damage*/
+//	_PlayerCamera->PostProcessBlendWeight = 1;
+//	_PlayerCamera->PostProcessSettings.bOverride_SceneFringeIntensity = true;
+//	_PlayerCamera->PostProcessSettings.SceneFringeIntensity = 5.0f;
+//	_Damaged = true;
+//
+//    _BreathAudioComp->Play();
+//
+//	if (_Health <= 0) {
+//		AGameModePlay* GameMode = Cast<AGameModePlay>(GetWorld()->GetAuthGameMode());
+//        if (GameMode) {
+//            MULTI_CharacterDead();
+//			GameMode->SERVER_PlayerDead(GetController());
+//        }
+//    }
+//    return _Health;
+//}

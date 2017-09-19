@@ -11,8 +11,8 @@ class LISTENTOMYVOICE_API AEnemyCharacter : public ACharacter {
     GENERATED_BODY()
 
 public:
-	UFUNCTION()
-	void OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
+	//UFUNCTION()
+	//void OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AI Settings")
     float _SightRadius;
@@ -35,8 +35,13 @@ public:
 	UPROPERTY(Category = "Diary", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UPaperSpriteComponent* _PlayerPointerComp;
 
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-		class AController* EventInstigator, class AActor* DamageCauser) override;
+	//virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	//	class AController* EventInstigator, class AActor* DamageCauser) override;
+    
+    UFUNCTION(Server, Reliable, WithValidation)
+    void SERVER_TakeDamage(int DamageAmount);
+    UFUNCTION(NetMulticast, Reliable)
+    void MULTI_TakeDamage(int DamageAmount);
 
     AEnemyCharacter(const FObjectInitializer& OI);
 

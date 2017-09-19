@@ -28,7 +28,8 @@ public:
 	int _Damage;
 
 	UFUNCTION()
-	void OnHit(UPrimitiveComponent* Hitcomp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	void OnHit(UPrimitiveComponent* Hitcomp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+               FVector NormalImpulse, const FHitResult& Hit);
 
 	//FORCEINLINE class UStaticMeshComponent* GetStaticMeshComp() const { return StaticMeshComponent; }
 	/** Returns CollisionComp subobject **/

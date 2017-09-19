@@ -49,8 +49,13 @@ public:
     virtual void UseRightPressed(bool IsMenuHidden);
     virtual void UseRightReleased(bool IsMenuHidden);
 
-    virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-                             class AController* EventInstigator, class AActor* DamageCauser) override;
+    //virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+    //                         class AController* EventInstigator, class AActor* DamageCauser) override;
+
+    UFUNCTION(Server, Reliable, WithValidation)
+    void SERVER_TakeDamage(int DamageAmount);
+    UFUNCTION(NetMulticast, Reliable)
+    void MULTI_TakeDamage(int DamageAmount);
 
     AActor* GetWalkieActor();
     bool IsWalkieInHand();

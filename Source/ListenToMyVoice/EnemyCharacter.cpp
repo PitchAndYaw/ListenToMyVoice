@@ -41,7 +41,7 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
     _DieEvent = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Scene/EnemyDead.EnemyDead")));
 
     AIControllerClass = AEnemyController::StaticClass();
-	OnActorHit.AddDynamic(this, &AEnemyCharacter::OnHit);
+	//OnActorHit.AddDynamic(this, &AEnemyCharacter::OnHit);
 
 	_DestructibleMesh = CreateDefaultSubobject<UDestructibleComponent>(TEXT("DestructibleMesh"));
 	_DestructibleMesh->SetHiddenInGame(true);
@@ -62,32 +62,42 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
 	GetCharacterMovement()->MaxWalkSpeed = 150.0f;
 }
 
-void AEnemyCharacter::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit) {
-	if (OtherActor) {
-		if (OtherActor->IsA(AProjectile::StaticClass())) {
-			// Create a damage event  
-			TSubclassOf<UDamageType> const ValidDamageTypeClass = TSubclassOf<UDamageType>(UDamageType::StaticClass());
-			FDamageEvent DamageEvent(ValidDamageTypeClass);
+//void AEnemyCharacter::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit) {
+//	if (OtherActor) {
+//		if (OtherActor->IsA(AProjectile::StaticClass())) {
+//			SERVER_TakeDamage(0);
+//		}
+//	}
+//}
 
-			const float DamageAmount = 0.0f;
-			TakeDamage(DamageAmount, DamageEvent, GetController(), OtherActor);
-		}
-	}
-}
+//float AEnemyCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+//				 class AController* EventInstigator, class AActor* DamageCauser) {
+//    if (!_IsDead) {
+//        ULibraryUtils::Log(FString::Printf(TEXT("AEnemyCharacter::TakeDamage")), 0, 60);
+//        /*The enemy doesn't receive damage*/
+//        SetDamaged(true);
+//
+//        if (_HurtAudioComp) _HurtAudioComp->Play();
+//    }
+//	return 0.0f;
+//}
 
-float AEnemyCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-				 class AController* EventInstigator, class AActor* DamageCauser) {
+bool AEnemyCharacter::SERVER_TakeDamage_Validate(int DamageAmount) { return true; }
+void AEnemyCharacter::SERVER_TakeDamage_Implementation(int DamageAmount) {
     if (!_IsDead) {
-        ULibraryUtils::Log(FString::Printf(TEXT("Me han dado")), 0, 60);
+        ULibraryUtils::Log(FString::Printf(TEXT("AEnemyCharacter::TakeDamage")), 0, 60);
         /*The enemy doesn't receive damage*/
         SetDamaged(true);
-
-        if (_HurtAudioComp) _HurtAudioComp->Play();
     }
-	return 0.0f;
+    MULTI_TakeDamage(DamageAmount);
+}
+
+void AEnemyCharacter::MULTI_TakeDamage_Implementation(int DamageAmount) {
+    if (_HurtAudioComp) _HurtAudioComp->Play();
 }
 
 void AEnemyCharacter::SetDamaged(bool Damaged) {
+    ULibraryUtils::Log("AEnemyCharacter::SetDamaged");
 	_IsDamaged = Damaged;
 }
 
