@@ -33,7 +33,7 @@ public:
 	UPROPERTY(Category = DestructibleMesh, VisibleAnywhere, BlueprintReadOnly)
 	class UDestructibleComponent* _DestructibleMesh;
 	UPROPERTY(Category = "Diary", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* _PlayerPointerComp;
+	class UPaperSpriteComponent* _PlayerPointerComp;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, class AActor* DamageCauser) override;

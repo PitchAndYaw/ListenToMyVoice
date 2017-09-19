@@ -10,6 +10,8 @@
 #include "GameModePlay.h"
 #include "Walkie.h"
 #include "MenuInteraction.h"
+#include "PaperSprite.h"
+#include "PaperSpriteComponent.h"
 
 
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
@@ -43,12 +45,12 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
     _BreathAudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/HurtMale.HurtMale")));
     _BreathAudioComp->bAutoActivate = false;
 
-	_PlayerPointerComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Player Pointer"));
+	_PlayerPointerComp = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("Player Pointer"));
     _PlayerPointerComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Plane(TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
-	if (StaticMesh_Plane.Object) {
-		_PlayerPointerComp->SetStaticMesh(StaticMesh_Plane.Object);
-	}
+	//static ConstructorHelpers::FObjectFinder<UPaperSprite> SpritePointer(TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
+	//if (SpritePointer.Object) {
+	//	_PlayerPointerComp->SetSprite(SpritePointer.Object);
+	//}
 	_PlayerPointerComp->SetRelativeLocation({ 0,0,300 });
 	_PlayerPointerComp->bOwnerNoSee = true;
 

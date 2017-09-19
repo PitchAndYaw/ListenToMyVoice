@@ -68,7 +68,7 @@ protected:
     UPROPERTY(Category = Menu , VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UMenuInteraction* _MenuInteractionComp;
 	UPROPERTY(Category = "Diary", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* _PlayerPointerComp;
+	class UPaperSpriteComponent* _PlayerPointerComp;
 
     void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
