@@ -34,8 +34,9 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
 	//if (SpritePlane.Object) {
 	//	_PlayerPointerComp->SetSprite(SpritePlane.Object);
 	//}
-	_PlayerPointerComp->SetRelativeLocation({ 0,0,300 });
-	_PlayerPointerComp->bOwnerNoSee = true;
+    _PlayerPointerComp->SetRelativeLocation({ 0, 0, 500 });
+    _PlayerPointerComp->SetRelativeRotation({ 90, 0, -90 });
+    _PlayerPointerComp->bOwnerNoSee = true;
 
     _DieEvent = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Scene/EnemyDead.EnemyDead")));
 

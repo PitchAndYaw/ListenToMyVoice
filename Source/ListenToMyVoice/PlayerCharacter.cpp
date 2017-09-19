@@ -51,7 +51,8 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
 	//if (SpritePointer.Object) {
 	//	_PlayerPointerComp->SetSprite(SpritePointer.Object);
 	//}
-	_PlayerPointerComp->SetRelativeLocation({ 0,0,300 });
+	_PlayerPointerComp->SetRelativeLocation({ 0, 0, 500 });
+    _PlayerPointerComp->SetRelativeRotation({ 90, 0, -90 });
 	_PlayerPointerComp->bOwnerNoSee = true;
 
 	_PlayerCamera->PostProcessBlendWeight = 0;
