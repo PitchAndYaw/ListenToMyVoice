@@ -38,4 +38,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Session")
     FString _MapLobbyName;
+
+private:
+    FString _SessionParamName;
+
+    void ParseParameters(const TCHAR* Line);
 };

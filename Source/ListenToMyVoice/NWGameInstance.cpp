@@ -149,7 +149,7 @@ void UNWGameInstance::OnFindSessionsComplete(bool bWasSuccessful) {
 
     int Index = _MenuActor->GetSubmenuNum() - 1;
     _MenuActor->SetSubmenuByIndex(Index);
-    if (Ok) _MenuActor->SetInputMenuLoading(Index, 0, false, "");
+    if (Ok) _MenuActor->SetInputMenuLoading(Index, 0, false, "JOIN GAME");
     else _MenuActor->SetInputMenuLoading(Index, 0, false, "NO GAMES");
 
     _MenuActor->PlayEndFindSessions(Ok);
@@ -325,7 +325,8 @@ bool UNWGameInstance::FillMenuFindGame() {
         FString Result = "";
         for (int32 i = 0; i < _SessionSearch->SearchResults.Num(); i++) {
             if (_SessionSearch->SearchResults[i].Session.NumOpenPublicConnections > 0) {
-                Result = _SessionSearch->SearchResults[i].Session.SessionSettings.Settings.FindRef(FName("SESSION_NAME")).Data.ToString() + FString::FromInt(i);
+                Result = _SessionSearch->SearchResults[i].Session.SessionSettings.Settings.
+                            FindRef(SETTING_SESSION_NAME).Data.ToString();
                 //Result = _SessionSearch->SearchResults[i].Session.OwningUserName;
                 Ok = true;
 

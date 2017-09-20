@@ -15,6 +15,8 @@
 #include "Runtime/UMG/Public/Slate/SObjectWidget.h"
 #include "Runtime/UMG/Public/IUMGModule.h"
 
+#define SETTING_SESSION_NAME FName(TEXT("SESSION_NAME"))
+
 DECLARE_DELEGATE(FRadioDelegate);
 DECLARE_DELEGATE(FGrabDelegate);
 DECLARE_DELEGATE_TwoParams(FGunDelegate, TSubclassOf<AActor>, const FTransform);
