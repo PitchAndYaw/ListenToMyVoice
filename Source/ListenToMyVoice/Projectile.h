@@ -6,34 +6,30 @@
 #include "Projectile.generated.h"
 
 UCLASS()
-class LISTENTOMYVOICE_API AProjectile : public AActor
-{
-	GENERATED_BODY()
-	/** Projectile's static mesh **/
-	//UPROPERTY(VisibleAnyWhere, Category = Projectile)
-	//class UStaticMeshComponent* StaticMeshComponent;
+class LISTENTOMYVOICE_API AProjectile : public AActor {
+    GENERATED_BODY()
 
-	/** Sphere collision component */
-	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
-	class USphereComponent* CollisionComp;
+    /** Sphere collision component */
+    UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
+    class USphereComponent* CollisionComp;
 
-	/** Projectile movement component */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
-	class UProjectileMovementComponent* ProjectileMovement;
-	
-public:	
-	AProjectile();
+        /** Projectile movement component */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+    class UProjectileMovementComponent* ProjectileMovement;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	int _Damage;
+public:
+    AProjectile();
 
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* Hitcomp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+    int _Damage;
+
+    UFUNCTION()
+    void OnHit(UPrimitiveComponent* Hitcomp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                FVector NormalImpulse, const FHitResult& Hit);
 
-	//FORCEINLINE class UStaticMeshComponent* GetStaticMeshComp() const { return StaticMeshComponent; }
-	/** Returns CollisionComp subobject **/
-	FORCEINLINE class USphereComponent* GetCollisionComp() const { return CollisionComp; }
-	/** Returns ProjectileMovement subobject **/
-	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
+    //FORCEINLINE class UStaticMeshComponent* GetStaticMeshComp() const { return StaticMeshComponent; }
+    /** Returns CollisionComp subobject **/
+    FORCEINLINE class USphereComponent* GetCollisionComp() const { return CollisionComp; }
+    /** Returns ProjectileMovement subobject **/
+    FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 };

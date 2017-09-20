@@ -8,6 +8,11 @@
 
 // Sets default values
 AProjectile::AProjectile() {
+    PrimaryActorTick.bCanEverTick = true;
+    bReplicates = true;
+    bReplicateMovement = true;
+    bAlwaysRelevant = true;
+
     _Damage = 0;
     // Use a sphere as a simple collision representation
     CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));

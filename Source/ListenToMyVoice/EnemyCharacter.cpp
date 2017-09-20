@@ -62,26 +62,6 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
 	GetCharacterMovement()->MaxWalkSpeed = 150.0f;
 }
 
-//void AEnemyCharacter::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit) {
-//	if (OtherActor) {
-//		if (OtherActor->IsA(AProjectile::StaticClass())) {
-//			SERVER_TakeDamage(0);
-//		}
-//	}
-//}
-
-//float AEnemyCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-//				 class AController* EventInstigator, class AActor* DamageCauser) {
-//    if (!_IsDead) {
-//        ULibraryUtils::Log(FString::Printf(TEXT("AEnemyCharacter::TakeDamage")), 0, 60);
-//        /*The enemy doesn't receive damage*/
-//        SetDamaged(true);
-//
-//        if (_HurtAudioComp) _HurtAudioComp->Play();
-//    }
-//	return 0.0f;
-//}
-
 bool AEnemyCharacter::SERVER_TakeDamage_Validate(int DamageAmount) { return true; }
 void AEnemyCharacter::SERVER_TakeDamage_Implementation(int DamageAmount) {
     if (!_IsDead) {

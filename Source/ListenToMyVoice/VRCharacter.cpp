@@ -479,6 +479,7 @@ void AVRCharacter::MULTI_GrabRelease_Implementation(int Hand) {
 
 void AVRCharacter::ItemGrabbedLeft() {
     if (_ActorGrabbing) {
+        CLIENT_AddGunDelegates(_ActorGrabbing);
         CLIENT_AddRadioDelegates(_ActorGrabbing);
 
         UStaticMeshComponent* ItemMesh = Cast<UStaticMeshComponent>(_ActorGrabbing->GetComponentByClass(
@@ -503,6 +504,7 @@ void AVRCharacter::ItemGrabbedLeft() {
 
 void AVRCharacter::ItemGrabbedRight() {
     if (_ActorGrabbing) {
+        CLIENT_AddGunDelegates(_ActorGrabbing);
         CLIENT_AddRadioDelegates(_ActorGrabbing);
 
         UStaticMeshComponent* ItemMesh = Cast<UStaticMeshComponent>(_ActorGrabbing->GetComponentByClass(
@@ -546,6 +548,7 @@ void AVRCharacter::DropRight() {
 /********** SWITCH ITEM ***********/
 bool AVRCharacter::SERVER_SwitchItem_Validate(AActor* ItemActor, int Hand) { return true; }
 void AVRCharacter::SERVER_SwitchItem_Implementation(AActor* ItemActor, int Hand) {
+    CLIENT_ClearGunDelegates(ItemActor);
     CLIENT_ClearRadioDelegates(ItemActor);
     MULTI_SwitchItem(ItemActor, Hand);
 }

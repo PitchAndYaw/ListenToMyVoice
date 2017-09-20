@@ -11,6 +11,8 @@
 #include "HandPickItem.h"
 #include "MenuInteraction.h"
 #include "FMODAudioComponent.h"
+#include "Gun.h"
+
 
 AFPCharacter::AFPCharacter(const FObjectInitializer& OI) : Super(OI) {
     _Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
@@ -428,6 +430,7 @@ void AFPCharacter::ToggleInventory() {
 /**************************************** INVENTORY **********************************************/
 bool AFPCharacter::SERVER_SaveItemInventory_Validate(AActor* ItemActor, int Hand) { return true; }
 void AFPCharacter::SERVER_SaveItemInventory_Implementation(AActor* ItemActor, int Hand) {
+    CLIENT_ClearGunDelegates(ItemActor);
     CLIENT_ClearRadioDelegates(ItemActor);
     MULTI_SaveItemInventory(ItemActor, Hand);
 }
@@ -476,6 +479,7 @@ void AFPCharacter::PickItemInventory(AActor* ItemActor, bool IsLeft) {
 
 bool AFPCharacter::SERVER_PickItemInventoryLeft_Validate(AActor* ItemActor) { return true; }
 void AFPCharacter::SERVER_PickItemInventoryLeft_Implementation(AActor* ItemActor) {
+    CLIENT_AddGunDelegates(ItemActor);
     CLIENT_AddRadioDelegates(ItemActor);
     MULTI_PickItemInventoryLeft(ItemActor);
 }
@@ -520,6 +524,7 @@ void AFPCharacter::MULTI_PickItemInventoryLeft_Implementation(AActor* ItemActor)
 
 bool AFPCharacter::SERVER_PickItemInventoryRight_Validate(AActor* ItemActor) { return true; }
 void AFPCharacter::SERVER_PickItemInventoryRight_Implementation(AActor* ItemActor) {
+    CLIENT_AddGunDelegates(ItemActor);
     CLIENT_AddRadioDelegates(ItemActor);
     MULTI_PickItemInventoryRight(ItemActor);
 }

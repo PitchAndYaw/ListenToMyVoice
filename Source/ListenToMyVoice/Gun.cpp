@@ -12,6 +12,7 @@ UGun::UGun(){
 	municion = 250;
 	RayParameter = 250;
 	_ProjectileClass = AProjectile::StaticClass();
+    _AreDelegatesBinded = false;
 }
 
 /*Interfaces*/
@@ -42,9 +43,7 @@ void UGun::AddAmmo(uint8 AmountToAdd) { municion += AmountToAdd; }
 uint8 UGun::GetAmmo() { return municion; }
 
 void UGun::OnFire() {	
-
 	if (_ProjectileClass != NULL) {
-		
 		UWorld* const World = GetOwner()->GetWorld();
 		if (World != NULL) {
 			UStaticMeshComponent* mesh = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
@@ -61,31 +60,8 @@ void UGun::OnFire() {
 				_CameraSocket = _PlayerCharacter->GetMesh()->GetSocketByName(TEXT("ShootCamera"));
 				CameraSocketTransform = _CameraSocket->GetSocketTransform(_PlayerCharacter->GetMesh());
 			}
-
-			FActorSpawnParameters ActorSpawnParams;
-			ActorSpawnParams.Owner = GetOwner();
-			ActorSpawnParams.Instigator = GetOwner()->Instigator;
-
 			
-			//Shoot bullet from gun:
-			
-			if (_Socket) {
-				AProjectile* const NewProjectile = World->SpawnActor<AProjectile>
-					(_ProjectileClass, SocketTransform, ActorSpawnParams);
-			}
-			
-
-			//Shoot bullet from camera:		
-			/*
-			if (_CameraSocket) {
-				CameraVector.X = _PlayerCharacter->GetPlayerCamera()->GetComponentLocation().X + 50;
-				CameraVector.Y = _PlayerCharacter->GetPlayerCamera()->GetComponentLocation().Y;
-				CameraVector.Z = _PlayerCharacter->GetPlayerCamera()->GetComponentLocation().Z;
-
-				AProjectile* const NewProjectile = World->SpawnActor<AProjectile>
-					(_ProjectileClass, CameraVector, _PlayerCharacter->GetPlayerCamera()->GetComponentRotation(), ActorSpawnParams);
-			}
-			*/
+			if (_Socket) _GunEvent.Broadcast(_ProjectileClass, SocketTransform);
 		}
 	}
 	/*Make noise*/
@@ -93,5 +69,13 @@ void UGun::OnFire() {
 		_PlayerCharacter->MakeNoise(1.0f, GetOwner()->Instigator, GetOwner()->GetActorLocation());
 }
 
+/*********************************************** DELEGATES ***************************************/
+FDelegateHandle UGun::AddOnGunDelegate(FGunDelegate& GunDelegate) {
+    _AreDelegatesBinded = true;
+    return _GunEvent.Add(GunDelegate);
+}
 
-
+void UGun::ClearOnGunDelegate(FDelegateHandle DelegateHandle) {
+    _AreDelegatesBinded = false;
+    _GunEvent.Remove(DelegateHandle);
+}

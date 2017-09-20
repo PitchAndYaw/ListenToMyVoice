@@ -9,6 +9,7 @@
 #include "FMODAudioComponent.h"
 #include "GameModePlay.h"
 #include "Walkie.h"
+#include "Gun.h"
 #include "MenuInteraction.h"
 #include "PaperSprite.h"
 #include "PaperSpriteComponent.h"
@@ -62,6 +63,8 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
 	_Damaged = false;
 
     GetCharacterMovement()->MaxWalkSpeed = 200.0f;
+
+    _OnGunDelegate.BindUObject(this, &APlayerCharacter::SpawnProjectile);
 }
 
 void APlayerCharacter::Tick(float DeltaSeconds) {
@@ -296,6 +299,25 @@ void APlayerCharacter::CLIENT_ClearRadioDelegates_Implementation(AActor* Actor) 
     }
 }
 
+/******* Gun Delegate *******/
+void APlayerCharacter::CLIENT_AddGunDelegates_Implementation(AActor* Actor) {
+    if (Actor) {
+        UGun* Gun = Cast<UGun>(Actor->GetComponentByClass(UGun::StaticClass()));
+        if (Gun && !Gun->_AreDelegatesBinded) {
+            _OnGunDelegateHandle = Gun->AddOnGunDelegate(_OnGunDelegate);
+        }
+    }
+}
+
+void APlayerCharacter::CLIENT_ClearGunDelegates_Implementation(AActor* Actor) {
+    if (Actor) {
+        UGun* Gun = Cast<UGun>(Actor->GetComponentByClass(UGun::StaticClass()));
+        if (Gun && Gun->_AreDelegatesBinded) {
+            Gun->ClearOnGunDelegate(_OnGunDelegateHandle);
+        }
+    }
+}
+
 /***********RECEIVE HIT AND DAMAGE*************/
 bool APlayerCharacter::SERVER_TakeDamage_Validate(int DamageAmount) { return true; }
 void APlayerCharacter::SERVER_TakeDamage_Implementation(int DamageAmount) {
@@ -327,26 +349,13 @@ void APlayerCharacter::MULTI_CharacterDead_Implementation() {
     SetActorEnableCollision(true);
     GetMesh()->SetSimulatePhysics(true);
 }
+void APlayerCharacter::SpawnProjectile(TSubclassOf<AActor> C, const FTransform T) {
+    ULibraryUtils::Log("SpawnProjectile");
+    SERVER_SpawnActor(C, T);
+}
 
-
-//float APlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-//                                   class AController* EventInstigator, class AActor* DamageCauser) {	
-//    ULibraryUtils::Log(FString::Printf(TEXT("APlayerCharacter::TakeDamage")), 0, 60);
-//    _Health -= DamageAmount;
-//	/*Fade to red when take damage*/
-//	_PlayerCamera->PostProcessBlendWeight = 1;
-//	_PlayerCamera->PostProcessSettings.bOverride_SceneFringeIntensity = true;
-//	_PlayerCamera->PostProcessSettings.SceneFringeIntensity = 5.0f;
-//	_Damaged = true;
-//
-//    _BreathAudioComp->Play();
-//
-//	if (_Health <= 0) {
-//		AGameModePlay* GameMode = Cast<AGameModePlay>(GetWorld()->GetAuthGameMode());
-//        if (GameMode) {
-//            MULTI_CharacterDead();
-//			GameMode->SERVER_PlayerDead(GetController());
-//        }
-//    }
-//    return _Health;
-//}
+bool APlayerCharacter::SERVER_SpawnActor_Validate(TSubclassOf<AActor> C, const FTransform T) { return true; }
+void APlayerCharacter::SERVER_SpawnActor_Implementation(TSubclassOf<AActor> C, const FTransform T) {
+    ULibraryUtils::Log("SERVER_SpawnActor");
+    GetWorld()->SpawnActor(C, &T);
+}

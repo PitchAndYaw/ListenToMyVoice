@@ -17,5 +17,6 @@
 
 DECLARE_DELEGATE(FRadioDelegate);
 DECLARE_DELEGATE(FGrabDelegate);
+DECLARE_DELEGATE_TwoParams(FGunDelegate, TSubclassOf<AActor>, const FTransform);
 
 #endif

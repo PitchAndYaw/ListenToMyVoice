@@ -37,7 +37,11 @@ public:
     FRadioDelegate _OnRadioPressedDelegate;
     FRadioDelegate _OnRadioReleasedDelegate;
 
+    /* Gun Delegate */
+    FGunDelegate _OnGunDelegate;
+    void SpawnProjectile(TSubclassOf<AActor> C, const FTransform T);
 
+    
     APlayerCharacter(const FObjectInitializer& OI);
     virtual void AfterPossessed(bool SetInventory);
 
@@ -49,9 +53,6 @@ public:
     virtual void UseRightPressed(bool IsMenuHidden);
     virtual void UseRightReleased(bool IsMenuHidden);
 
-    //virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-    //                         class AController* EventInstigator, class AActor* DamageCauser) override;
-
     UFUNCTION(Server, Reliable, WithValidation)
     void SERVER_TakeDamage(int DamageAmount);
     UFUNCTION(NetMulticast, Reliable)
@@ -62,6 +63,10 @@ public:
     class UFMODEvent* GetWalkieEvent();
 
     virtual void ToggleMenuInteraction(bool Activate);
+
+
+    UFUNCTION(Server, Reliable, WithValidation)
+    void SERVER_SpawnActor(TSubclassOf<AActor> C, const FTransform T);
 
 protected:
     UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -118,9 +123,17 @@ protected:
     UFUNCTION(NetMulticast, Reliable)
     void MULTI_CharacterDead();
     UFUNCTION(Client, Reliable)
+
+
+    /* DELEGATES */
     void CLIENT_AddRadioDelegates(AActor* Actor);
     UFUNCTION(Client, Reliable)
     void CLIENT_ClearRadioDelegates(AActor* Actor);
+
+    UFUNCTION(Client, Reliable)
+    void CLIENT_AddGunDelegates(AActor* Actor);
+    UFUNCTION(Client, Reliable)
+    void CLIENT_ClearGunDelegates(AActor* Actor);
 
 	/***********POST PROCESS***********/
 	bool _Damaged;
@@ -138,6 +151,9 @@ private:
     /* Radio Delegate */
     FDelegateHandle _OnRadioPressedDelegateHandle;
     FDelegateHandle _OnRadioReleasedDelegateHandle;
+
+    /* Gun Delegate */
+    FDelegateHandle _OnGunDelegateHandle;
 
 public:
     FORCEINLINE UCameraComponent* APlayerCharacter::GetPlayerCamera() const { return _PlayerCamera; }

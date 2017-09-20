@@ -7,13 +7,18 @@
 #include "Components/ActorComponent.h"
 #include "Gun.generated.h"
 
+DECLARE_EVENT_TwoParams(UGun, FGunEvent, TSubclassOf<AActor>, const FTransform);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LISTENTOMYVOICE_API UGun : public UActorComponent, public IItfUsableItem {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
+public:
+    bool _AreDelegatesBinded;
+
+    FDelegateHandle AddOnGunDelegate(FGunDelegate& RadioDelegate);
+    void ClearOnGunDelegate(FDelegateHandle DelegateHandle);
+
 	UGun();
 	void OnFire();
 	float RayParameter;	
@@ -46,4 +51,6 @@ public:
 private:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Gun Component", meta = (AllowPrivateAccess = "true"))
 	uint8 municion;
+
+    FGunEvent _GunEvent;
 };
