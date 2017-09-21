@@ -83,8 +83,8 @@ void AGameSessionDedicated::UnregisterPlayer(FName InSessionName, const FUniqueN
         if (Sessions.IsValid()) {
             FNamedOnlineSession* Session = Sessions->GetNamedSession(InSessionName);
             
-            if (Session->RegisteredPlayers.Num() == 0) {
-                ULibraryUtils::Log("NO PLAYERS");
+            if (Session->RegisteredPlayers.Num() < 2) {
+                ULibraryUtils::Log("PLAYER EXIT");
                 OnDestroySessionCompleteDelegateHandle = 
                     Sessions->AddOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegate);
                 Sessions->DestroySession(GameSessionName);
