@@ -5,13 +5,8 @@
 
 #include "NWGameInstance.h"
 #include "PlayerCharacter.h"
+#include "GameModeLobby.h"
 
-
-void APlayerControllerLobby::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const {
-    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-    DOREPLIFETIME(APlayerControllerLobby, _IsVR);
-}
 
 APlayerControllerLobby::APlayerControllerLobby(const FObjectInitializer& OI) : Super(OI) {
     GConfig->GetString(
@@ -33,11 +28,19 @@ void APlayerControllerLobby::SetupInputComponent() {
     InputComponent->BindAction("ClickRight", IE_Released, this, &APlayerControllerLobby::UseRightReleased);
 }
 
-void APlayerControllerLobby::BeginPlay() {
-    Super::BeginPlay();
+void APlayerControllerLobby::CLIENT_Init_Implementation() {
+    UNWGameInstance* GI = Cast<UNWGameInstance>(GetGameInstance());
+    if (GI) {
+        SERVER_InitCharacter(GI->_IsVRMode);
+    }
+}
 
-    UNWGameInstance* GameInstance = Cast<UNWGameInstance>(GetGameInstance());
-    if (GameInstance) _IsVR = GameInstance->_IsVRMode;
+bool APlayerControllerLobby::SERVER_InitCharacter_Validate(bool IsVR) { return true; }
+void APlayerControllerLobby::SERVER_InitCharacter_Implementation(bool IsVR) {
+    AGameModeLobby* GM = Cast<AGameModeLobby>(GetGameInstance()->GetWorld()->GetAuthGameMode());
+    if (GM) {
+        GM->SERVER_SpawnCharacter(IsVR, this);
+    }
 }
 
 void APlayerControllerLobby::OnRep_Pawn() {

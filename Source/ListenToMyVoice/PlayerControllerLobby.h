@@ -13,18 +13,19 @@ class LISTENTOMYVOICE_API APlayerControllerLobby : public APlayerController {
     GENERATED_BODY()
 
 public:
-    UPROPERTY(Replicated)
-    bool _IsVR;
-
     /* TUTORIAL */
     bool _IsLefReleased;
     bool _IsRightReleased;
 
     APlayerControllerLobby(const FObjectInitializer& OI);
-    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const override;
 
     UFUNCTION()
     void OnRep_Pawn() override;
+
+    UFUNCTION(Client, Reliable, BlueprintCallable, Category = "Init")
+    void CLIENT_Init();
+    UFUNCTION(Server, Reliable, WithValidation)
+    void SERVER_InitCharacter(bool IsVR);
 
     UFUNCTION(Client, Reliable, BlueprintCallable, Category = "Menu")
     void CLIENT_CreateMenu();
@@ -32,7 +33,6 @@ public:
 protected:
 
     virtual void SetupInputComponent() override;
-    virtual void BeginPlay() override;
 
     /********************************** ACTION MAPPINGS ******************************************/
     /******** USE ITEM LEFT *********/

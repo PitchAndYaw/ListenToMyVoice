@@ -297,7 +297,7 @@ void APlayerControllerPlay::EnableMenu(bool Enable) {
 /*********************************************** DELEGATES ***************************************/
 void APlayerControllerPlay::OnRadioPressed() {
     APlayerStatePlay* PS = Cast<APlayerStatePlay>(PlayerState);
-    if (PS) PS->SetIsTalking(true);
+    if (PS) PS->SERVER_SetIsTalking(true);
 
     StartTalking();
 
@@ -321,7 +321,7 @@ void APlayerControllerPlay::OnRadioPressed() {
 
 void APlayerControllerPlay::OnRadioReleased() {
     APlayerStatePlay* PS = Cast<APlayerStatePlay>(PlayerState);
-    if (PS) PS->SetIsTalking(false);
+    if (PS) PS->SERVER_SetIsTalking(false);
 
     StopTalking();
 

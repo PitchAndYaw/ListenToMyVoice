@@ -8,7 +8,6 @@ void APlayerStatePlay::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & 
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
     DOREPLIFETIME(APlayerStatePlay, _IsTalking);
-    DOREPLIFETIME(APlayerStatePlay, _IsVR);
     DOREPLIFETIME(APlayerStatePlay, _CharacterClass);
 }
 
@@ -16,14 +15,15 @@ APlayerStatePlay::APlayerStatePlay(const class FObjectInitializer& OI) : Super(O
     bReplicates = true;
 
     _IsTalking = false;
-    _IsVR = false;
 }
 
 void APlayerStatePlay::OverrideWith(APlayerState* PlayerState) {
     Super::OverrideWith(PlayerState);
 
     APlayerStatePlay* PSP = Cast<APlayerStatePlay>(PlayerState);
-    if (PSP) _CharacterClass = PSP->_CharacterClass;
+    if (PSP) {
+        _CharacterClass = PSP->_CharacterClass;
+    }
 }
 
 
@@ -31,14 +31,16 @@ void APlayerStatePlay::CopyProperties(APlayerState* PlayerState) {
     Super::CopyProperties(PlayerState);
 
     APlayerStatePlay* PSP = Cast<APlayerStatePlay>(PlayerState);
-    if(PSP) PSP->_CharacterClass = _CharacterClass;
+    if (PSP) {
+        PSP->_CharacterClass = _CharacterClass;
+    }
 }
 
 /******************************** GETTERS/SETTERS ************************************************/
-bool APlayerStatePlay::SetIsTalking_Validate(const bool IsTalking) {
+bool APlayerStatePlay::SERVER_SetIsTalking_Validate(const bool IsTalking) {
     return true;
 }
-void APlayerStatePlay::SetIsTalking_Implementation(const bool IsTalking) {
+void APlayerStatePlay::SERVER_SetIsTalking_Implementation(const bool IsTalking) {
     _IsTalking = IsTalking;
     ForceNetUpdate();
 }
@@ -47,24 +49,10 @@ bool APlayerStatePlay::GetIsTalking() {
     return _IsTalking;
 }
 
-
-bool APlayerStatePlay::SetIsVR_Validate(const bool IsVR) {
+bool APlayerStatePlay::SERVER_SetCharacterClass_Validate(TSubclassOf<ACharacter> CharacterClass) {
     return true;
 }
-void APlayerStatePlay::SetIsVR_Implementation(const bool IsVR) {
-    _IsVR = IsVR;
-    ForceNetUpdate();
-}
-
-bool APlayerStatePlay::GetIsVR() {
-    return _IsVR;
-}
-
-
-bool APlayerStatePlay::SetCharacterClass_Validate(TSubclassOf<ACharacter> CharacterClass) {
-    return true;
-}
-void APlayerStatePlay::SetCharacterClass_Implementation(TSubclassOf<ACharacter> CharacterClass) {
+void APlayerStatePlay::SERVER_SetCharacterClass_Implementation(TSubclassOf<ACharacter> CharacterClass) {
     _CharacterClass = CharacterClass;
     ForceNetUpdate();
 }

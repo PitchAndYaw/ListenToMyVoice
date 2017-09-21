@@ -23,6 +23,8 @@ public:
     virtual void InitGame(const FString & MapName, const FString & Options, 
                           FString & ErrorMessage) override;
 
+    UFUNCTION(Server, Reliable, WithValidation)
+    void SERVER_SpawnCharacter(bool IsVR, APlayerController* NewPlayer);
 protected:
     UPROPERTY(Replicated)
     FString _MapNameGM;

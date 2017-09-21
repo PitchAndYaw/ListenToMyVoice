@@ -15,23 +15,17 @@ public:
     bool _IsTalking;
 
     UPROPERTY(Replicated)
-    bool _IsVR;
-
-    UPROPERTY(Replicated)
     TSubclassOf<ACharacter> _CharacterClass;
 
     APlayerStatePlay(const class FObjectInitializer& OI);
+    void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 
     UFUNCTION(Server, Reliable, WithValidation)
-    void SetIsTalking(const bool IsTalking);
+    void SERVER_SetIsTalking(const bool IsTalking);
     bool GetIsTalking();
 
     UFUNCTION(Server, Reliable, WithValidation)
-    void SetIsVR(const bool IsVR);
-    bool GetIsVR();
-
-    UFUNCTION(Server, Reliable, WithValidation)
-    void SetCharacterClass(TSubclassOf<ACharacter> CharacterClass);
+    void SERVER_SetCharacterClass(TSubclassOf<ACharacter> CharacterClass);
     TSubclassOf<ACharacter> GetCharacterClass();
 
 protected:

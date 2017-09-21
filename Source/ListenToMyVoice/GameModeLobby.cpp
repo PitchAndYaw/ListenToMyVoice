@@ -39,21 +39,28 @@ void AGameModeLobby::PostLogin(APlayerController* NewPlayer) {
     Super::PostLogin(NewPlayer);
 
     APlayerControllerLobby* PC = Cast<APlayerControllerLobby>(NewPlayer);
-    UNWGameInstance* GI = Cast<UNWGameInstance>(GetGameInstance());
-    if (HasAuthority() && PC && GI) {
+    if(PC) PC->CLIENT_Init();
+}
+
+bool AGameModeLobby::SERVER_SpawnCharacter_Validate(bool IsVR, APlayerController* NewPlayer) {
+    return true; 
+}
+void AGameModeLobby::SERVER_SpawnCharacter_Implementation(bool IsVR, APlayerController* NewPlayer) {
+    APlayerControllerLobby* PC = Cast<APlayerControllerLobby>(NewPlayer);
+    if (HasAuthority() && PC) {
         /* SPAWN PLAYER */
         if (PC->GetPawn()) PC->GetPawn()->Destroy();
 
         APlayerStatePlay* PS = Cast<APlayerStatePlay>(PC->PlayerState);
-        if (PS) {
-            PS->SetIsVR(PC->_IsVR);
+        UNWGameInstance* GI = Cast<UNWGameInstance>(GetGameInstance());
+        if (PS && GI) {
             if (NumPlayers == 1) {
                 PS->SetPlayerName("host");
-                PS->SetCharacterClass(PC->_IsVR ? GI->_VRBoyClass : GI->_BoyClass);
+                PS->SERVER_SetCharacterClass(IsVR ? GI->_VRBoyClass : GI->_BoyClass);
             }
             else {
                 PS->SetPlayerName("guest");
-                PS->SetCharacterClass(PC->_IsVR ? GI->_VRGirlClass : GI->_GirlClass);
+                PS->SERVER_SetCharacterClass(IsVR ? GI->_VRBoyClass : GI->_BoyClass);
             }
 
             FTransform Transform = FindPlayerStart(PC, PS->PlayerName)->GetActorTransform();
