@@ -60,7 +60,7 @@ void AGameModeLobby::SERVER_SpawnCharacter_Implementation(bool IsVR, APlayerCont
             }
             else {
                 PS->SetPlayerName("guest");
-                PS->SERVER_SetCharacterClass(IsVR ? GI->_VRBoyClass : GI->_BoyClass);
+                PS->SERVER_SetCharacterClass(IsVR ? GI->_VRGirlClass : GI->_GirlClass);
             }
 
             FTransform Transform = FindPlayerStart(PC, PS->PlayerName)->GetActorTransform();
