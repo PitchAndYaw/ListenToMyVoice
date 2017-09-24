@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "ListenToMyVoice.h"
 #include "NWGameInstance.h"
 
@@ -319,14 +317,17 @@ void UNWGameInstance::CreateOptionsPanel() {
 }
 
 bool UNWGameInstance::FillMenuFindGame() {
-    int Index = _MenuActor->GetSubmenuNum() - 1;
     bool Ok = false;
     if (_SessionSearch.IsValid()) {
+        int Index = _MenuActor->GetSubmenuNum() - 1;
         FString Result = "";
+        int AvailableConnections = 0;
         for (int32 i = 0; i < _SessionSearch->SearchResults.Num(); i++) {
-            if (_SessionSearch->SearchResults[i].Session.NumOpenPublicConnections > 0) {
+            AvailableConnections = _SessionSearch->SearchResults[i].Session.NumOpenPublicConnections;
+            if (AvailableConnections > 0) {
                 Result = _SessionSearch->SearchResults[i].Session.SessionSettings.Settings.
                             FindRef(SETTING_SESSION_NAME).Data.ToString();
+                Result += FString::Printf(TEXT("[%i\\2]"), FGenericPlatformMath::Abs(AvailableConnections - 2));
                 //Result = _SessionSearch->SearchResults[i].Session.OwningUserName;
                 Ok = true;
 
