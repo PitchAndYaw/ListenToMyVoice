@@ -11,9 +11,6 @@ class LISTENTOMYVOICE_API AEnemyCharacter : public ACharacter {
     GENERATED_BODY()
 
 public:
-	//UFUNCTION()
-	//void OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
-
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AI Settings")
     float _SightRadius;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings")
@@ -46,6 +43,9 @@ public:
     class UFMODAudioComponent* _BreathAudioComp;
     UPROPERTY(Category = Audio, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UFMODAudioComponent* _HurtAudioComp;
+
+    UFUNCTION(NetMulticast, Reliable)
+    void MULTI_AfterPossessed();
 
 protected:
     bool _IsDead;

@@ -62,6 +62,10 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
 	GetCharacterMovement()->MaxWalkSpeed = 150.0f;
 }
 
+void AEnemyCharacter::MULTI_AfterPossessed_Implementation() {
+    ULibraryUtils::Log("AEnemyCharacter::MULTI_AfterPossessed");
+}
+
 bool AEnemyCharacter::SERVER_TakeDamage_Validate(int DamageAmount) { return true; }
 void AEnemyCharacter::SERVER_TakeDamage_Implementation(int DamageAmount) {
     if (!_IsDead) {

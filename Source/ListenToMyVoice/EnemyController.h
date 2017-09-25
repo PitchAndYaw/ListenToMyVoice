@@ -31,9 +31,9 @@ protected:
 
     UFUNCTION()
     void PerceptionUpdated(TArray<AActor*> Actors);
-
-    //UFUNCTION()
-    //void TargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
+    
+    UFUNCTION(Server, Reliable, WithValidation)
+    void SERVER_AfterPossessed(AEnemyCharacter* InPawn);
 
 private:
 	void ApplySenses(float SightRange, float LoseSightRadius, float VisionAngleDegrees, float HearingRange);

@@ -21,7 +21,6 @@ AEnemyController::AEnemyController(const FObjectInitializer& OI) : Super(OI) {
     GetAIPerceptionComponent()->SetDominantSense(_SightConfig->GetSenseImplementation());
 
     GetAIPerceptionComponent()->OnPerceptionUpdated.AddDynamic(this, &AEnemyController::PerceptionUpdated);
-    //GetAIPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemyController::TargetPerceptionUpdated);
 }
 
 void AEnemyController::Possess(APawn* InPawn) {
@@ -29,15 +28,19 @@ void AEnemyController::Possess(APawn* InPawn) {
     if (EnemyCharacter) {
         Super::Possess(InPawn);
 
-        //EnemyCharacter->_BreathAudioComp->Play();
-
         RunBehaviorTree(Cast<AEnemyCharacter>(GetPawn())->_BehaviourTree);
 
 		ApplySenses(EnemyCharacter->_SightRadius,
 			EnemyCharacter->_LoseSightRadius,
 			EnemyCharacter->_VisionAngleDegrees,
 			EnemyCharacter->_HearingRange);
+        SERVER_AfterPossessed(EnemyCharacter);
     }
+}
+
+bool AEnemyController::SERVER_AfterPossessed_Validate(AEnemyCharacter* InPawn) { return true; }
+void AEnemyController::SERVER_AfterPossessed_Implementation(AEnemyCharacter* InPawn) {
+    InPawn->MULTI_AfterPossessed();
 }
 
 void AEnemyController::ApplySenses(float SightRange, float LoseSightRadius, float VisionAngleDegrees, float HearingRange) {
@@ -80,9 +83,3 @@ void AEnemyController::PerceptionUpdated(TArray<AActor*> Actors) {
         }
     }
 }
-
-//void AEnemyController::TargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus) {
-//    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "OnTargetPerceptionUpdated");
-//
-//    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, Actor->GetName());
-//}
