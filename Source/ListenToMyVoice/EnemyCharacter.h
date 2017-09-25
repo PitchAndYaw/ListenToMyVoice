@@ -31,18 +31,26 @@ public:
 	class UDestructibleComponent* _DestructibleMesh;
 	UPROPERTY(Category = "Diary", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UPaperSpriteComponent* _PlayerPointerComp;
-    
-    UFUNCTION(Server, Reliable, WithValidation)
-    void SERVER_TakeDamage(int DamageAmount);
-    UFUNCTION(NetMulticast, Reliable)
-    void MULTI_TakeDamage(int DamageAmount);
-
-    AEnemyCharacter(const FObjectInitializer& OI);
 
     UPROPERTY(Category = Audio, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UFMODAudioComponent* _BreathAudioComp;
     UPROPERTY(Category = Audio, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UFMODAudioComponent* _HurtAudioComp;
+
+    UPROPERTY(ReplicatedUsing = OnRep_SetIsPossessed)
+    bool _IsPossessed;
+    UFUNCTION(reliable, server, WithValidation)
+    void SERVER_SetIsPossessed(bool IsPossessed);
+    UFUNCTION()
+    virtual void OnRep_SetIsPossessed();
+
+    AEnemyCharacter(const FObjectInitializer& OI);
+    void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+    UFUNCTION(Server, Reliable, WithValidation)
+    void SERVER_TakeDamage(int DamageAmount);
+    UFUNCTION(NetMulticast, Reliable)
+    void MULTI_TakeDamage(int DamageAmount);
 
 protected:
     bool _IsDead;

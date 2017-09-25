@@ -7,10 +7,19 @@
 
 #include "EnemyController.h"
 
+
+void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME(AEnemyCharacter, _IsPossessed);
+}
+
 AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
     PrimaryActorTick.bCanEverTick = true;
     bReplicates = true;
     bReplicateMovement = true;
+
+    _IsPossessed = false;
 
     _StepsAudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("Audio"));
     _StepsAudioComp->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("Foot"));
@@ -30,10 +39,6 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
 
 	_PlayerPointerComp = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("Player Pointer"));
     _PlayerPointerComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-	//static ConstructorHelpers::FObjectFinder<UPaperSprite> SpritePlane(TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
-	//if (SpritePlane.Object) {
-	//	_PlayerPointerComp->SetSprite(SpritePlane.Object);
-	//}
     _PlayerPointerComp->SetRelativeLocation({ 0, 0, 500 });
     _PlayerPointerComp->SetRelativeRotation({ 90, 0, -90 });
     _PlayerPointerComp->bOwnerNoSee = true;
@@ -41,11 +46,9 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
     _DieEvent = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Scene/EnemyDead.EnemyDead")));
 
     AIControllerClass = AEnemyController::StaticClass();
-	//OnActorHit.AddDynamic(this, &AEnemyCharacter::OnHit);
 
 	_DestructibleMesh = CreateDefaultSubobject<UDestructibleComponent>(TEXT("DestructibleMesh"));
 	_DestructibleMesh->SetHiddenInGame(true);
-	//_DestructibleMesh->SetNotifyRigidBodyCollision(true);
 	_DestructibleMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
 	_DestructibleMesh->SetRelativeLocation(GetMesh()->GetComponentLocation());
 
@@ -61,6 +64,22 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
     GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 	GetCharacterMovement()->MaxWalkSpeed = 150.0f;
 }
+
+bool AEnemyCharacter::SERVER_SetIsPossessed_Validate(bool IsPossessed) { return true; }
+void AEnemyCharacter::SERVER_SetIsPossessed_Implementation(bool IsPossessed) {
+    _IsPossessed = IsPossessed;
+    OnRep_SetIsPossessed();
+}
+
+void AEnemyCharacter::OnRep_SetIsPossessed() {
+    ULibraryUtils::Log("OnRep_SetIsPossessed");
+
+    if (_IsPossessed && Role != ROLE_Authority) {
+        _BreathAudioComp->Play();
+        ULibraryUtils::Log("_BreathAudioComp->Play()");
+    }
+}
+
 
 bool AEnemyCharacter::SERVER_TakeDamage_Validate(int DamageAmount) { return true; }
 void AEnemyCharacter::SERVER_TakeDamage_Implementation(int DamageAmount) {

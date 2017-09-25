@@ -34,6 +34,7 @@ void AEnemyController::Possess(APawn* InPawn) {
 			EnemyCharacter->_LoseSightRadius,
 			EnemyCharacter->_VisionAngleDegrees,
 			EnemyCharacter->_HearingRange);
+        EnemyCharacter->SERVER_SetIsPossessed(true);
     }
 }
 
