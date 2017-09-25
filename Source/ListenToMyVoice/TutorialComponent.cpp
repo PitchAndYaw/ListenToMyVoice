@@ -28,6 +28,10 @@ UTutorialComponent::UTutorialComponent() : Super() {
 
 void UTutorialComponent::BeginPlay() {
     Super::BeginPlay();
+
+    if (GetOwner()->Role == ROLE_Authority) {// No widgets in server please
+        DestroyComponent();
+    }
 }
 
 void UTutorialComponent::TickComponent(float DeltaTime, ELevelTick TickType,
