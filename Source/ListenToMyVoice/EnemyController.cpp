@@ -34,13 +34,7 @@ void AEnemyController::Possess(APawn* InPawn) {
 			EnemyCharacter->_LoseSightRadius,
 			EnemyCharacter->_VisionAngleDegrees,
 			EnemyCharacter->_HearingRange);
-        SERVER_AfterPossessed(EnemyCharacter);
     }
-}
-
-bool AEnemyController::SERVER_AfterPossessed_Validate(AEnemyCharacter* InPawn) { return true; }
-void AEnemyController::SERVER_AfterPossessed_Implementation(AEnemyCharacter* InPawn) {
-    InPawn->MULTI_AfterPossessed();
 }
 
 void AEnemyController::ApplySenses(float SightRange, float LoseSightRadius, float VisionAngleDegrees, float HearingRange) {

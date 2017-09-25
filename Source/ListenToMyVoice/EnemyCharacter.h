@@ -44,9 +44,6 @@ public:
     UPROPERTY(Category = Audio, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UFMODAudioComponent* _HurtAudioComp;
 
-    UFUNCTION(NetMulticast, Reliable)
-    void MULTI_AfterPossessed();
-
 protected:
     bool _IsDead;
     TAssetPtr<class UFMODEvent> _DieEvent;
