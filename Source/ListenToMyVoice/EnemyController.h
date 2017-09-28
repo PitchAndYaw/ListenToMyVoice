@@ -1,10 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
-
-#include "Perception/AIPerceptionComponent.h"
-#include "Perception/AISenseConfig_Sight.h"
-#include "Perception/AISenseConfig_Hearing.h"
 
 
 #include "AIController.h"
@@ -17,10 +11,10 @@ class LISTENTOMYVOICE_API AEnemyController : public AAIController {
 
 public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-    UAISenseConfig_Sight* _SightConfig;
+    class UAISenseConfig_Sight* _SightConfig;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UAISenseConfig_Hearing* _HearingConfig;
+	class UAISenseConfig_Hearing* _HearingConfig;
 
     AEnemyController(const FObjectInitializer& OI);
 

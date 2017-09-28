@@ -1,7 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
-#include "Projectile.h"
+
 
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.generated.h"
@@ -21,8 +19,6 @@ public:
 	float _HearingRange;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings")
     class UBehaviorTree* _BehaviourTree;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI Settings")
-	TSubclassOf<class UAIPerceptionComponent> AIPerceptionComponent;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
     int _Damage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")

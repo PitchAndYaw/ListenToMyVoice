@@ -13,6 +13,9 @@
 #include "MenuInteraction.h"
 #include "PaperSprite.h"
 #include "PaperSpriteComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
+#include "Perception/AISense_Hearing.h"
 
 
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
@@ -48,13 +51,13 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
 
 	_PlayerPointerComp = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("Player Pointer"));
     _PlayerPointerComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-	//static ConstructorHelpers::FObjectFinder<UPaperSprite> SpritePointer(TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
-	//if (SpritePointer.Object) {
-	//	_PlayerPointerComp->SetSprite(SpritePointer.Object);
-	//}
 	_PlayerPointerComp->SetRelativeLocation({ 0, 0, 500 });
     _PlayerPointerComp->SetRelativeRotation({ 90, 0, -90 });
 	_PlayerPointerComp->bOwnerNoSee = true;
+
+    _PerceptionStimuliSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("PerceptionStimuliSource"));
+    _PerceptionStimuliSource->RegisterForSense(UAISense_Sight::StaticClass());
+    _PerceptionStimuliSource->RegisterForSense(UAISense_Hearing::StaticClass());
 
 	_PlayerCamera->PostProcessBlendWeight = 0;
 	_DamageDisappearVelocity = 0.3;
@@ -352,10 +355,18 @@ void APlayerCharacter::MULTI_CharacterDead_Implementation() {
 void APlayerCharacter::SpawnProjectile(TSubclassOf<AActor> C, const FTransform T) {
     ULibraryUtils::Log("SpawnProjectile");
     SERVER_SpawnActor(C, T);
+    SERVER_ReportNoise();
 }
 
 bool APlayerCharacter::SERVER_SpawnActor_Validate(TSubclassOf<AActor> C, const FTransform T) { return true; }
 void APlayerCharacter::SERVER_SpawnActor_Implementation(TSubclassOf<AActor> C, const FTransform T) {
     ULibraryUtils::Log("SERVER_SpawnActor");
     GetWorld()->SpawnActor(C, &T);
+}
+
+bool APlayerCharacter::SERVER_ReportNoise_Validate(float Loudness) { return true; }
+void APlayerCharacter::SERVER_ReportNoise_Implementation(float Loudness) {
+    ULibraryUtils::Log("SERVER_ReportNoise");
+    //MakeNoise(Loudness, this, GetActorLocation());
+    UAISense_Hearing::ReportNoiseEvent(GetWorld(), GetActorLocation(), Loudness, this);
 }

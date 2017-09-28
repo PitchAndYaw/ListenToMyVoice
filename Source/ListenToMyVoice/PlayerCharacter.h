@@ -1,8 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
-#include "Net/UnrealNetwork.h"
+
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
@@ -77,8 +75,10 @@ protected:
 	class UFMODAudioComponent* _BreathAudioComp;
     UPROPERTY(Category = Menu , VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UMenuInteraction* _MenuInteractionComp;
-	UPROPERTY(Category = "Diary", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Category = Diary, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UPaperSpriteComponent* _PlayerPointerComp;
+    UPROPERTY(Category = AI, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    class UAIPerceptionStimuliSourceComponent* _PerceptionStimuliSource;
 
     void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
@@ -155,9 +155,13 @@ private:
     /* Gun Delegate */
     FDelegateHandle _OnGunDelegateHandle;
 
+    UFUNCTION(Server, Reliable, WithValidation)
+    void SERVER_ReportNoise(float Loudness = 1.0f);
+
 public:
     FORCEINLINE UCameraComponent* APlayerCharacter::GetPlayerCamera() const { return _PlayerCamera; }
     FORCEINLINE UFMODAudioComponent* APlayerCharacter::GetStepsAudioComp() const { return _StepsAudioComp; }
 	FORCEINLINE UFMODAudioComponent* APlayerCharacter::GetBreathAudioComp() const { return _BreathAudioComp; }
     FORCEINLINE UMenuInteraction* APlayerCharacter::GetMenuInteractionComp() const { return _MenuInteractionComp; }
+    FORCEINLINE UAIPerceptionStimuliSourceComponent* APlayerCharacter::GetPerceptionStimuliSource() const { return _PerceptionStimuliSource; }
 };

@@ -8,6 +8,9 @@
 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
+#include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISenseConfig_Sight.h"
+#include "Perception/AISenseConfig_Hearing.h"
 
 
 AEnemyController::AEnemyController(const FObjectInitializer& OI) : Super(OI) {
@@ -28,12 +31,12 @@ void AEnemyController::Possess(APawn* InPawn) {
     if (EnemyCharacter) {
         Super::Possess(InPawn);
 
-        RunBehaviorTree(Cast<AEnemyCharacter>(GetPawn())->_BehaviourTree);
-
 		ApplySenses(EnemyCharacter->_SightRadius,
 			EnemyCharacter->_LoseSightRadius,
 			EnemyCharacter->_VisionAngleDegrees,
 			EnemyCharacter->_HearingRange);
+        RunBehaviorTree(Cast<AEnemyCharacter>(GetPawn())->_BehaviourTree);
+
         EnemyCharacter->SERVER_SetIsPossessed(true);
     }
 }
