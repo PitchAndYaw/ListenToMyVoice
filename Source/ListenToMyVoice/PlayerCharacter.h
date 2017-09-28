@@ -80,6 +80,7 @@ protected:
     UPROPERTY(Category = AI, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UAIPerceptionStimuliSourceComponent* _PerceptionStimuliSource;
 
+    void BeginPlay() override;
     void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
     /*************************************** ACTION MAPPINGS *************************************/
@@ -134,9 +135,6 @@ protected:
     void CLIENT_AddGunDelegates(AActor* Actor);
     UFUNCTION(Client, Reliable)
     void CLIENT_ClearGunDelegates(AActor* Actor);
-
-	/***********POST PROCESS***********/
-	bool _Damaged;
 
     /* Physic Materials */
     const USkeletalMeshSocket* _FootSocket;

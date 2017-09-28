@@ -59,24 +59,36 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
     _PerceptionStimuliSource->RegisterForSense(UAISense_Sight::StaticClass());
     _PerceptionStimuliSource->RegisterForSense(UAISense_Hearing::StaticClass());
 
-	_PlayerCamera->PostProcessBlendWeight = 0;
 	_DamageDisappearVelocity = 0.3;
 
     _Health = 3;
-	_Damaged = false;
 
     GetCharacterMovement()->MaxWalkSpeed = 200.0f;
 
     _OnGunDelegate.BindUObject(this, &APlayerCharacter::SpawnProjectile);
 }
 
+void APlayerCharacter::BeginPlay() {
+    Super::BeginPlay();
+
+    /* PostProcess Config only in Clients */
+    if (Role != ROLE_Authority) {
+        _PlayerCamera->PostProcessBlendWeight = 0;
+        _PlayerCamera->PostProcessSettings.bOverride_SceneFringeIntensity = true;
+        _PlayerCamera->PostProcessSettings.SceneFringeIntensity = 5.0f;
+        _PlayerCamera->PostProcessSettings.bOverride_VignetteIntensity = true;
+        _PlayerCamera->PostProcessSettings.VignetteIntensity = 1.5f;
+        _PlayerCamera->PostProcessSettings.bOverride_SceneColorTint = true;
+        _PlayerCamera->PostProcessSettings.SceneColorTint = FLinearColor(1, 0, 0, 0.8);
+    }
+}
+
 void APlayerCharacter::Tick(float DeltaSeconds) {
     Super::Tick(DeltaSeconds);
-	if (_Damaged) {
-		_PlayerCamera->PostProcessBlendWeight = FMath::FInterpTo(_PlayerCamera->PostProcessBlendWeight, 0.0, DeltaSeconds, _DamageDisappearVelocity);
-		if (_PlayerCamera->PostProcessBlendWeight == 0) {
-			_Damaged = !_Damaged;
-		}
+
+	if (_PlayerCamera->PostProcessBlendWeight > 0) {
+		_PlayerCamera->PostProcessBlendWeight = FMath::FInterpTo(_PlayerCamera->PostProcessBlendWeight,
+                                                                 0.0, DeltaSeconds, _DamageDisappearVelocity);
 	}
 }
 
@@ -326,7 +338,6 @@ bool APlayerCharacter::SERVER_TakeDamage_Validate(int DamageAmount) { return tru
 void APlayerCharacter::SERVER_TakeDamage_Implementation(int DamageAmount) {
     ULibraryUtils::Log(FString::Printf(TEXT("APlayerCharacter::TakeDamage")), 0, 60);
     _Health -= DamageAmount;
-    _Damaged = true;
 
     MULTI_TakeDamage(DamageAmount);
     if (_Health <= 0) {
@@ -339,12 +350,10 @@ void APlayerCharacter::SERVER_TakeDamage_Implementation(int DamageAmount) {
 }
 
 void APlayerCharacter::MULTI_TakeDamage_Implementation(int DamageAmount) {
-    /*Fade to red when take damage*/
-    _PlayerCamera->PostProcessBlendWeight = 1;
-    _PlayerCamera->PostProcessSettings.bOverride_SceneFringeIntensity = true;
-    _PlayerCamera->PostProcessSettings.SceneFringeIntensity = 5.0f;
-
-    _BreathAudioComp->Play();
+    if (Role != ROLE_Authority) {
+        _PlayerCamera->PostProcessBlendWeight = 1;
+        _BreathAudioComp->Play();
+    }
 }
 
 void APlayerCharacter::MULTI_CharacterDead_Implementation() {
@@ -367,6 +376,5 @@ void APlayerCharacter::SERVER_SpawnActor_Implementation(TSubclassOf<AActor> C, c
 bool APlayerCharacter::SERVER_ReportNoise_Validate(float Loudness) { return true; }
 void APlayerCharacter::SERVER_ReportNoise_Implementation(float Loudness) {
     ULibraryUtils::Log("SERVER_ReportNoise");
-    //MakeNoise(Loudness, this, GetActorLocation());
     UAISense_Hearing::ReportNoiseEvent(GetWorld(), GetActorLocation(), Loudness, this);
 }

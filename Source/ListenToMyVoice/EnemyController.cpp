@@ -61,15 +61,15 @@ void AEnemyController::ApplySenses(float SightRange, float LoseSightRadius, floa
 
 void AEnemyController::PerceptionUpdated(TArray<AActor*> Actors) {
     /* Find Player */
-    bool found = false;
     int i = 0;
-    while (!found && i < Actors.Num()) {
-        if (Actors[i]->IsA<APlayerCharacter>()) found = true;
+    APlayerCharacter* NewTarget = nullptr;
+    while (!NewTarget && i < Actors.Num()) {
+        if (Actors[i]->IsA<APlayerCharacter>()) NewTarget = Cast<APlayerCharacter>(Actors[i]);
         else i++;
     }
 
-    if (found) {
-        _TargetPawn = _TargetPawn ? nullptr : Cast<APlayerCharacter>(Actors[i]);
+    if (NewTarget) {
+        _TargetPawn = _TargetPawn == NewTarget ? nullptr : NewTarget;
         if (Blackboard) {
             const UBlackboardData* BBAsset = Blackboard->GetBlackboardAsset();
             if (BBAsset) {

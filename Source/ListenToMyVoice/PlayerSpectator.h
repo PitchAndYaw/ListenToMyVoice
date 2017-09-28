@@ -17,13 +17,13 @@ public:
     void ClickLeftPressed();
     void ClickLeftReleased();
 
+    void Init();
+
 protected:
     UPROPERTY(Category = Spectator, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     UCameraComponent* _PlayerCamera;
     UPROPERTY(Category = Spectator, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UMenuInteraction* _MenuInteractionComp;
-
-    virtual void BeginPlay() override;
 
 public:
     FORCEINLINE UCameraComponent* APlayerSpectator::GetPlayerCamera() const { return _PlayerCamera; }

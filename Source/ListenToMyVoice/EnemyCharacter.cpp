@@ -59,7 +59,7 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
     _SightRadius = 500.0f;
     _LoseSightRadius = 1000.0f;
     _VisionAngleDegrees = 90.0f;
-	_HearingRange = 1500.0f;
+	_HearingRange = 700.0f;
     _Damage = 1;
 	_IsDamaged = false;
     _IsDead = false;
@@ -75,8 +75,6 @@ void AEnemyCharacter::SERVER_SetIsPossessed_Implementation(bool IsPossessed) {
 }
 
 void AEnemyCharacter::OnRep_SetIsPossessed() {
-    ULibraryUtils::Log("OnRep_SetIsPossessed");
-
     if (_IsPossessed && Role != ROLE_Authority) _BreathAudioComp->Play();
 }
 

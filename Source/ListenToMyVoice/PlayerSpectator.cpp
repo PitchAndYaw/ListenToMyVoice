@@ -10,10 +10,10 @@ APlayerSpectator::APlayerSpectator(const FObjectInitializer& OI) : Super(OI) {
     bUseControllerRotationYaw = true;
 
     _PlayerCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Player Camera"));
-    _MenuInteractionComp = CreateDefaultSubobject<UMenuInteraction>(TEXT("Menu Interaction"));
-
     _PlayerCamera->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
     _PlayerCamera->bUsePawnControlRotation = true;
+
+    _MenuInteractionComp = CreateDefaultSubobject<UMenuInteraction>(TEXT("Menu Interaction"));
     _MenuInteractionComp->AttachToComponent(_PlayerCamera, FAttachmentTransformRules::KeepRelativeTransform);
     _MenuInteractionComp->_RayParameter = 100000;
 
@@ -21,8 +21,14 @@ APlayerSpectator::APlayerSpectator(const FObjectInitializer& OI) : Super(OI) {
     if (Movement) Movement->MaxSpeed = 10;
 }
 
-void APlayerSpectator::BeginPlay() {
-    Super::BeginPlay();
+void APlayerSpectator::Init() {
+    /* PostProcess Config only in Clients */
+    ULibraryUtils::Log("APlayerSpectator::PostProcess");
+    _PlayerCamera->PostProcessBlendWeight = 1.0f;
+    _PlayerCamera->PostProcessSettings.bOverride_SceneColorTint = true;
+    _PlayerCamera->PostProcessSettings.SceneColorTint = FLinearColor(1, 0, 0, 0.8);
+
+    ToggleMenuInteraction(true);
 }
 
 void APlayerSpectator::ToggleMenuInteraction(bool Activate) {

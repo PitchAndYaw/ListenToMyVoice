@@ -364,7 +364,7 @@ void APlayerControllerPlay::CLIENT_Dead_Implementation(bool IsMe) {
 
                 _MenuActor->ToogleMenu(Location,
                                        CameraComp->GetComponentRotation());
-                PlayerSpectator->ToggleMenuInteraction(true);
+                PlayerSpectator->Init();
             }
         }
     }
