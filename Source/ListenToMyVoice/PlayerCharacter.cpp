@@ -62,7 +62,7 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& OI) :Super(OI) {
 	_PlayerCamera->PostProcessBlendWeight = 0;
 	_DamageDisappearVelocity = 0.3;
 
-    _Health = 1;
+    _Health = 3;
 	_Damaged = false;
 
     GetCharacterMovement()->MaxWalkSpeed = 200.0f;

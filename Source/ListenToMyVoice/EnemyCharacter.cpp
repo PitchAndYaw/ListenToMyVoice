@@ -6,6 +6,7 @@
 #include "PaperSpriteComponent.h"
 
 #include "EnemyController.h"
+#include "PlayerCharacter.h"
 
 
 void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
@@ -26,16 +27,18 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
     _StepsAudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/pasos.pasos")));
     _StepsAudioComp->ComponentTags.Add("step");
     _StepsAudioComp->bAutoActivate = false;
+    _StepsAudioComp->SetParameter("Humedad", 0.0f);
 
     _BreathAudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("Audio_Breathing"));
     _BreathAudioComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
     _BreathAudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/Beast.Beast")));
     _BreathAudioComp->bAutoActivate = false;
 
-    _HurtAudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("Audio_Hurt"));
-    _HurtAudioComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-    _HurtAudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/HurtEnemy.HurtEnemy")));
-    _HurtAudioComp->bAutoActivate = false;
+    _ActionAudioComp = CreateDefaultSubobject<UFMODAudioComponent>(TEXT("_ActionComp"));
+    _ActionAudioComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+    _ActionAudioComp->Event = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Personaje/HurtEnemy.HurtEnemy")));
+    _ActionAudioComp->bAutoActivate = false;
+    _ActionAudioComp->SetParameter("Mode", 0.0f);
 
 	_PlayerPointerComp = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("Player Pointer"));
     _PlayerPointerComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
@@ -74,25 +77,38 @@ void AEnemyCharacter::SERVER_SetIsPossessed_Implementation(bool IsPossessed) {
 void AEnemyCharacter::OnRep_SetIsPossessed() {
     ULibraryUtils::Log("OnRep_SetIsPossessed");
 
-    if (_IsPossessed && Role != ROLE_Authority) {
-        _BreathAudioComp->Play();
-        ULibraryUtils::Log("_BreathAudioComp->Play()");
-    }
+    if (_IsPossessed && Role != ROLE_Authority) _BreathAudioComp->Play();
 }
-
 
 bool AEnemyCharacter::SERVER_TakeDamage_Validate(int DamageAmount) { return true; }
 void AEnemyCharacter::SERVER_TakeDamage_Implementation(int DamageAmount) {
     if (!_IsDead) {
-        ULibraryUtils::Log(FString::Printf(TEXT("AEnemyCharacter::TakeDamage")), 0, 60);
-        /*The enemy doesn't receive damage*/
         SetDamaged(true);
+        MULTI_TakeDamage(DamageAmount);
     }
-    MULTI_TakeDamage(DamageAmount);
 }
 
 void AEnemyCharacter::MULTI_TakeDamage_Implementation(int DamageAmount) {
-    if (_HurtAudioComp) _HurtAudioComp->Play();
+    if (_ActionAudioComp) {
+        _ActionAudioComp->SetParameter("Mode", 0.0f);
+        _ActionAudioComp->Play();
+    }
+}
+
+bool AEnemyCharacter::SERVER_MakeDamage_Validate(ACharacter* Target, int DamageAmount) { return true; }
+void AEnemyCharacter::SERVER_MakeDamage_Implementation(ACharacter* Target, int DamageAmount) {
+    APlayerCharacter* TargetCharacter = Cast<APlayerCharacter>(Target);
+    if (!_IsDead && TargetCharacter) {
+        MULTI_MakeDamage(DamageAmount);
+        TargetCharacter->SERVER_TakeDamage(DamageAmount);
+    }
+}
+
+void AEnemyCharacter::MULTI_MakeDamage_Implementation(int DamageAmount) {
+    if (_ActionAudioComp) {
+        _ActionAudioComp->SetParameter("Mode", 1.0f);
+        _ActionAudioComp->Play();
+    }
 }
 
 void AEnemyCharacter::SetDamaged(bool Damaged) {

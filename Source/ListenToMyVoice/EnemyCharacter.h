@@ -31,7 +31,7 @@ public:
     UPROPERTY(Category = Audio, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UFMODAudioComponent* _BreathAudioComp;
     UPROPERTY(Category = Audio, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-    class UFMODAudioComponent* _HurtAudioComp;
+    class UFMODAudioComponent* _ActionAudioComp;
 
     UPROPERTY(ReplicatedUsing = OnRep_SetIsPossessed)
     bool _IsPossessed;
@@ -47,6 +47,11 @@ public:
     void SERVER_TakeDamage(int DamageAmount);
     UFUNCTION(NetMulticast, Reliable)
     void MULTI_TakeDamage(int DamageAmount);
+
+    UFUNCTION(Server, Reliable, WithValidation)
+    void SERVER_MakeDamage(ACharacter* Target, int DamageAmount);
+    UFUNCTION(NetMulticast, Reliable)
+    void MULTI_MakeDamage(int DamageAmount);
 
 protected:
     bool _IsDead;
