@@ -150,7 +150,7 @@ FHitResult AFPCharacter::Raycasting() {
     }
 
     //If Raycast is not hitting any actor, disable the outline
-    if (bInventoryItemHit && _HitResult.Actor != _LastMeshFocused->GetOwner()) {
+    if (bInventoryItemHit && _HitResult.Actor.IsValid() &&  _HitResult.Actor != _LastMeshFocused->GetOwner()) {
 
         _LastMeshFocused->SetCustomDepthStencilValue(0);
         _LastMeshFocused->SetRenderCustomDepth(false);
