@@ -59,6 +59,7 @@ private:
     /* MENU INTERFACE */
     class AMenu3D* _MenuActor;
     void CreateMenuActor();
+    bool GetOtherPlayerState();
 
     void TickWalkie();
     void SetLightColor();

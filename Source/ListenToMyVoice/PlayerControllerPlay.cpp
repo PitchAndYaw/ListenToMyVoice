@@ -41,6 +41,22 @@ void APlayerControllerPlay::OnRep_Pawn() {
     }
 }
 
+bool APlayerControllerPlay::GetOtherPlayerState() {
+    bool found = false;
+    if (!_OtherPlayerState) {
+        for (APlayerState* OtherPlayerState : GetWorld()->GetGameState()->PlayerArray) {
+            if (PlayerState->UniqueId != OtherPlayerState->UniqueId &&
+                PlayerState->IsA(APlayerStatePlay::StaticClass())) {
+                
+                _OtherPlayerState = Cast<APlayerStatePlay>(OtherPlayerState);
+                found = true;
+            }
+        }
+    }
+    else found = true;
+    return found;
+}
+
 /*********************************************** VOICE *******************************************/
 void APlayerControllerPlay::ModifyVoiceAudioComponent(const FUniqueNetId& RemoteTalkerId,
                                                       class UAudioComponent* AudioComponent) {
@@ -48,17 +64,9 @@ void APlayerControllerPlay::ModifyVoiceAudioComponent(const FUniqueNetId& Remote
     APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
     bool FullVolume = false;
     if (PlayerCharacter) {
-        if (!_OtherPlayerState) {
-            for (APlayerState* OtherPlayerState : GetWorld()->GetGameState()->PlayerArray) {
-                if (PlayerState->UniqueId != OtherPlayerState->UniqueId && PlayerState->IsA(APlayerStatePlay::StaticClass())) {
-                    _OtherPlayerState = Cast<APlayerStatePlay>(OtherPlayerState);
-                }
-            }
-        }
-
         FullVolume = PlayerCharacter->IsWalkieInHand();
 
-        if (!_VoiceAudioComp) {
+        if (!_VoiceAudioComp && GetOtherPlayerState()) {
             AActor* WalkieActor = PlayerCharacter->GetWalkieActor();
             if (WalkieActor) {
                 UFMODEvent* NoiseEvent = PlayerCharacter->GetWalkieEvent();
@@ -311,7 +319,7 @@ void APlayerControllerPlay::OnRadioPressed() {
     ULibraryUtils::Log(FString::Printf(TEXT("I AM: %s"),
                                        *PlayerState->UniqueId.ToDebugString()), 3, 60);
 
-    if (_OtherPlayerState) {
+    if (GetOtherPlayerState()) {
         ClientMutePlayer(_OtherPlayerState->UniqueId);
         ULibraryUtils::Log(FString::Printf(TEXT("MUTE: %s"),
                                            *_OtherPlayerState->UniqueId.ToDebugString()), 2, 60);
@@ -324,7 +332,7 @@ void APlayerControllerPlay::OnRadioReleased() {
 
     StopTalking();
 
-    if (_OtherPlayerState) {
+    if (GetOtherPlayerState()) {
         ClientUnmutePlayer(_OtherPlayerState->UniqueId);
         ULibraryUtils::Log(FString::Printf(TEXT("UNMUTE: %s"),
                                            *_OtherPlayerState->UniqueId.ToDebugString()), 0, 60);
