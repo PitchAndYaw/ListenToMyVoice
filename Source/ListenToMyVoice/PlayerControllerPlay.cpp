@@ -48,7 +48,14 @@ void APlayerControllerPlay::ModifyVoiceAudioComponent(const FUniqueNetId& Remote
     APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
     bool FullVolume = false;
     if (PlayerCharacter) {
-        ULibraryUtils::Log("ModifyVoiceAudioComponent");
+        if (!_OtherPlayerState) {
+            for (APlayerState* OtherPlayerState : GetWorld()->GetGameState()->PlayerArray) {
+                if (PlayerState->UniqueId != OtherPlayerState->UniqueId && PlayerState->IsA(APlayerStatePlay::StaticClass())) {
+                    _OtherPlayerState = Cast<APlayerStatePlay>(OtherPlayerState);
+                }
+            }
+        }
+
         FullVolume = PlayerCharacter->IsWalkieInHand();
 
         if (!_VoiceAudioComp) {
@@ -304,14 +311,6 @@ void APlayerControllerPlay::OnRadioPressed() {
     ULibraryUtils::Log(FString::Printf(TEXT("I AM: %s"),
                                        *PlayerState->UniqueId.ToDebugString()), 3, 60);
 
-    if (!_OtherPlayerState) {
-        for (APlayerState* OtherPlayerState : GetWorld()->GetGameState()->PlayerArray) {
-            if (PlayerState->UniqueId != OtherPlayerState->UniqueId && PlayerState->IsA(APlayerStatePlay::StaticClass())) {
-                _OtherPlayerState = Cast<APlayerStatePlay>(OtherPlayerState);
-            }
-        }
-    }
-
     if (_OtherPlayerState) {
         ClientMutePlayer(_OtherPlayerState->UniqueId);
         ULibraryUtils::Log(FString::Printf(TEXT("MUTE: %s"),
@@ -324,14 +323,6 @@ void APlayerControllerPlay::OnRadioReleased() {
     if (PS) PS->SERVER_SetIsTalking(false);
 
     StopTalking();
-
-    if (!_OtherPlayerState) {
-        for (APlayerState* OtherPlayerState : GetWorld()->GetGameState()->PlayerArray) {
-            if (PlayerState->UniqueId != OtherPlayerState->UniqueId && PlayerState->IsA(APlayerStatePlay::StaticClass())) {
-                _OtherPlayerState = Cast<APlayerStatePlay>(OtherPlayerState);
-            }
-        }
-    }
 
     if (_OtherPlayerState) {
         ClientUnmutePlayer(_OtherPlayerState->UniqueId);

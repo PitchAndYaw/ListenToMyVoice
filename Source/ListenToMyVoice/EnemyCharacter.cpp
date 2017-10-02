@@ -46,8 +46,6 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& OI) : Super(OI) {
     _PlayerPointerComp->SetRelativeRotation({ 90, 0, -90 });
     _PlayerPointerComp->bOwnerNoSee = true;
 
-    _DieEvent = TAssetPtr<UFMODEvent>(FStringAssetReference(TEXT("/Game/FMOD/Events/Scene/EnemyDead.EnemyDead")));
-
     AIControllerClass = AEnemyController::StaticClass();
 
 	_DestructibleMesh = CreateDefaultSubobject<UDestructibleComponent>(TEXT("DestructibleMesh"));
@@ -104,7 +102,7 @@ void AEnemyCharacter::SERVER_MakeDamage_Implementation(ACharacter* Target, int D
 
 void AEnemyCharacter::MULTI_MakeDamage_Implementation(int DamageAmount) {
     if (_ActionAudioComp) {
-        _ActionAudioComp->SetParameter("Mode", 1.0f);
+        _ActionAudioComp->SetParameter("Mode", 0.4f);
         _ActionAudioComp->Play();
     }
 }
@@ -126,16 +124,17 @@ void AEnemyCharacter::Die() {
 		_DestructibleMesh->SetHiddenInGame(false);
 		_DestructibleMesh->ApplyRadiusDamage(100.0f, GetActorLocation(), 100.0f, 0.0f, false);
 
-        _StepsAudioComp->Event = _DieEvent;
-        _StepsAudioComp->Play();
-
         _BreathAudioComp->Stop();
+        _StepsAudioComp->Stop();
+
+        if (_ActionAudioComp) {
+            _ActionAudioComp->SetParameter("Mode", 1.0f);
+            _ActionAudioComp->Play();
+        }
 
         _IsDead = true;
-
         SetActorTickEnabled(false);
 
-		if(GetController())
-			GetController()->UnPossess();
+		if(GetController())	GetController()->UnPossess();
 	}
 }

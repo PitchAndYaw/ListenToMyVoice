@@ -21,10 +21,10 @@ APlayerSpectator::APlayerSpectator(const FObjectInitializer& OI) : Super(OI) {
 
 void APlayerSpectator::Init() {
     /* PostProcess Config only in Clients */
-    ULibraryUtils::Log("APlayerSpectator::PostProcess");
-    _PlayerCamera->PostProcessBlendWeight = 1.0f;
-    _PlayerCamera->PostProcessSettings.bOverride_SceneColorTint = true;
-    _PlayerCamera->PostProcessSettings.SceneColorTint = FLinearColor(1, 0, 0, 0.8);
+    ULibraryUtils::Log("APlayerSpectator::Init");
+    //_PlayerCamera->PostProcessBlendWeight = 1.0f;
+    //_PlayerCamera->PostProcessSettings.bOverride_SceneColorTint = true;
+    //_PlayerCamera->PostProcessSettings.SceneColorTint = FLinearColor(1, 0, 0, 0.8);
 
     ToggleMenuInteraction(true);
 }
