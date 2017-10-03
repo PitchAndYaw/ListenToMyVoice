@@ -43,7 +43,7 @@ protected:
     void UseRightReleased();
 
     /*************** TRIGGER MENU *************/
-    void ToogleMenu();
+    void ToggleMenu();
 
 private:
     bool _ClientPossesed;

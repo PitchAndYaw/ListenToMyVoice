@@ -38,7 +38,7 @@ void UTutorialComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                        FActorComponentTickFunction* ThisTickFunction) {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-    if (_Character) {
+    if (ULibraryUtils::IsValid(_Character)) {
         if (_IsMovable) {
             FRotator PlayerRot = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(),
                                                                         _Character->GetPlayerCamera()->GetComponentLocation());

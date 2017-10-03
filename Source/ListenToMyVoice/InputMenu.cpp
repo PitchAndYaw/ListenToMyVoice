@@ -40,23 +40,11 @@ UInputMenu::UInputMenu(const FObjectInitializer& OI) : Super(OI) {
     _NextPoint = FVector();
     bool _IsFlee = false;
     _IsLoading = false;
-
-    //OnComponentActivated.AddDynamic(this, &UInputMenu::OnActivate);
-    //OnComponentDeactivated.AddDynamic(this, &UInputMenu::OnDeactivate);
 }
-
-//void UInputMenu::OnActivate(UActorComponent* Component, bool bReset) {
-//    ULibraryUtils::Log("OnActivate");
-//}
-//
-//void UInputMenu::OnDeactivate(UActorComponent* Component) {
-//    ULibraryUtils::Log("OnDeactivate");
-//}
 
 void UInputMenu::BeginPlay() {
     _TextRender->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform,
                                    FName("SocketText"));
-    _TextRender->SetText(FText::FromString(GetFName().ToString()));
     _TextRender->RegisterComponent();
 
     _AudioComp->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);

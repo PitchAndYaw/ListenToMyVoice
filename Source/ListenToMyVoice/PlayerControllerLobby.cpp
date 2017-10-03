@@ -19,7 +19,7 @@ APlayerControllerLobby::APlayerControllerLobby(const FObjectInitializer& OI) : S
 
 void APlayerControllerLobby::SetupInputComponent() {
     Super::SetupInputComponent();
-    InputComponent->BindAction("Menu", IE_Released, this, &APlayerControllerLobby::ToogleMenu);
+    InputComponent->BindAction("Menu", IE_Released, this, &APlayerControllerLobby::ToggleMenu);
 
     /* USE ITEM */
     InputComponent->BindAction("ClickLeft", IE_Pressed, this, &APlayerControllerLobby::UseLeftPressed);
@@ -70,7 +70,7 @@ void APlayerControllerLobby::CLIENT_CreateMenu_Implementation() {
                 Location.Z += 200;
                 Location.X += 50;
             }
-            _MenuActor->ToogleMenu(Location,
+            _MenuActor->ToggleMenu(Location,
                                    CameraComp->GetComponentRotation(), false);
 
             APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
@@ -124,7 +124,7 @@ void APlayerControllerLobby::UseRightReleased() {
 }
 
 /*************** TRIGGER MENU *************/
-void APlayerControllerLobby::ToogleMenu() {
+void APlayerControllerLobby::ToggleMenu() {
     if (!_MapMainMenu.Contains(GetWorld()->GetMapName())) {
         /* MENU INTERFACE */
         if (!_MenuActor) CreateMenuActor(false);
@@ -136,7 +136,7 @@ void APlayerControllerLobby::ToogleMenu() {
                 FVector Location = CameraComp->GetComponentLocation() +
                                   (CameraComp->GetForwardVector().GetSafeNormal() * 200);
                 
-                _MenuActor->ToogleMenu(Location,
+                _MenuActor->ToggleMenu(Location,
                                        CameraComp->GetComponentRotation());
 
                 APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());

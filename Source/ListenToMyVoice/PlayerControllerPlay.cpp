@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "ListenToMyVoice.h"
 #include "PlayerControllerPlay.h"
 
@@ -18,7 +16,7 @@ APlayerControllerPlay::APlayerControllerPlay(const FObjectInitializer& OI) : Sup
 
 void APlayerControllerPlay::SetupInputComponent() {
     Super::SetupInputComponent();
-    InputComponent->BindAction("Menu", IE_Released, this, &APlayerControllerPlay::ToogleMenu);
+    InputComponent->BindAction("Menu", IE_Released, this, &APlayerControllerPlay::ToggleMenu);
 
     /* USE ITEM */
     InputComponent->BindAction("ClickLeft", IE_Pressed, this, &APlayerControllerPlay::UseLeftPressed);
@@ -37,6 +35,17 @@ void APlayerControllerPlay::OnRep_Pawn() {
             PlayerCharacter->_OnRadioReleasedDelegate.BindUObject(this, &APlayerControllerPlay::OnRadioReleased);
             PlayerCharacter->AfterPossessed(true);
             _ClientPossesed = true;
+        }
+    }
+    /* PLAYER DEAD */
+    else {
+        APlayerSpectator* PlayerSpectator = Cast<APlayerSpectator>(GetPawn());
+        if (PlayerSpectator) {
+            PlayerSpectator->AfterPossessed();
+            /* MENU INTERFACE */
+            bool  IsMenuHidden = _MenuActor ? _MenuActor->_IsMenuHidden : true;
+            if (!IsMenuHidden) ToggleMenu();
+            ToggleMenu();
         }
     }
 }
@@ -184,7 +193,7 @@ void APlayerControllerPlay::UseLeftPressed() {
             PlayerCharacter->UseLeftPressed(IsMenuHidden);
         }
         else {
-            APlayerSpectator* PlayerSpectator = Cast<APlayerSpectator>(GetSpectatorPawn());
+            APlayerSpectator* PlayerSpectator = Cast<APlayerSpectator>(GetPawn());
             if (PlayerSpectator) PlayerSpectator->ClickLeftPressed();
         }
     }
@@ -198,7 +207,7 @@ void APlayerControllerPlay::UseLeftReleased() {
             PlayerCharacter->UseLeftReleased(IsMenuHidden);
         }
         else {
-            APlayerSpectator* PlayerSpectator = Cast<APlayerSpectator>(GetSpectatorPawn());
+            APlayerSpectator* PlayerSpectator = Cast<APlayerSpectator>(GetPawn());
             if (PlayerSpectator) PlayerSpectator->ClickLeftReleased();
         }
     }
@@ -213,7 +222,7 @@ void APlayerControllerPlay::UseRightPressed() {
             PlayerCharacter->UseRightPressed(IsMenuHidden);
         }
         else {
-            APlayerSpectator* PlayerSpectator = Cast<APlayerSpectator>(GetSpectatorPawn());
+            APlayerSpectator* PlayerSpectator = Cast<APlayerSpectator>(GetPawn());
             if (PlayerSpectator) PlayerSpectator->ClickLeftPressed();
         }
     }
@@ -227,14 +236,14 @@ void APlayerControllerPlay::UseRightReleased() {
             PlayerCharacter->UseRightReleased(IsMenuHidden);
         }
         else {
-            APlayerSpectator* PlayerSpectator = Cast<APlayerSpectator>(GetSpectatorPawn());
+            APlayerSpectator* PlayerSpectator = Cast<APlayerSpectator>(GetPawn());
             if (PlayerSpectator) PlayerSpectator->ClickLeftReleased();
         }
     }
 }
 
 /*************** TRIGGER MENU *************/
-void APlayerControllerPlay::ToogleMenu() {
+void APlayerControllerPlay::ToggleMenu() {
     APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
     if (PlayerCharacter && !PlayerCharacter->_ItemPressedLeft && !PlayerCharacter->_ItemPressedRight) {
         /* MENU INTERFACE */
@@ -246,13 +255,12 @@ void APlayerControllerPlay::ToogleMenu() {
             FVector Location = CameraComp->GetComponentLocation() +
                 (CameraComp->GetForwardVector().GetSafeNormal() * 200);
 
-            _MenuActor->ToogleMenu(Location,
-                                   CameraComp->GetComponentRotation());
+            _MenuActor->ToggleMenu(Location, CameraComp->GetComponentRotation());
             PlayerCharacter->ToggleMenuInteraction(!_MenuActor->_IsMenuHidden);
         }
     }
     else {
-        APlayerSpectator* PlayerSpectator = Cast<APlayerSpectator>(GetSpectatorPawn());
+        APlayerSpectator* PlayerSpectator = Cast<APlayerSpectator>(GetPawn());
         if (PlayerSpectator) {
             /* MENU INTERFACE */
             if (!_MenuActor) CreateMenuActor();
@@ -263,8 +271,7 @@ void APlayerControllerPlay::ToogleMenu() {
                 FVector Location = CameraComp->GetComponentLocation() +
                     (CameraComp->GetForwardVector().GetSafeNormal() * 200);
 
-                _MenuActor->ToogleMenu(Location,
-                                       CameraComp->GetComponentRotation());
+                _MenuActor->ToggleMenu(Location, CameraComp->GetComponentRotation());
                 PlayerSpectator->ToggleMenuInteraction(!_MenuActor->_IsMenuHidden);
             }
         }
@@ -276,39 +283,6 @@ void APlayerControllerPlay::CreateMenuActor() {
     if (GameInstance) _MenuActor = GameInstance->CreateMenuPlay();
 }
 
-void APlayerControllerPlay::EnableMenu(bool Enable) {
-    APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
-    if (PlayerCharacter) {
-        if (Enable) {
-            if (!_MenuActor) CreateMenuActor();
-            if (_MenuActor->_IsMenuHidden) {
-                UCameraComponent* CameraComp = Cast<UCameraComponent>(PlayerCharacter->
-                                                                      FindComponentByClass<UCameraComponent>());
-                if (CameraComp) {
-                    FVector Location = CameraComp->GetComponentLocation() +
-                        (CameraComp->GetForwardVector().GetSafeNormal() * 200);
-
-                    _MenuActor->ToogleMenu(Location,
-                                           CameraComp->GetComponentRotation());
-                    PlayerCharacter->ToggleMenuInteraction(true);
-                }
-            }
-        }
-        else {
-            bool  IsMenuHidden = _MenuActor ? _MenuActor->_IsMenuHidden : true;
-            if (!IsMenuHidden) {
-                UCameraComponent* CameraComp = Cast<UCameraComponent>(PlayerCharacter->
-                                                                      FindComponentByClass<UCameraComponent>());
-                if (CameraComp) {
-                    _MenuActor->ToogleMenu(CameraComp->GetComponentLocation(),
-                                           CameraComp->GetComponentRotation());
-                    PlayerCharacter->ToggleMenuInteraction(false);
-                }
-
-            }
-        }
-    }
-}
 /*********************************************** DELEGATES ***************************************/
 void APlayerControllerPlay::OnRadioPressed() {
     APlayerStatePlay* PS = Cast<APlayerStatePlay>(PlayerState);
@@ -336,35 +310,5 @@ void APlayerControllerPlay::OnRadioReleased() {
         ClientUnmutePlayer(_OtherPlayerState->UniqueId);
         ULibraryUtils::Log(FString::Printf(TEXT("UNMUTE: %s"),
                                            *_OtherPlayerState->UniqueId.ToDebugString()), 0, 60);
-    }
-}
-
-/******************************************** GAME FLOW ******************************************/
-void APlayerControllerPlay::CLIENT_Dead_Implementation(bool IsMe) {
-    if (!IsMe) EnableMenu();
-    else {
-        /* Change to Spectate Mode */
-        FVector ActorLocation = GetPawn()->GetActorLocation();
-        ClientGotoState(NAME_Spectating);
-        GetSpectatorPawn()->SetActorLocation(ActorLocation);
-
-        /* Show Menu */
-        bool  IsMenuHidden = _MenuActor ? _MenuActor->_IsMenuHidden : true;
-        APlayerSpectator* PlayerSpectator = Cast<APlayerSpectator>(GetSpectatorPawn());
-        if (IsMenuHidden && PlayerSpectator) {
-            /* MENU INTERFACE */
-            if (!_MenuActor) CreateMenuActor();
-
-            UCameraComponent* CameraComp = Cast<UCameraComponent>(PlayerSpectator->
-                                                                  FindComponentByClass<UCameraComponent>());
-            if (CameraComp) {
-                FVector Location = CameraComp->GetComponentLocation() +
-                    (CameraComp->GetForwardVector().GetSafeNormal() * 200);
-
-                _MenuActor->ToogleMenu(Location,
-                                       CameraComp->GetComponentRotation());
-                PlayerSpectator->Init();
-            }
-        }
     }
 }

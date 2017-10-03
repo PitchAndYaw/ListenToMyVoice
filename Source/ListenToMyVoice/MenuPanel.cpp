@@ -53,14 +53,14 @@ void UMenuPanel::RemoveFrom(int From) {
         float SphereRadius;
         UInputMenu* Pivot;
         for (int32 i = From; i < Tot; i++) {
-            Pivot = _MenuInputs[_MenuInputs.Num() - 1];
+            Pivot = _MenuInputs[i];
             UKismetSystemLibrary::GetComponentBounds(Pivot, Origin, BoxExtent, SphereRadius);
             _PanelHeight -= (2 * BoxExtent.Z) + _Margin;
 
             Pivot->ClearOnInputMenuDelegate();
             Pivot->DestroyComponent(true);
-            _MenuInputs.RemoveAt(_MenuInputs.Num() - 1);
         }
+        _MenuInputs.RemoveAt(From, _MenuInputs.Num() - From);
     }
 }
 

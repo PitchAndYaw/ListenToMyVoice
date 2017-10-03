@@ -27,12 +27,8 @@ public:
     void OnRadioPressed();
     void OnRadioReleased();
 
-    UFUNCTION(Client, Reliable)
-    void CLIENT_Dead(bool IsMe);
-
     /*************** TRIGGER MENU *************/
-    void ToogleMenu();
-    void EnableMenu(bool Enable = true);
+    void ToggleMenu();
 
 protected:
 

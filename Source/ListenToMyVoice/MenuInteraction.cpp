@@ -47,8 +47,6 @@ void UMenuInteraction::TickComponent(float DeltaTime, ELevelTick TickType,
     FVector StartRaycast = GetComponentLocation();
     FVector EndRaycast = GetForwardVector() * _RayParameter + StartRaycast;
 
-    //DrawDebugLine(GetWorld(), StartRaycast, EndRaycast, FColor(0, 255, 0), false, -1.0f, (uint8)'\000', 0.8f);
-
     if (GetWorld()->LineTraceSingleByChannel(HitResult, StartRaycast, EndRaycast,
                                              ECollisionChannel::ECC_Visibility, CollisionInfo) &&
         HitResult.Actor.IsValid()) {
@@ -65,7 +63,7 @@ void UMenuInteraction::TickComponent(float DeltaTime, ELevelTick TickType,
         }
     }
     else {
-        if (_TargetInputMenu) {
+        if (ULibraryUtils::IsValid(_TargetInputMenu)) {
             _TargetInputMenu->EndhoverInteraction();
             _TargetInputMenu = nullptr;
             _TargetLocked = false;
@@ -74,9 +72,9 @@ void UMenuInteraction::TickComponent(float DeltaTime, ELevelTick TickType,
 }
 
 void UMenuInteraction::PressPointer() {
-    if (_TargetInputMenu) _TargetInputMenu->PressEvents();
+    if (ULibraryUtils::IsValid(_TargetInputMenu)) _TargetInputMenu->PressEvents();
 }
 
 void UMenuInteraction::ReleasePointer() {
-    if (_TargetInputMenu) _TargetInputMenu->ReleaseEvents();
+    if (ULibraryUtils::IsValid(_TargetInputMenu)) _TargetInputMenu->ReleaseEvents();
 }

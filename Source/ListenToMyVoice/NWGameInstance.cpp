@@ -202,14 +202,17 @@ AMenu3D* UNWGameInstance::CreateMenuMain() {
     _MenuActor = GetWorld()->SpawnActor<AMenu3D>();
 
     /*** (0)MAIN MENU ***/
-    UMenuPanel* MenuMain = NewObject<UMenuPanel>(_MenuActor, FName("MenuMain"));
-    UInputMenu* Slot_NewGame = NewObject<UInputMenu>(_MenuActor, FName("NEW GAME"));
+    UMenuPanel* MenuMain = NewObject<UMenuPanel>(_MenuActor);
+    UInputMenu* Slot_NewGame = NewObject<UInputMenu>(_MenuActor);
+    Slot_NewGame->_TextRender->SetText(FText::FromString("NEW GAME"));
     Slot_NewGame->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonNewGame);
     Slot_NewGame->AddOnInputMenuDelegate();
-    UInputMenu* Slot_Options = NewObject<UInputMenu>(_MenuActor, FName("OPTIONS"));
+    UInputMenu* Slot_Options = NewObject<UInputMenu>(_MenuActor);
+    Slot_Options->_TextRender->SetText(FText::FromString("OPTIONS"));
     Slot_Options->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonOptions);
     Slot_Options->AddOnInputMenuDelegate();
-    UInputMenu* Slot_ExitGame = NewObject<UInputMenu>(_MenuActor, FName("EXIT GAME"));
+    UInputMenu* Slot_ExitGame = NewObject<UInputMenu>(_MenuActor);
+    Slot_ExitGame->_TextRender->SetText(FText::FromString("EXIT GAME"));
     Slot_ExitGame->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonExitGame);
     Slot_ExitGame->AddOnInputMenuDelegate();
 
@@ -222,8 +225,9 @@ AMenu3D* UNWGameInstance::CreateMenuMain() {
     CreateOptionsPanel();
 
     /*** (TOTAL -2)NEW GAME MENU ***/
-    UMenuPanel* MenuNewGame = NewObject<UMenuPanel>(_MenuActor, FName("MenuNewGame"));
-    UInputMenu* Slot_FindGame = NewObject<UInputMenu>(_MenuActor, FName("FIND GAME"));
+    UMenuPanel* MenuNewGame = NewObject<UMenuPanel>(_MenuActor);
+    UInputMenu* Slot_FindGame = NewObject<UInputMenu>(_MenuActor);
+    Slot_FindGame->_TextRender->SetText(FText::FromString("FIND GAME"));
     Slot_FindGame->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonFindGame);
     Slot_FindGame->AddOnInputMenuDelegate();
 
@@ -231,8 +235,9 @@ AMenu3D* UNWGameInstance::CreateMenuMain() {
     MenuNewGame->AddMenuInput(Slot_FindGame);
 
     /*** (TOTAL - 1)FIND GAME MENU ***/
-    UMenuPanel* MenuFindGame = NewObject<UMenuPanel>(_MenuActor, FName("MenuFindGame"));
-    UInputMenu* Slot_JoinGame = NewObject<UInputMenu>(_MenuActor, FName("JOIN GAME"));
+    UMenuPanel* MenuFindGame = NewObject<UMenuPanel>(_MenuActor);
+    UInputMenu* Slot_JoinGame = NewObject<UInputMenu>(_MenuActor);
+    Slot_JoinGame->_TextRender->SetText(FText::FromString("JOIN GAME"));
     //Slot_JoinGame->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonJoinGame);
     //Slot_JoinGame->AddOnInputMenuDelegate();
 
@@ -252,14 +257,17 @@ AMenu3D* UNWGameInstance::CreateMenuPlay() {
     _MenuActor = GetWorld()->SpawnActor<AMenu3D>();
 
     /*** (0)PLAY MENU ***/
-    UMenuPanel* MenuPlay = NewObject<UMenuPanel>(_MenuActor, FName("MenuPlay"));
-    UInputMenu* Slot_BackToMenu = NewObject<UInputMenu>(_MenuActor, FName("BACK TO MENU"));
+    UMenuPanel* MenuPlay = NewObject<UMenuPanel>(_MenuActor);
+    UInputMenu* Slot_BackToMenu = NewObject<UInputMenu>(_MenuActor);
+    Slot_BackToMenu->_TextRender->SetText(FText::FromString("BACK TO MENU"));
     Slot_BackToMenu->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonBackToMenu);
     Slot_BackToMenu->AddOnInputMenuDelegate();
-    UInputMenu* Slot_Options = NewObject<UInputMenu>(_MenuActor, FName("OPTIONS"));
+    UInputMenu* Slot_Options = NewObject<UInputMenu>(_MenuActor);
+    Slot_Options->_TextRender->SetText(FText::FromString("OPTIONS"));
     Slot_Options->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonOptions);
     Slot_Options->AddOnInputMenuDelegate();
-    UInputMenu* Slot_ExitGame = NewObject<UInputMenu>(_MenuActor, FName("EXIT GAME"));
+    UInputMenu* Slot_ExitGame = NewObject<UInputMenu>(_MenuActor);
+    Slot_ExitGame->_TextRender->SetText(FText::FromString("EXIT GAME"));
     Slot_ExitGame->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonDestroyExitGame);
     Slot_ExitGame->AddOnInputMenuDelegate();
 
@@ -276,35 +284,42 @@ AMenu3D* UNWGameInstance::CreateMenuPlay() {
 
 void UNWGameInstance::CreateOptionsPanel() {
     /*** (1)OPTIONS MENU ***/
-    UMenuPanel* MenuOptions = NewObject<UMenuPanel>(_MenuActor, FName("MenuOptions"));
+    UMenuPanel* MenuOptions = NewObject<UMenuPanel>(_MenuActor);
     _MenuActor->AddSubmenu(MenuOptions);
     if (_IsVRMode) {
-        UInputMenu* Slot_ComfortMode = NewObject<UInputMenu>(_MenuActor,
-                                                             _MenuOptions.bComfortMode ? "COMFORT ON" : "COMFORT OFF");
+        UInputMenu* Slot_ComfortMode = NewObject<UInputMenu>(_MenuActor);
+        Slot_ComfortMode->_TextRender->SetText(_MenuOptions.bComfortMode ?
+                                               FText::FromString("COMFORT ON") :
+                                               FText::FromString("COMFORT OFF"));
         Slot_ComfortMode->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonSwitchComfortMode);
         Slot_ComfortMode->AddOnInputMenuDelegate();
 
         MenuOptions->AddMenuInput(Slot_ComfortMode);
     }
     else {
-        UInputMenu* Slot_Graphics = NewObject<UInputMenu>(_MenuActor, "GRAPHICS");
+        UInputMenu* Slot_Graphics = NewObject<UInputMenu>(_MenuActor);
+        Slot_Graphics->_TextRender->SetText(FText::FromString("GRAPHICS"));
         Slot_Graphics->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonGraphics);
         Slot_Graphics->AddOnInputMenuDelegate();
 
         MenuOptions->AddMenuInput(Slot_Graphics);
 
         /*** (2)GRAPHICS MENU ***/
-        UMenuPanel* MenuGraphics = NewObject<UMenuPanel>(_MenuActor, FName("MenuGraphics"));
-        UInputMenu* Slot_Res1920 = NewObject<UInputMenu>(_MenuActor, "1920x1080");
+        UMenuPanel* MenuGraphics = NewObject<UMenuPanel>(_MenuActor);
+        UInputMenu* Slot_Res1920 = NewObject<UInputMenu>(_MenuActor);
+        Slot_Res1920->_TextRender->SetText(FText::FromString("1920x1080"));
         Slot_Res1920->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnRes1920);
         Slot_Res1920->AddOnInputMenuDelegate();
-        UInputMenu* Slot_Res1600 = NewObject<UInputMenu>(_MenuActor, "1600x900");
+        UInputMenu* Slot_Res1600 = NewObject<UInputMenu>(_MenuActor);
+        Slot_Res1600->_TextRender->SetText(FText::FromString("1600x900"));
         Slot_Res1600->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnRes1600);
         Slot_Res1600->AddOnInputMenuDelegate();
-        UInputMenu* Slot_Res1280 = NewObject<UInputMenu>(_MenuActor, "1280x720");
+        UInputMenu* Slot_Res1280 = NewObject<UInputMenu>(_MenuActor);
+        Slot_Res1280->_TextRender->SetText(FText::FromString("1280x720"));
         Slot_Res1280->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnRes1280);
         Slot_Res1280->AddOnInputMenuDelegate();
-        UInputMenu* Slot_Res800 = NewObject<UInputMenu>(_MenuActor, "800x600");
+        UInputMenu* Slot_Res800 = NewObject<UInputMenu>(_MenuActor);
+        Slot_Res800->_TextRender->SetText(FText::FromString("800x600"));
         Slot_Res800->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnRes800);
         Slot_Res800->AddOnInputMenuDelegate();
 
@@ -331,7 +346,8 @@ bool UNWGameInstance::FillMenuFindGame() {
                 //Result = _SessionSearch->SearchResults[i].Session.OwningUserName;
                 Ok = true;
 
-                UInputMenu* Slot_GameSlot = NewObject<UInputMenu>(_MenuActor, FName(*Result));
+                UInputMenu* Slot_GameSlot = NewObject<UInputMenu>(_MenuActor);
+                Slot_GameSlot->_TextRender->SetText(FText::FromString(Result));
                 Slot_GameSlot->_InputMenuReleasedDelegate.BindUObject(this, &UNWGameInstance::OnButtonJoinGame);
                 Slot_GameSlot->AddOnInputMenuDelegate();
 

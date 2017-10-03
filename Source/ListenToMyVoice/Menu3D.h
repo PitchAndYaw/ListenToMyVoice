@@ -17,7 +17,7 @@ public:
     bool _IsMenuHidden;
 
     AMenu3D(const class FObjectInitializer& OI);
-    void ToogleMenu(FVector Location, FRotator Rotation, bool PlaySound = true);
+    void ToggleMenu(FVector Location, FRotator Rotation, bool PlaySound = true);
 
     void AddSubmenu(UMenuPanel* Submenu);
     void SetSubmenuByIndex(const int& Index);

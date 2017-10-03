@@ -46,11 +46,20 @@ bool AGameModePlay::SERVER_PlayerDead_Validate(AController* Controller) { return
 void AGameModePlay::SERVER_PlayerDead_Implementation(AController* Controller) {
     APlayerControllerPlay* PC = Cast<APlayerControllerPlay>(Controller);
     if (PC) {
-        PC->ChangeState(NAME_Spectating);
+        APlayerStatePlay* PSAux;
         APlayerControllerPlay* PCAux;
+        APawn* Actor;
         for (FConstPlayerControllerIterator I = GetWorld()->GetPlayerControllerIterator(); I; ++I) {
             PCAux = Cast<APlayerControllerPlay>(I->Get());
-            PCAux->CLIENT_Dead(PCAux == PC);
+            PSAux = PCAux ? Cast<APlayerStatePlay>(PCAux->PlayerState) : nullptr;
+            if (PSAux) {
+                Actor = PCAux->GetPawn();
+                PCAux->UnPossess();
+                if (Actor) Actor->Destroy();
+                FTransform Transform = FindPlayerStart(PC, PSAux->PlayerName)->GetActorTransform();
+                Actor = Cast<APawn>(GetWorld()->SpawnActor(SpectatorClass, &Transform));
+                if (Actor) PCAux->Possess(Actor);
+            }
         }
     }
 }

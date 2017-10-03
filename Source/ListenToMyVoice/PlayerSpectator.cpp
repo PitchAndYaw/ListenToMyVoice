@@ -17,19 +17,20 @@ APlayerSpectator::APlayerSpectator(const FObjectInitializer& OI) : Super(OI) {
 
     USpectatorPawnMovement* Movement = Cast<USpectatorPawnMovement>(GetMovementComponent());
     if (Movement) Movement->MaxSpeed = 10;
+
+    _PlayerCamera->PostProcessBlendWeight = 0.6f;
+    _PlayerCamera->PostProcessSettings.bOverride_SceneColorTint = true;
+    _PlayerCamera->PostProcessSettings.SceneColorTint = FLinearColor(1, 0, 0, 0.8);
 }
 
-void APlayerSpectator::Init() {
-    /* PostProcess Config only in Clients */
-    ULibraryUtils::Log("APlayerSpectator::Init");
-    //_PlayerCamera->PostProcessBlendWeight = 1.0f;
-    //_PlayerCamera->PostProcessSettings.bOverride_SceneColorTint = true;
-    //_PlayerCamera->PostProcessSettings.SceneColorTint = FLinearColor(1, 0, 0, 0.8);
-
-    ToggleMenuInteraction(true);
+void APlayerSpectator::AfterPossessed() {
+    ToggleMenuInteraction(false);
 }
 
 void APlayerSpectator::ToggleMenuInteraction(bool Activate) {
+    if (Activate) ULibraryUtils::Log("ACTIVATE");
+    else ULibraryUtils::Log("DEACTIVATE");
+
     _MenuInteractionComp->SetActive(Activate);
     _MenuInteractionComp->SetHiddenInGame(!Activate, true);
     _MenuInteractionComp->SetComponentTickEnabled(Activate);

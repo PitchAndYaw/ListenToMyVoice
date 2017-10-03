@@ -40,6 +40,7 @@ AMenu3D::AMenu3D(const class FObjectInitializer& OI) : Super(OI) {
     _MiddleDecorator->LightingChannels.bChannel1 = true;
 
     _BackSubmenu = CreateDefaultSubobject<UInputMenu>(TEXT("BACK"));
+    _BackSubmenu->_TextRender->SetText(FText::FromString("BACK"));
     _BackSubmenu->_InputMenuReleasedDelegate.BindUObject(this, &AMenu3D::OnButtonBack);
     _BackSubmenu->AddOnInputMenuDelegate();
 
@@ -75,7 +76,7 @@ void AMenu3D::AddSubmenu(UMenuPanel* Submenu) {
     _Submenus.Add(Submenu);
 }
 
-void AMenu3D::ToogleMenu(FVector Location, FRotator Rotation, bool PlaySound) {
+void AMenu3D::ToggleMenu(FVector Location, FRotator Rotation, bool PlaySound) {
     if (PlaySound) {
         _AudioComp->Event = _AudioOpenCloseEvent;
         _AudioComp->Play();

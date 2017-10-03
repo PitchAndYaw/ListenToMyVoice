@@ -15,7 +15,7 @@ public:
     void ClickLeftPressed();
     void ClickLeftReleased();
 
-    void Init();
+    void AfterPossessed();
 
 protected:
     UPROPERTY(Category = Spectator, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
