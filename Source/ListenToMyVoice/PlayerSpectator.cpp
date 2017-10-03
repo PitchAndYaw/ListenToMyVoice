@@ -12,8 +12,8 @@ APlayerSpectator::APlayerSpectator(const FObjectInitializer& OI) : Super(OI) {
     _PlayerCamera->bUsePawnControlRotation = true;
 
     _MenuInteractionComp = CreateDefaultSubobject<UMenuInteraction>(TEXT("Menu Interaction"));
-    _MenuInteractionComp->AttachToComponent(_PlayerCamera, FAttachmentTransformRules::KeepRelativeTransform);
     _MenuInteractionComp->_RayParameter = 100000;
+    _MenuInteractionComp->AttachToComponent(_PlayerCamera, FAttachmentTransformRules::KeepRelativeTransform);
 
     USpectatorPawnMovement* Movement = Cast<USpectatorPawnMovement>(GetMovementComponent());
     if (Movement) Movement->MaxSpeed = 10;
@@ -28,9 +28,6 @@ void APlayerSpectator::AfterPossessed() {
 }
 
 void APlayerSpectator::ToggleMenuInteraction(bool Activate) {
-    if (Activate) ULibraryUtils::Log("ACTIVATE");
-    else ULibraryUtils::Log("DEACTIVATE");
-
     _MenuInteractionComp->SetActive(Activate);
     _MenuInteractionComp->SetHiddenInGame(!Activate, true);
     _MenuInteractionComp->SetComponentTickEnabled(Activate);
