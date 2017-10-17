@@ -449,6 +449,7 @@ void AFPCharacter::MULTI_SaveItemInventory_Implementation(AActor* ItemActor, int
 }
 
 void AFPCharacter::PickItemInventory(AActor* ItemActor, bool IsLeft) {
+	ToggleInventory();
     if (ItemActor) {
         if (IsLeft && _ItemLeft != ItemActor) {
             _Inventory->_AudioComp->Play();
@@ -513,6 +514,7 @@ void AFPCharacter::MULTI_PickItemInventoryLeft_Implementation(AActor* ItemActor)
 
         _ItemLeft = ItemActor;
 		GrabbingLeft = true;
+		
 
         /*If the item is equipped in the other hand*/
 		if (_ItemRight && _ItemRight == ItemActor) {
